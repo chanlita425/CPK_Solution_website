@@ -1,6 +1,7 @@
-@import "tailwindcss/preflight";  /* Tailwind base */
-@import "tailwindcss/components"; /* Tailwind components */
-@import "tailwindcss/utilities";  /* Tailwind utilities */
+/* @import "tailwindcss/preflight";  Tailwind base */
+/* @import "tailwindcss/components"; Tailwind components */
+/* @import "tailwindcss/utilities";  Tailwind utilities */
+@import "tailwindcss";
 
 /* Font Awesome */
 @import "@fortawesome/fontawesome-free/css/all.min.css";
@@ -8,3 +9,6 @@
 /* Custom UI styles */
 @import "./ui.css";
 
+
+/* Admin Panel Styles */
+@import "./admin.css";
