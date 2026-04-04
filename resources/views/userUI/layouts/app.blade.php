@@ -71,16 +71,20 @@
 
     {{-- Swiper CSS --}}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
-
     
 </head>
 <body class="bg-gray-50 text-gray-800 antialiased">
 
     {{-- Top Header --}}
-    @include('components.header')
+    @include('userUI.components.header')
 
     {{-- Main Navbar --}}
-    @include('components.navbar')
+    @include('userUI.components.navbar')
+
+    @include('userUI.components.banner')
+
+    @include('userUI.components.categories')
+    @include('userUI.components.brands')
 
     {{-- Page Content --}}
     <main class="animate-fade-in">
@@ -88,7 +92,7 @@
     </main>
 
     {{-- Footer --}}
-    @include('components.footer')
+    @include('userUI.components.footer')
 
     {{-- Swiper JS --}}
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
