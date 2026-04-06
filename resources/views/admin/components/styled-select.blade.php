@@ -32,12 +32,12 @@
     <div class="relative" x-data="{ open: false, selected: '{{ $selectedValue }}', selectedLabel: '{{ addslashes($selectedLabel) }}' }">
         <div class="relative">
             @if ($icon)
-                <i class="{{ $icon }} absolute left-3 top-4 text-gray-400 z-10"></i>
+                <i class="{{ $icon }} absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 z-10"></i>
             @endif
             <button type="button" @click="open = !open"
-                class="relative w-full bg-white border border-gray-300 rounded-lg py-2.5 px-4 text-left cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#D7B259] focus:border-transparent hover:border-[#D7B259]"
+                class="relative w-full bg-white border border-gray-300 rounded-lg h-[42px] px-4 text-left cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#D7B259] focus:border-transparent hover:border-[#D7B259]"
                 :class="{ 'pl-10': '{{ $icon }}' }">
-                <div class="flex items-center justify-between">
+                <div class="flex items-center justify-between h-full">
                     <span class="block truncate flex-1" x-show="!selectedLabel"
                         :class="{ 'text-gray-400': !selectedLabel }">
                         {{ $placeholder }}

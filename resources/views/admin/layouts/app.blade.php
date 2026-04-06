@@ -8,15 +8,6 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Admin Dashboard') - CPK Solution</title>
 
-    <script>
-        // Set default timezone for Flatpickr
-        window.flatpickr = {
-            l10n: {
-                firstDayOfWeek: 1
-            }
-        };
-    </script>
-
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
@@ -35,15 +26,16 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
-    <!-- Flatpickr Mobile Theme (Optional but looks better on mobile) -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_blue.css">
-
     <style>
         * {
             font-family: 'Inter', sans-serif;
         }
 
-
+        /* Make the wrapper take full height */
+        html,
+        body {
+            height: 100%;
+        }
 
         /* Custom Scrollbar */
         ::-webkit-scrollbar {
@@ -287,7 +279,7 @@
     @stack('styles')
 </head>
 
-<body class="bg-gray-50 antialiased">
+<body class="bg-gray-50 antialiased flex flex-col min-h-screen">
 
     <!-- Sidebar Overlay (Mobile) -->
     <div id="sidebarOverlay" class="fixed inset-0 bg-black/50 z-30 hidden lg:hidden transition-opacity duration-300">
@@ -296,17 +288,17 @@
     <!-- Sidebar -->
     @include('admin.components.sidebar')
 
-    <!-- Main Content Wrapper -->
-    <div id="mainContent" class="lg:ml-64 min-h-screen transition-all duration-300">
+    <!-- Main Content Wrapper - flex column to push footer down -->
+    <div id="mainContent" class="lg:ml-64 flex flex-col min-h-screen transition-all duration-300">
         <!-- Header -->
         @include('admin.components.header')
 
-        <!-- Page Content -->
-        <main class="p-4 md:p-6">
+        <!-- Page Content - grows to fill available space -->
+        <main class="flex-1 p-4 md:p-6">
             @yield('content')
         </main>
 
-        <!-- Footer -->
+        <!-- Footer - will stick to bottom -->
         @include('admin.components.footer')
     </div>
 
