@@ -1,119 +1,163 @@
+{{-- resources/views/admin/coupons/index.blade.php --}}
 @extends('admin.layouts.app')
 
 @section('title', 'Coupons')
 @section('header', 'Coupons')
 
 @section('content')
-    <div class="admin-card p-6">
-        <div class="flex justify-between items-center mb-6">
-            <h2 class="text-2xl font-bold">Coupons Management</h2>
-            <a href="{{ route('admin.coupons.create') }}" class="btn-admin-primary">
-                <i class="fas fa-plus mr-2"></i> Add Coupon
-            </a>
+    <div class="mb-6 flex justify-between items-center">
+        <p class="text-gray-600">Manage discount coupons for your store</p>
+        <a href="{{ route('admin.coupons.create') }}"
+            class="bg-yellow-500 hover:bg-yellow-600 text-gray-900 px-4 py-2 rounded-lg transition flex items-center gap-2">
+            <i class="fas fa-plus-circle"></i> Add Coupon
+        </a>
+    </div>
+
+    @if (session('success'))
+        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-4">
+            {{ session('success') }}
         </div>
+    @endif
 
-        @if (session('success'))
-            <div class="admin-alert-success mb-4">
-                {{ session('success') }}
-            </div>
-        @endif
-
+    <div class="bg-white rounded-xl shadow-sm overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="admin-table">
-                <thead>
+            <table class="w-full">
+                <thead class="bg-gray-50">
                     <tr>
-                        <th>ID</th>
-                        <th>Code</th>
-                        <th>Discount Type</th>
-                        <th>Discount Value</th>
-                        <th>Min. Order</th>
-                        <th>Valid Period</th>
-                        <th>Usage</th>
-                        <th>Status</th>
-                        <th>Actions</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Code</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Value</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Min Order</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Valid Period</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="divide-y divide-gray-200">
                     @forelse($coupons as $coupon)
-                        <tr>
-                            <td>{{ $coupon->id }}</td>
-                            <td>
-                                <span class="font-mono font-bold text-primary">{{ $coupon->code }}</span>
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4">
+                                <span class="font-mono font-medium text-gray-900">{{ $coupon->code }}</span>
                             </td>
-                            <td>
-                                <span
-                                    class="px-2 py-1 rounded text-xs {{ $coupon->discount_type == 'percentage' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800' }}">
-                                    {{ ucfirst($coupon->discount_type) }}
-                                </span>
+                            <td class="px-6 py-4">
+                                <span class="capitalize text-sm text-gray-600">{{ $coupon->type }}</span>
                             </td>
-                            <td>
-                                @if ($coupon->discount_type == 'percentage')
-                                    {{ $coupon->discount_value }}%
+                            <td class="px-6 py-4 text-sm font-medium text-yellow-600">
+                                @if ($coupon->type == 'percent')
+                                    {{ $coupon->value }}%
                                 @else
-                                    ${{ number_format($coupon->discount_value, 2) }}
+                                    ${{ number_format($coupon->value, 2) }}
                                 @endif
                             </td>
-                            <td>${{ number_format($coupon->minimum_order, 2) }}</td>
-                            <td>
-                                {{ date('d/m/Y', strtotime($coupon->valid_from)) }} -
-                                {{ date('d/m/Y', strtotime($coupon->valid_until)) }}
-                                @if (now() > $coupon->valid_until)
-                                    <span class="text-red-500 text-xs block">Expired</span>
+                            <td class="px-6 py-4 text-sm text-gray-600">
+                                @if ($coupon->min_order_amount > 0)
+                                    ${{ number_format($coupon->min_order_amount, 2) }}
+                                @else
+                                    No minimum
                                 @endif
                             </td>
-                            <td>
-                                <div class="text-sm">
-                                    {{ $coupon->used_count }} / {{ $coupon->usage_limit ?? '∞' }}
-                                </div>
-                                @if ($coupon->usage_limit)
-                                    <div class="w-full bg-gray-200 rounded-full h-1 mt-1">
-                                        <div class="bg-primary rounded-full h-1"
-                                            style="width: {{ ($coupon->used_count / $coupon->usage_limit) * 100 }}%"></div>
-                                    </div>
+                            <td class="px-6 py-4 text-sm text-gray-600">
+                                @if ($coupon->start_date || $coupon->end_date)
+                                    {{ $coupon->start_date ? $coupon->start_date->format('M d, Y') : 'Any' }}
+                                    -
+                                    {{ $coupon->end_date ? $coupon->end_date->format('M d, Y') : 'Any' }}
+                                @else
+                                    Always valid
                                 @endif
                             </td>
-                            <td>
-                                <div class="flex flex-col gap-1">
-                                    <span
-                                        class="px-2 py-1 rounded text-xs {{ $coupon->is_active && $coupon->valid_until >= now() ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                                        {{ $coupon->is_active && $coupon->valid_until >= now() ? 'Active' : 'Inactive' }}
-                                    </span>
-                                    @if (!$coupon->is_active)
-                                        <span class="text-xs text-gray-500">Disabled</span>
-                                    @elseif($coupon->valid_until < now())
-                                        <span class="text-xs text-red-500">Expired</span>
-                                    @endif
-                                </div>
+                            <td class="px-6 py-4">
+                                <button onclick="toggleStatus({{ $coupon->id }})"
+                                    class="px-2 py-1 text-xs rounded-full transition
+                            {{ $coupon->is_active ? 'bg-green-100 text-green-800 hover:bg-green-200' : 'bg-red-100 text-red-800 hover:bg-red-200' }}">
+                                    {{ $coupon->is_active ? 'Active' : 'Inactive' }}
+                                </button>
                             </td>
-                            <td>
-                                <div class="flex gap-2">
-                                    <a href="{{ route('admin.coupons.edit', $coupon) }}"
-                                        class="text-blue-600 hover:text-blue-800">
+                            <td class="px-6 py-4 text-right">
+                                <div class="flex items-center justify-end gap-2">
+                                    <a href="{{ route('admin.coupons.edit', $coupon->id) }}"
+                                        class="text-blue-600 hover:text-blue-700 p-1">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <form action="{{ route('admin.coupons.destroy', $coupon) }}" method="POST"
-                                        class="inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="text-red-600 hover:text-red-800"
-                                            onclick="return confirm('Are you sure?')">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </form>
+                                    <button onclick="deleteCoupon({{ $coupon->id }})"
+                                        class="text-red-600 hover:text-red-700 p-1">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
                                 </div>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="9" class="text-center py-8 text-gray-500">No coupons found</td>
+                            <td colspan="7" class="px-6 py-12 text-center text-gray-500">
+                                <i class="fas fa-ticket-alt text-4xl mb-2 block"></i>
+                                No coupons found. Click "Add Coupon" to create your first discount code.
+                            </td>
                         </tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
-
-        <div class="mt-6">
-            {{ $coupons->links() }}
-        </div>
     </div>
+
+    <div class="mt-6">
+        {{ $coupons->links() }}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function toggleStatus(id) {
+            fetch(`/admin/coupons/${id}/toggle-status`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        Swal.fire('Error', 'Failed to update status', 'error');
+                    }
+                })
+                .catch(() => {
+                    Swal.fire('Error', 'Failed to update status', 'error');
+                });
+        }
+
+        function deleteCoupon(id) {
+            Swal.fire({
+                title: 'Delete Coupon?',
+                text: "This action cannot be undone!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc2626',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch(`/admin/coupons/${id}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                location.reload();
+                            } else {
+                                Swal.fire('Error', 'Failed to delete', 'error');
+                            }
+                        })
+                        .catch(() => {
+                            Swal.fire('Error', 'Failed to delete coupon', 'error');
+                        });
+                }
+            });
+        }
+    </script>
 @endsection

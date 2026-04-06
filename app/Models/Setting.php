@@ -11,51 +11,38 @@ class Setting extends Model
     use HasFactory;
 
     protected $fillable = [
-        'key',
-        'value',
-        'type',
-        'group',
-        'is_public'
+        'company_name',
+        'company_url',
+        'company_phone_number_first',
+        'company_phone_number_second',
+        'company_logo',
+        'about_company',
+        'hero_banner_image',
+        'promotion_banner_image',
+        'facebook_link',
+        'telegram_link',
+        'tiktok_link',
+        'instagram_link',
+        'shipping_fee',
+        'tax_percent',
+        'seller_telegram',
     ];
 
     protected $casts = [
-        'is_public' => 'boolean',
+        'shipping_fee' => 'decimal:2',
+        'tax_percent' => 'decimal:2',
     ];
 
-    // Get setting value by key
-    public static function get($key, $default = null)
+    public static function getSettings()
     {
-        $setting = self::where('key', $key)->first();
-        return $setting ? $setting->value : $default;
-    }
-
-    // Set setting value (update or create)
-    public static function set($key, $value, $type = 'text', $group = 'general')
-    {
-        $setting = self::where('key', $key)->first();
-
-        if ($setting) {
-            // Update existing
-            $setting->update([
-                'value' => $value,
-                'type' => $type,
-                'group' => $group
-            ]);
-            return $setting;
-        } else {
-            // Create new
-            return self::create([
-                'key' => $key,
-                'value' => $value,
-                'type' => $type,
-                'group' => $group
+        $settings = self::first();
+        if (!$settings) {
+            $settings = self::create([
+                'company_name' => 'CPK Solution',
+                'shipping_fee' => 5.00,
+                'tax_percent' => 10.00,
             ]);
         }
-    }
-
-    // Get all settings by group
-    public static function getGroup($group)
-    {
-        return self::where('group', $group)->get()->pluck('value', 'key');
+        return $settings;
     }
 }

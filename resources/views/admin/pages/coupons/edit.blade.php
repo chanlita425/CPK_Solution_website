@@ -1,124 +1,119 @@
+{{-- resources/views/admin/coupons/edit.blade.php --}}
 @extends('admin.layouts.app')
 
 @section('title', 'Edit Coupon')
 @section('header', 'Edit Coupon')
 
 @section('content')
-    <div class="admin-card p-6">
-        <form action="{{ route('admin.coupons.update', $coupon) }}" method="POST">
-            @csrf
-            @method('PUT')
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    <label class="admin-form-label">Coupon Code *</label>
-                    <input type="text" name="code" class="admin-form-input" value="{{ old('code', $coupon->code) }}"
-                        required>
-                    <p class="text-xs text-gray-500 mt-1">Use uppercase letters and numbers only</p>
-                    @error('code')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                    @enderror
-                </div>
-
-                <div>
-                    <label class="admin-form-label">Discount Type *</label>
-                    <select name="discount_type" class="admin-form-input" required id="discountType">
-                        <option value="percentage"
-                            {{ old('discount_type', $coupon->discount_type) == 'percentage' ? 'selected' : '' }}>Percentage
-                            (%)</option>
-                        <option value="fixed"
-                            {{ old('discount_type', $coupon->discount_type) == 'fixed' ? 'selected' : '' }}>Fixed Amount ($)
-                        </option>
-                    </select>
-                    @error('discount_type')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                    @enderror
-                </div>
-
-                <div>
-                    <label class="admin-form-label">Discount Value *</label>
-                    <div class="relative">
-                        <input type="number" step="0.01" name="discount_value" class="admin-form-input"
-                            value="{{ old('discount_value', $coupon->discount_value) }}" required>
-                        <span class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500" id="discountSymbol">
-                            {{ $coupon->discount_type == 'percentage' ? '%' : '$' }}
-                        </span>
-                    </div>
-                    @error('discount_value')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                    @enderror
-                </div>
-
-                <div>
-                    <label class="admin-form-label">Minimum Order Amount</label>
-                    <input type="number" step="0.01" name="minimum_order" class="admin-form-input"
-                        value="{{ old('minimum_order', $coupon->minimum_order) }}">
-                    <p class="text-xs text-gray-500 mt-1">Leave 0 for no minimum requirement</p>
-                    @error('minimum_order')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                    @enderror
-                </div>
-
-                <div>
-                    <label class="admin-form-label">Valid From *</label>
-                    <input type="date" name="valid_from" class="admin-form-input"
-                        value="{{ old('valid_from', $coupon->valid_from->format('Y-m-d')) }}" required>
-                    @error('valid_from')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                    @enderror
-                </div>
-
-                <div>
-                    <label class="admin-form-label">Valid Until *</label>
-                    <input type="date" name="valid_until" class="admin-form-input"
-                        value="{{ old('valid_until', $coupon->valid_until->format('Y-m-d')) }}" required>
-                    @error('valid_until')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                    @enderror
-                </div>
-
-                <div>
-                    <label class="admin-form-label">Usage Limit</label>
-                    <input type="number" name="usage_limit" class="admin-form-input"
-                        value="{{ old('usage_limit', $coupon->usage_limit) }}" placeholder="Leave empty for unlimited">
-                    <p class="text-xs text-gray-500 mt-1">Maximum number of times this coupon can be used</p>
-                    @error('usage_limit')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                    @enderror
-                </div>
-
-                <div>
-                    <label class="admin-form-label">Used Count</label>
-                    <input type="number" name="used_count" class="admin-form-input bg-gray-100"
-                        value="{{ old('used_count', $coupon->used_count) }}" readonly>
-                    <p class="text-xs text-gray-500 mt-1">Number of times this coupon has been used</p>
-                </div>
-
-                <div>
-                    <label class="admin-form-label">Status</label>
-                    <select name="is_active" class="admin-form-input">
-                        <option value="1" {{ old('is_active', $coupon->is_active) ? 'selected' : '' }}>Active</option>
-                        <option value="0" {{ !old('is_active', $coupon->is_active) ? 'selected' : '' }}>Inactive
-                        </option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="mt-6 flex justify-end">
-                <a href="{{ route('admin.coupons.index') }}" class="btn-admin-secondary mr-3">Cancel</a>
-                <button type="submit" class="btn-admin-primary">Update Coupon</button>
-            </div>
-        </form>
+    <div class="mb-6">
+        <a href="{{ route('admin.coupons.index') }}" class="text-gray-600 hover:text-yellow-600">
+            <i class="fas fa-arrow-left mr-2"></i> Back to Coupons
+        </a>
     </div>
 
-    <script>
-        document.getElementById('discountType')?.addEventListener('change', function() {
-            const symbol = document.getElementById('discountSymbol');
-            if (this.value === 'percentage') {
-                symbol.textContent = '%';
-            } else {
-                symbol.textContent = '$';
-            }
-        });
-    </script>
+    @if ($errors->any())
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-4">
+            <ul class="list-disc list-inside">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    <form action="{{ route('admin.coupons.update', $coupon->id) }}" method="POST"
+        class="bg-white rounded-xl shadow-sm overflow-hidden max-w-2xl">
+        @csrf
+        @method('PUT')
+
+        <div class="p-6">
+            <div class="space-y-6">
+                <!-- Coupon Code -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Coupon Code <span
+                            class="text-red-500">*</span></label>
+                    <input type="text" name="code" value="{{ old('code', $coupon->code) }}" required
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500 font-mono uppercase"
+                        placeholder="SUMMER2024">
+                    <p class="text-xs text-gray-500 mt-1">Use uppercase letters and numbers only. Customers will enter this
+                        code at checkout.</p>
+                </div>
+
+                <!-- Type & Value Row -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Discount Type <span
+                                class="text-red-500">*</span></label>
+                        <select name="type" required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
+                            <option value="percent" {{ old('type', $coupon->type) == 'percent' ? 'selected' : '' }}>
+                                Percentage (%)</option>
+                            <option value="fixed" {{ old('type', $coupon->type) == 'fixed' ? 'selected' : '' }}>Fixed
+                                Amount ($)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Value <span
+                                class="text-red-500">*</span></label>
+                        <div class="relative">
+                            <input type="number" name="value" value="{{ old('value', $coupon->value) }}" step="0.01"
+                                required
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500"
+                                placeholder="10">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Minimum Order Amount -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Minimum Order Amount</label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-2 text-gray-500">$</span>
+                        <input type="number" name="min_order_amount"
+                            value="{{ old('min_order_amount', $coupon->min_order_amount) }}" step="0.01"
+                            class="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500"
+                            placeholder="0">
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">Minimum order amount required to use this coupon. Leave 0 for no
+                        minimum.</p>
+                </div>
+
+                <!-- Valid Period -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Start Date</label>
+                        <input type="date" name="start_date"
+                            value="{{ old('start_date', $coupon->start_date ? $coupon->start_date->format('Y-m-d') : '') }}"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
+                        <p class="text-xs text-gray-500 mt-1">Leave empty for immediate start</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">End Date</label>
+                        <input type="date" name="end_date"
+                            value="{{ old('end_date', $coupon->end_date ? $coupon->end_date->format('Y-m-d') : '') }}"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
+                        <p class="text-xs text-gray-500 mt-1">Leave empty for no expiration</p>
+                    </div>
+                </div>
+
+                <!-- Status -->
+                <div>
+                    <label class="inline-flex items-center">
+                        <input type="checkbox" name="is_active" value="1"
+                            {{ old('is_active', $coupon->is_active) ? 'checked' : '' }}
+                            class="rounded border-gray-300 text-yellow-500 focus:ring-yellow-500">
+                        <span class="ml-2 text-sm text-gray-700">Active (coupon can be used by customers)</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end gap-3">
+            <a href="{{ route('admin.coupons.index') }}"
+                class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition">Cancel</a>
+            <button type="submit"
+                class="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-gray-900 rounded-lg transition">Update
+                Coupon</button>
+        </div>
+    </form>
 @endsection

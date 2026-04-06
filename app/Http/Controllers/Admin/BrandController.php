@@ -12,12 +12,14 @@ class BrandController extends Controller
 {
     public function index()
     {
-        $brands = Brand::orderBy('sort_order')->paginate(10);
+        $brands = Brand::orderBy('id', 'desc')->paginate(10);
+        // FIXED: Changed from 'admin.brands.index' to 'admin.pages.brands.index'
         return view('admin.pages.brands.index', compact('brands'));
     }
 
     public function create()
     {
+        // FIXED: Changed from 'admin.brands.create' to 'admin.pages.brands.create'
         return view('admin.pages.brands.create');
     }
 
@@ -26,70 +28,97 @@ class BrandController extends Controller
         $request->validate([
             'name_en' => 'required|string|max:255',
             'name_kh' => 'required|string|max:255',
-            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'sort_order' => 'nullable|integer',
-            'is_active' => 'nullable|boolean',
+            'logo_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        $data = $request->all();
+        $brand = new Brand();
+        $brand->name_en = $request->name_en;
+        $brand->name_kh = $request->name_kh;
+        $brand->is_active = $request->has('is_active');
 
-        if ($request->hasFile('logo')) {
-            $data['logo'] = $request->file('logo')->store('brands', 'public');
+        if ($request->hasFile('logo_image')) {
+            $image = $request->file('logo_image');
+            $filename = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+            $path = $image->storeAs('brands', $filename, 'public');
+            $brand->logo_image = $path;
         }
 
-        $data['is_active'] = $request->has('is_active');
-        $data['sort_order'] = $request->sort_order ?? 0;
-
-        Brand::create($data);
+        $brand->save();
 
         return redirect()->route('admin.brands.index')
-            ->with('success', 'Brand created successfully.');
+            ->with('success', 'Brand created successfully!');
     }
 
-    public function edit(Brand $brand)
+    public function edit($id)
     {
+        $brand = Brand::findOrFail($id);
+        // FIXED: Changed from 'admin.brands.edit' to 'admin.pages.brands.edit'
         return view('admin.pages.brands.edit', compact('brand'));
     }
 
-    public function update(Request $request, Brand $brand)
+    public function update(Request $request, $id)
     {
         $request->validate([
             'name_en' => 'required|string|max:255',
             'name_kh' => 'required|string|max:255',
-            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'sort_order' => 'nullable|integer',
-            'is_active' => 'nullable|boolean',
+            'logo_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        $data = $request->all();
+        $brand = Brand::findOrFail($id);
+        $brand->name_en = $request->name_en;
+        $brand->name_kh = $request->name_kh;
+        $brand->is_active = $request->has('is_active');
 
-        if ($request->hasFile('logo')) {
-            // Delete old logo
-            if ($brand->logo) {
-                Storage::disk('public')->delete($brand->logo);
+        if ($request->hasFile('logo_image')) {
+            if ($brand->logo_image && Storage::disk('public')->exists($brand->logo_image)) {
+                Storage::disk('public')->delete($brand->logo_image);
             }
-            $data['logo'] = $request->file('logo')->store('brands', 'public');
+
+            $image = $request->file('logo_image');
+            $filename = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+            $path = $image->storeAs('brands', $filename, 'public');
+            $brand->logo_image = $path;
         }
 
-        $data['is_active'] = $request->has('is_active');
-        $data['sort_order'] = $request->sort_order ?? 0;
+        if ($request->has('remove_logo') && $request->remove_logo == '1') {
+            if ($brand->logo_image && Storage::disk('public')->exists($brand->logo_image)) {
+                Storage::disk('public')->delete($brand->logo_image);
+            }
+            $brand->logo_image = null;
+        }
 
-        $brand->update($data);
+        $brand->save();
 
         return redirect()->route('admin.brands.index')
-            ->with('success', 'Brand updated successfully.');
+            ->with('success', 'Brand updated successfully!');
     }
 
-    public function destroy(Brand $brand)
+    public function destroy($id)
     {
-        // Delete logo if exists
-        if ($brand->logo) {
-            Storage::disk('public')->delete($brand->logo);
+        $brand = Brand::findOrFail($id);
+
+        if ($brand->logo_image && Storage::disk('public')->exists($brand->logo_image)) {
+            Storage::disk('public')->delete($brand->logo_image);
         }
 
         $brand->delete();
 
-        return redirect()->route('admin.brands.index')
-            ->with('success', 'Brand deleted successfully.');
+        return response()->json([
+            'success' => true,
+            'message' => 'Brand deleted successfully!'
+        ]);
+    }
+
+    public function toggleStatus($id)
+    {
+        $brand = Brand::findOrFail($id);
+        $brand->is_active = !$brand->is_active;
+        $brand->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Brand status updated successfully!',
+            'is_active' => $brand->is_active
+        ]);
     }
 }

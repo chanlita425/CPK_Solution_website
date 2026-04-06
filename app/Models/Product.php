@@ -1,4 +1,5 @@
 <?php
+// app/Models/Product.php
 
 namespace App\Models;
 
@@ -12,25 +13,38 @@ class Product extends Model
     protected $fillable = [
         'category_id',
         'brand_id',
-        'sku',
-        'model_number',
+        'name_en',
+        'name_kh',
+        'SKU',
         'price',
-        'quantity',
-        'title_en',
-        'title_kh',
         'specification_en',
         'specification_kh',
-        'images',
+        'quantity',
         'is_active',
-        'is_featured'
     ];
 
     protected $casts = [
-        'images' => 'array',
-        'price' => 'decimal:2',
         'is_active' => 'boolean',
-        'is_featured' => 'boolean',
+        'price' => 'decimal:2',
     ];
+
+    public function getNameAttribute()
+    {
+        $locale = app()->getLocale();
+        if ($locale === 'kh') {
+            return $this->name_kh ?: $this->name_en;
+        }
+        return $this->name_en;
+    }
+
+    public function getSpecificationAttribute()
+    {
+        $locale = app()->getLocale();
+        if ($locale === 'kh') {
+            return $this->specification_kh ?: $this->specification_en;
+        }
+        return $this->specification_en;
+    }
 
     public function category()
     {
@@ -42,39 +56,25 @@ class Product extends Model
         return $this->belongsTo(Brand::class);
     }
 
-    public function getMainImageAttribute()
+    public function images()
     {
-        $images = $this->images;
-        if ($images && is_array($images) && count($images) > 0) {
-            return $images[0];
-        }
-        return null;
+        return $this->hasMany(ProductImage::class);
     }
 
-    public function getGalleryImagesAttribute()
+    public function orderItems()
     {
-        $images = $this->images;
-        if ($images && is_array($images) && count($images) > 1) {
-            return array_slice($images, 1, 4);
-        }
-        return [];
+        return $this->hasMany(OrderItem::class);
     }
 
-    public function getTitleAttribute()
+    public function decreaseStock($quantity)
     {
-        $locale = app()->getLocale();
-        if ($locale == 'km') {
-            return $this->title_kh;
-        }
-        return $this->title_en;
+        $this->quantity -= $quantity;
+        return $this->save();
     }
 
-    public function getSpecificationAttribute()
+    public function increaseStock($quantity)
     {
-        $locale = app()->getLocale();
-        if ($locale == 'km') {
-            return $this->specification_kh;
-        }
-        return $this->specification_en;
+        $this->quantity += $quantity;
+        return $this->save();
     }
 }

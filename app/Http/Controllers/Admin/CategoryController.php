@@ -12,12 +12,14 @@ class CategoryController extends Controller
 {
     public function index()
     {
-        $categories = Category::orderBy('sort_order')->paginate(10);
+        $categories = Category::orderBy('id', 'desc')->paginate(10);
+        // FIXED: Changed from 'admin.categories.index' to 'admin.pages.categories.index'
         return view('admin.pages.categories.index', compact('categories'));
     }
 
     public function create()
     {
+        // FIXED: Changed from 'admin.categories.create' to 'admin.pages.categories.create'
         return view('admin.pages.categories.create');
     }
 
@@ -26,70 +28,97 @@ class CategoryController extends Controller
         $request->validate([
             'name_en' => 'required|string|max:255',
             'name_kh' => 'required|string|max:255',
-            'icon' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'sort_order' => 'nullable|integer',
-            'is_active' => 'nullable|boolean',
+            'icon_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        $data = $request->all();
+        $category = new Category();
+        $category->name_en = $request->name_en;
+        $category->name_kh = $request->name_kh;
+        $category->is_active = $request->has('is_active');
 
-        if ($request->hasFile('icon')) {
-            $data['icon'] = $request->file('icon')->store('categories', 'public');
+        if ($request->hasFile('icon_image')) {
+            $image = $request->file('icon_image');
+            $filename = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+            $path = $image->storeAs('categories', $filename, 'public');
+            $category->icon_image = $path;
         }
 
-        $data['is_active'] = $request->has('is_active');
-        $data['sort_order'] = $request->sort_order ?? 0;
-
-        Category::create($data);
+        $category->save();
 
         return redirect()->route('admin.categories.index')
-            ->with('success', 'Category created successfully.');
+            ->with('success', 'Category created successfully!');
     }
 
-    public function edit(Category $category)
+    public function edit($id)
     {
+        $category = Category::findOrFail($id);
+        // FIXED: Changed from 'admin.categories.edit' to 'admin.pages.categories.edit'
         return view('admin.pages.categories.edit', compact('category'));
     }
 
-    public function update(Request $request, Category $category)
+    public function update(Request $request, $id)
     {
         $request->validate([
             'name_en' => 'required|string|max:255',
             'name_kh' => 'required|string|max:255',
-            'icon' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'sort_order' => 'nullable|integer',
-            'is_active' => 'nullable|boolean',
+            'icon_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        $data = $request->all();
+        $category = Category::findOrFail($id);
+        $category->name_en = $request->name_en;
+        $category->name_kh = $request->name_kh;
+        $category->is_active = $request->has('is_active');
 
-        if ($request->hasFile('icon')) {
-            // Delete old icon
-            if ($category->icon) {
-                Storage::disk('public')->delete($category->icon);
+        if ($request->hasFile('icon_image')) {
+            if ($category->icon_image && Storage::disk('public')->exists($category->icon_image)) {
+                Storage::disk('public')->delete($category->icon_image);
             }
-            $data['icon'] = $request->file('icon')->store('categories', 'public');
+
+            $image = $request->file('icon_image');
+            $filename = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+            $path = $image->storeAs('categories', $filename, 'public');
+            $category->icon_image = $path;
         }
 
-        $data['is_active'] = $request->has('is_active');
-        $data['sort_order'] = $request->sort_order ?? 0;
+        if ($request->has('remove_icon') && $request->remove_icon == '1') {
+            if ($category->icon_image && Storage::disk('public')->exists($category->icon_image)) {
+                Storage::disk('public')->delete($category->icon_image);
+            }
+            $category->icon_image = null;
+        }
 
-        $category->update($data);
+        $category->save();
 
         return redirect()->route('admin.categories.index')
-            ->with('success', 'Category updated successfully.');
+            ->with('success', 'Category updated successfully!');
     }
 
-    public function destroy(Category $category)
+    public function destroy($id)
     {
-        // Delete icon if exists
-        if ($category->icon) {
-            Storage::disk('public')->delete($category->icon);
+        $category = Category::findOrFail($id);
+
+        if ($category->icon_image && Storage::disk('public')->exists($category->icon_image)) {
+            Storage::disk('public')->delete($category->icon_image);
         }
 
         $category->delete();
 
-        return redirect()->route('admin.categories.index')
-            ->with('success', 'Category deleted successfully.');
+        return response()->json([
+            'success' => true,
+            'message' => 'Category deleted successfully!'
+        ]);
+    }
+
+    public function toggleStatus($id)
+    {
+        $category = Category::findOrFail($id);
+        $category->is_active = !$category->is_active;
+        $category->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Category status updated successfully!',
+            'is_active' => $category->is_active
+        ]);
     }
 }

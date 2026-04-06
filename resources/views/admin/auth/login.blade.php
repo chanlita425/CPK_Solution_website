@@ -1,4 +1,4 @@
-{{-- resources/views/admin/pages/auth/login.blade.php --}}
+{{-- resources/views/admin/auth/login.blade.php --}}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,7 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Admin Login - CPK</title>
-    @vite(['resources/css/app.css'])
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
     <style>
         .login-card {
             animation: slideUp 0.4s ease-out;
@@ -277,7 +283,6 @@
         if (emailInput) {
             emailInput.addEventListener('input', function() {
                 this.classList.remove('error', 'shake');
-                // Find and remove error message
                 const errorDiv = this.closest('.field-group').querySelector('.error-message');
                 if (errorDiv && !this.classList.contains('error')) {
                     errorDiv.remove();
@@ -288,7 +293,6 @@
         if (passwordInput) {
             passwordInput.addEventListener('input', function() {
                 this.classList.remove('error', 'shake');
-                // Find and remove error message
                 const errorDiv = this.closest('.field-group').querySelector('.error-message');
                 if (errorDiv && !this.classList.contains('error')) {
                     errorDiv.remove();

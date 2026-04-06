@@ -11,72 +11,82 @@ class CouponController extends Controller
 {
     public function index()
     {
-        $coupons = Coupon::orderBy('created_at', 'desc')->paginate(10);
+        $coupons = Coupon::orderBy('id', 'desc')->paginate(10);
+        // FIXED: Changed from 'admin.coupons.index' to 'admin.pages.coupons.index'
         return view('admin.pages.coupons.index', compact('coupons'));
     }
 
     public function create()
     {
+        // FIXED: Changed from 'admin.coupons.create' to 'admin.pages.coupons.create'
         return view('admin.pages.coupons.create');
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'code' => 'required|string|unique:coupons|max:50',
-            'discount_type' => 'required|in:percentage,fixed',
-            'discount_value' => 'required|numeric|min:0',
-            'minimum_order' => 'nullable|numeric|min:0',
-            'valid_from' => 'required|date',
-            'valid_until' => 'required|date|after_or_equal:valid_from',
-            'usage_limit' => 'nullable|integer|min:1',
-            'is_active' => 'nullable|boolean',
+            'code' => 'required|string|unique:coupons',
+            'type' => 'required|in:percent,fixed',
+            'value' => 'required|numeric|min:0',
+            'min_order_amount' => 'nullable|numeric|min:0',
+            'is_active' => 'boolean',
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
         ]);
 
-        $data = $request->all();
-        $data['is_active'] = $request->has('is_active');
-        $data['minimum_order'] = $request->minimum_order ?? 0;
-        $data['used_count'] = 0;
-
-        Coupon::create($data);
+        Coupon::create($request->all());
 
         return redirect()->route('admin.coupons.index')
-            ->with('success', 'Coupon created successfully.');
+            ->with('success', 'Coupon created successfully!');
     }
 
-    public function edit(Coupon $coupon)
+    public function edit($id)
     {
+        $coupon = Coupon::findOrFail($id);
+        // FIXED: Changed from 'admin.coupons.edit' to 'admin.pages.coupons.edit'
         return view('admin.pages.coupons.edit', compact('coupon'));
     }
 
-    public function update(Request $request, Coupon $coupon)
+    public function update(Request $request, $id)
     {
+        $coupon = Coupon::findOrFail($id);
+
         $request->validate([
-            'code' => 'required|string|max:50|unique:coupons,code,' . $coupon->id,
-            'discount_type' => 'required|in:percentage,fixed',
-            'discount_value' => 'required|numeric|min:0',
-            'minimum_order' => 'nullable|numeric|min:0',
-            'valid_from' => 'required|date',
-            'valid_until' => 'required|date|after_or_equal:valid_from',
-            'usage_limit' => 'nullable|integer|min:1',
-            'is_active' => 'nullable|boolean',
+            'code' => 'required|string|unique:coupons,code,' . $id,
+            'type' => 'required|in:percent,fixed',
+            'value' => 'required|numeric|min:0',
+            'min_order_amount' => 'nullable|numeric|min:0',
+            'is_active' => 'boolean',
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
         ]);
 
-        $data = $request->all();
-        $data['is_active'] = $request->has('is_active');
-        $data['minimum_order'] = $request->minimum_order ?? 0;
-
-        $coupon->update($data);
+        $coupon->update($request->all());
 
         return redirect()->route('admin.coupons.index')
-            ->with('success', 'Coupon updated successfully.');
+            ->with('success', 'Coupon updated successfully!');
     }
 
-    public function destroy(Coupon $coupon)
+    public function destroy($id)
     {
+        $coupon = Coupon::findOrFail($id);
         $coupon->delete();
 
-        return redirect()->route('admin.coupons.index')
-            ->with('success', 'Coupon deleted successfully.');
+        return response()->json([
+            'success' => true,
+            'message' => 'Coupon deleted successfully!'
+        ]);
+    }
+
+    public function toggleStatus($id)
+    {
+        $coupon = Coupon::findOrFail($id);
+        $coupon->is_active = !$coupon->is_active;
+        $coupon->save();
+
+        return response()->json([
+            'success' => true,
+            'is_active' => $coupon->is_active
+        ]);
     }
 }

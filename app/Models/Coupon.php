@@ -1,9 +1,11 @@
 <?php
+// app/Models/Coupon.php
 
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class Coupon extends Model
 {
@@ -11,43 +13,51 @@ class Coupon extends Model
 
     protected $fillable = [
         'code',
-        'discount_type',
-        'discount_value',
-        'minimum_order',
-        'valid_from',
-        'valid_until',
-        'usage_limit',
-        'used_count',
-        'is_active'
+        'type',
+        'value',
+        'min_order_amount',
+        'is_active',
+        'start_date',
+        'end_date',
     ];
 
     protected $casts = [
-        'discount_value' => 'decimal:2',
-        'minimum_order' => 'decimal:2',
-        'valid_from' => 'date',
-        'valid_until' => 'date',
         'is_active' => 'boolean',
-        'used_count' => 'integer',
+        'value' => 'decimal:2',
+        'min_order_amount' => 'decimal:2',
+        'start_date' => 'date',
+        'end_date' => 'date',
     ];
 
     public function isValid()
     {
-        $now = now();
-        return $this->is_active &&
-            $now->between($this->valid_from, $this->valid_until) &&
-            ($this->usage_limit === null || $this->used_count < $this->usage_limit);
+        if (!$this->is_active) {
+            return false;
+        }
+
+        $now = Carbon::now();
+
+        if ($this->start_date && $now->lt($this->start_date)) {
+            return false;
+        }
+
+        if ($this->end_date && $now->gt($this->end_date)) {
+            return false;
+        }
+
+        return true;
     }
 
     public function calculateDiscount($subtotal)
     {
-        if ($subtotal < $this->minimum_order) {
+        if (!$this->isValid() || $subtotal < $this->min_order_amount) {
             return 0;
         }
 
-        if ($this->discount_type === 'percentage') {
-            return $subtotal * ($this->discount_value / 100);
+        if ($this->type === 'percent') {
+            return $subtotal * ($this->value / 100);
         }
 
-        return min($this->discount_value, $subtotal);
+        return min($this->value, $subtotal);
     }
 }

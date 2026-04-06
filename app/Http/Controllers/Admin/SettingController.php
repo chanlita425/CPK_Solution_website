@@ -1,100 +1,77 @@
 <?php
+// app/Http/Controllers/Admin/SettingController.php
 
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Admin;
 use App\Models\Setting;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\DB;
 
 class SettingController extends Controller
 {
-    // Profile Settings
-    public function profile()
+    public function index()
     {
-        $admin = Auth::guard('admin')->user();
-        return view('admin.pages.settings.profile', compact('admin'));
+        $settings = Setting::first();
+        if (!$settings) {
+            $settings = Setting::create([
+                'company_name' => 'CPK Solution',
+                'shipping_fee' => 5.00,
+                'tax_percent' => 10.00,
+            ]);
+        }
+        // FIXED: Changed from 'admin.settings.index' to 'admin.pages.settings.index'
+        return view('admin.pages.settings.index', compact('settings'));
     }
 
-    public function updateProfile(Request $request)
+    public function update(Request $request)
     {
-        $admin = Auth::guard('admin')->user();
-        $adminId = $admin->id;
+        $settings = Setting::first();
 
         $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:admins,email,' . $adminId,
-            'current_password' => 'nullable|required_with:new_password',
-            'new_password' => 'nullable|min:6|confirmed',
+            'company_name' => 'nullable|string|max:255',
+            'company_url' => 'nullable|url',
+            'company_phone_number_first' => 'nullable|string',
+            'company_phone_number_second' => 'nullable|string',
+            'about_company' => 'nullable|string',
+            'facebook_link' => 'nullable|url',
+            'telegram_link' => 'nullable|url',
+            'tiktok_link' => 'nullable|url',
+            'instagram_link' => 'nullable|url',
+            'shipping_fee' => 'required|numeric|min:0',
+            'tax_percent' => 'required|numeric|min:0|max:100',
+            'seller_telegram' => 'nullable|string',
+            'company_logo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'hero_banner_image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'promotion_banner_image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
-        $data = [
-            'name' => $request->name,
-            'email' => $request->email,
-        ];
+        $data = $request->except(['company_logo', 'hero_banner_image', 'promotion_banner_image', '_token', '_method']);
 
-        // Update password
-        if ($request->filled('current_password')) {
-            if (!Hash::check($request->current_password, $admin->password)) {
-                return back()->withErrors(['current_password' => 'Current password is incorrect']);
+        if ($request->hasFile('company_logo')) {
+            if ($settings->company_logo && Storage::disk('public')->exists($settings->company_logo)) {
+                Storage::disk('public')->delete($settings->company_logo);
             }
-            $data['password'] = Hash::make($request->new_password);
+            $data['company_logo'] = $request->file('company_logo')->store('settings', 'public');
         }
 
-        DB::table('admins')->where('id', $adminId)->update($data);
-
-        return redirect()->route('admin.settings.profile')
-            ->with('success', 'Profile updated successfully');
-    }
-
-    // System Settings
-    public function system()
-    {
-        $settings = Setting::getGroup('system');
-        return view('admin.pages.settings.system', compact('settings'));
-    }
-
-    public function updateSystem(Request $request)
-    {
-        $request->validate([
-            'website_url' => 'nullable|string|max:255',
-            'navbar_logo' => 'nullable|image|mimes:jpeg,png,jpg,svg|max:2048',
-            'phone_1' => 'nullable|string|max:50',
-            'phone_2' => 'nullable|string|max:50',
-            'facebook_url' => 'nullable|url|max:255',
-            'tiktok_url' => 'nullable|url|max:255',
-            'instagram_url' => 'nullable|url|max:255',
-            'telegram_url' => 'nullable|url|max:255',
-        ]);
-
-        // Update website URL
-        Setting::set('website_url', $request->website_url, 'text', 'system');
-
-        // Update navbar logo
-        if ($request->hasFile('navbar_logo')) {
-            $oldLogo = Setting::get('navbar_logo');
-            if ($oldLogo && Storage::disk('public')->exists($oldLogo)) {
-                Storage::disk('public')->delete($oldLogo);
+        if ($request->hasFile('hero_banner_image')) {
+            if ($settings->hero_banner_image && Storage::disk('public')->exists($settings->hero_banner_image)) {
+                Storage::disk('public')->delete($settings->hero_banner_image);
             }
-            $logoPath = $request->file('navbar_logo')->store('settings', 'public');
-            Setting::set('navbar_logo', $logoPath, 'image', 'system');
+            $data['hero_banner_image'] = $request->file('hero_banner_image')->store('settings', 'public');
         }
 
-        // Update phone numbers
-        Setting::set('phone_1', $request->phone_1, 'text', 'system');
-        Setting::set('phone_2', $request->phone_2, 'text', 'system');
+        if ($request->hasFile('promotion_banner_image')) {
+            if ($settings->promotion_banner_image && Storage::disk('public')->exists($settings->promotion_banner_image)) {
+                Storage::disk('public')->delete($settings->promotion_banner_image);
+            }
+            $data['promotion_banner_image'] = $request->file('promotion_banner_image')->store('settings', 'public');
+        }
 
-        // Update social media links
-        Setting::set('facebook_url', $request->facebook_url, 'text', 'system');
-        Setting::set('tiktok_url', $request->tiktok_url, 'text', 'system');
-        Setting::set('instagram_url', $request->instagram_url, 'text', 'system');
-        Setting::set('telegram_url', $request->telegram_url, 'text', 'system');
+        $settings->update($data);
 
-        return redirect()->route('admin.settings.system')
-            ->with('success', 'Settings updated successfully');
+        return redirect()->route('admin.settings.index')
+            ->with('success', 'Settings updated successfully!');
     }
 }

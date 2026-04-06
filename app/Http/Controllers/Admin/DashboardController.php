@@ -8,7 +8,7 @@ use App\Models\Category;
 use App\Models\Brand;
 use App\Models\Product;
 use App\Models\Coupon;
-use App\Models\Banner;
+use App\Models\Order;
 
 class DashboardController extends Controller
 {
@@ -18,14 +18,20 @@ class DashboardController extends Controller
         $totalBrands = Brand::count();
         $totalProducts = Product::count();
         $activeCoupons = Coupon::where('is_active', true)->count();
-        $totalBanners = Banner::count();
+        $totalOrders = Order::count();
+        $pendingOrders = Order::where('status', 'pending')->count();
+        $confirmedOrders = Order::where('status', 'confirmed')->count();
+        $recentOrders = Order::with('items')->latest()->take(5)->get();
 
-        return view('admin.pages.dashboard.index', compact(
+        return view('admin.dashboard', compact(
             'totalCategories',
             'totalBrands',
             'totalProducts',
             'activeCoupons',
-            'totalBanners'
+            'totalOrders',
+            'pendingOrders',
+            'confirmedOrders',
+            'recentOrders'
         ));
     }
 }

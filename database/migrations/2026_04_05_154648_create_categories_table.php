@@ -8,18 +8,18 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('banners', function (Blueprint $table) {
+        Schema::create('categories', function (Blueprint $table) {
             $table->id();
-            $table->string('type'); // 'hero' or 'promotion'
-            $table->string('image');
+            $table->string('name_en');
+            $table->string('name_kh');
+            $table->string('icon_image')->nullable();
             $table->boolean('is_active')->default(true);
-            $table->integer('sort_order')->default(0);
             $table->timestamps();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('banners');
+        Schema::dropIfExists('categories');
     }
 };

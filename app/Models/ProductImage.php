@@ -1,27 +1,27 @@
 <?php
+// app/Models/ProductImage.php
 
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Cart extends Model
+class ProductImage extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['session_id', 'product_id', 'quantity'];
+    protected $fillable = [
+        'product_id',
+        'image',
+        'is_main',
+    ];
 
     protected $casts = [
-        'quantity' => 'integer',
+        'is_main' => 'boolean',
     ];
 
     public function product()
     {
         return $this->belongsTo(Product::class);
-    }
-
-    public function getSubtotalAttribute()
-    {
-        return $this->product->price * $this->quantity;
     }
 }

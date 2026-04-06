@@ -1,69 +1,147 @@
+{{-- resources/views/admin/categories/create.blade.php --}}
 @extends('admin.layouts.app')
 
-@section('title', 'Create Category')
-@section('header', 'Create Category')
+@section('title', 'Add Category')
+@section('header', 'Add New Category')
 
 @section('content')
-<div class="admin-card p-6">
-    <form action="{{ route('admin.categories.store') }}" method="POST" enctype="multipart/form-data">
+    <div class="mb-6">
+        <a href="{{ route('admin.categories.index') }}" class="text-gray-600 hover:text-yellow-600">
+            <i class="fas fa-arrow-left mr-2"></i> Back to Categories
+        </a>
+    </div>
+
+    @if ($errors->any())
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-4">
+            <ul class="list-disc list-inside">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    <form action="{{ route('admin.categories.store') }}" method="POST" enctype="multipart/form-data"
+        class="bg-white rounded-xl shadow-sm overflow-hidden max-w-2xl">
         @csrf
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-                <label class="admin-form-label">Name (English) *</label>
-                <input type="text" name="name_en" class="admin-form-input" value="{{ old('name_en') }}" required>
-                @error('name_en') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
-            </div>
-
-            <div>
-                <label class="admin-form-label">Name (Khmer) *</label>
-                <input type="text" name="name_kh" class="admin-form-input" value="{{ old('name_kh') }}" required>
-                @error('name_kh') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
-            </div>
-
-            <div>
-                <label class="admin-form-label">Icon Image</label>
-                <input type="file" name="icon" class="admin-form-input" accept="image/*" onchange="previewImage(this)">
-                <div id="iconPreview" class="mt-2 hidden">
-                    <img id="preview" class="w-20 h-20 object-cover rounded">
+        <div class="p-6">
+            <div class="space-y-6">
+                <!-- Name English -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Name (English) <span
+                            class="text-red-500">*</span></label>
+                    <input type="text" name="name_en" value="{{ old('name_en') }}" required
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500"
+                        placeholder="Enter category name in English">
                 </div>
-                @error('icon') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
-            </div>
 
-            <div>
-                <label class="admin-form-label">Sort Order</label>
-                <input type="number" name="sort_order" class="admin-form-input" value="{{ old('sort_order', 0) }}">
-            </div>
+                <!-- Name Khmer -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Name (Khmer) <span
+                            class="text-red-500">*</span></label>
+                    <input type="text" name="name_kh" value="{{ old('name_kh') }}" required
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500"
+                        placeholder="បញ្ចូលឈ្មោះប្រភេទជាភាសាខ្មែរ">
+                </div>
 
-            <div>
-                <label class="admin-form-label">Status</label>
-                <select name="is_active" class="admin-form-input">
-                    <option value="1" {{ old('is_active') ? 'selected' : '' }}>Active</option>
-                    <option value="0" {{ !old('is_active') ? 'selected' : '' }}>Inactive</option>
-                </select>
+                <!-- Category Icon -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Category Icon</label>
+                    <div id="imageUploadArea"
+                        class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-yellow-500 transition">
+                        <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-2 block"></i>
+                        <p class="text-gray-600">Click or drag image here</p>
+                        <p class="text-xs text-gray-500 mt-1">PNG, JPG, GIF up to 2MB</p>
+                    </div>
+                    <div id="imagePreviewContainer" class="mt-4 hidden">
+                        <div class="relative inline-block">
+                            <img id="imagePreview" class="w-32 h-32 object-cover rounded-lg border">
+                            <button type="button" onclick="removeImage()"
+                                class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600">
+                                <i class="fas fa-times text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <input type="file" name="icon_image" id="imageInput" accept="image/*" class="hidden">
+                </div>
+
+                <!-- Status -->
+                <div>
+                    <label class="inline-flex items-center">
+                        <input type="checkbox" name="is_active" value="1" {{ old('is_active', true) ? 'checked' : '' }}
+                            class="rounded border-gray-300 text-yellow-500 focus:ring-yellow-500">
+                        <span class="ml-2 text-sm text-gray-700">Active (visible on website)</span>
+                    </label>
+                </div>
             </div>
         </div>
 
-        <div class="mt-6 flex justify-end">
-            <a href="{{ route('admin.categories.index') }}" class="btn-admin-secondary mr-3">Cancel</a>
-            <button type="submit" class="btn-admin-primary">Create Category</button>
+        <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end gap-3">
+            <a href="{{ route('admin.categories.index') }}"
+                class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition">Cancel</a>
+            <button type="submit"
+                class="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-gray-900 rounded-lg transition">Create
+                Category</button>
         </div>
     </form>
-</div>
 
-<script>
-function previewImage(input) {
-    const preview = document.getElementById('iconPreview');
-    const img = document.getElementById('preview');
+    <script>
+        const uploadArea = document.getElementById('imageUploadArea');
+        const imageInput = document.getElementById('imageInput');
+        const previewContainer = document.getElementById('imagePreviewContainer');
+        const previewImg = document.getElementById('imagePreview');
+        let selectedFile = null;
 
-    if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            img.src = e.target.result;
-            preview.classList.remove('hidden');
-        };
-        reader.readAsDataURL(input.files[0]);
-    }
-}
-</script>
+        uploadArea.addEventListener('click', () => imageInput.click());
+
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('border-yellow-500', 'bg-yellow-50');
+        });
+
+        uploadArea.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('border-yellow-500', 'bg-yellow-50');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('border-yellow-500', 'bg-yellow-50');
+
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                handleImage(file);
+            }
+        });
+
+        imageInput.addEventListener('change', (e) => {
+            if (e.target.files && e.target.files[0]) {
+                handleImage(e.target.files[0]);
+            }
+        });
+
+        function handleImage(file) {
+            if (file.size > 2 * 1024 * 1024) {
+                alert('Image size must be less than 2MB');
+                return;
+            }
+
+            selectedFile = file;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                previewImg.src = e.target.result;
+                previewContainer.classList.remove('hidden');
+                uploadArea.classList.add('hidden');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function removeImage() {
+            selectedFile = null;
+            imageInput.value = '';
+            previewContainer.classList.add('hidden');
+            uploadArea.classList.remove('hidden');
+        }
+    </script>
 @endsection
