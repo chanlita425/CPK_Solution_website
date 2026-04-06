@@ -66,7 +66,7 @@ class BrandController extends Controller
         $brand->save();
 
         return redirect()->route('admin.brands.index')
-            ->with('success', 'Brand created successfully!');
+            ->with('toast', ['message' => 'Brand created successfully!', 'type' => 'success']);
     }
 
     public function edit($id)

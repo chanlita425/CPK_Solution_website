@@ -13,14 +13,10 @@ class OrderController extends Controller
     {
         $query = Order::with('items');
 
-        // Search filter - by order code or customer name/phone
+        // Search filter - by order code only
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('order_code', 'like', "%{$search}%")
-                    ->orWhere('customer_name', 'like', "%{$search}%")
-                    ->orWhere('customer_phone', 'like', "%{$search}%");
-            });
+            $query->where('order_code', 'like', "%{$search}%");
         }
 
         // Status filter

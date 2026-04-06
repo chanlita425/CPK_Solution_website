@@ -63,7 +63,7 @@
                             <div class="relative">
                                 <i class="fas fa-language absolute left-3 top-3 text-gray-400"></i>
                                 <input type="text" name="name_en" value="{{ old('name_en') }}" required
-                                    class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-[#D7B259] focus:border-[#D7B259] @error('name_en') border-red-500 @enderror"
+                                    class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D7B259] focus:border-transparent @error('name_en') border-red-500 @enderror"
                                     placeholder="Enter product name in English">
                             </div>
                             @error('name_en')
@@ -78,7 +78,7 @@
                             <div class="relative">
                                 <i class="fas fa-language absolute left-3 top-3 text-gray-400"></i>
                                 <input type="text" name="name_kh" value="{{ old('name_kh') }}" required
-                                    class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-[#D7B259] focus:border-[#D7B259] @error('name_kh') border-red-500 @enderror"
+                                    class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D7B259] focus:border-transparent @error('name_kh') border-red-500 @enderror"
                                     placeholder="បញ្ចូលឈ្មោះផលិតផលជាភាសាខ្មែរ">
                             </div>
                             @error('name_kh')
@@ -93,7 +93,7 @@
                             <div class="relative">
                                 <i class="fas fa-barcode absolute left-3 top-3 text-gray-400"></i>
                                 <input type="text" name="SKU" value="{{ old('SKU') }}" required
-                                    class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-[#D7B259] focus:border-[#D7B259] @error('SKU') border-red-500 @enderror"
+                                    class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D7B259] focus:border-transparent @error('SKU') border-red-500 @enderror"
                                     placeholder="Unique product identifier">
                             </div>
                             @error('SKU')
@@ -108,7 +108,7 @@
                             <div class="relative">
                                 <i class="fas fa-dollar-sign absolute left-3 top-3 text-gray-400"></i>
                                 <input type="number" name="price" value="{{ old('price') }}" step="0.01" required
-                                    class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-[#D7B259] focus:border-[#D7B259] @error('price') border-red-500 @enderror"
+                                    class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D7B259] focus:border-transparent @error('price') border-red-500 @enderror"
                                     placeholder="0.00">
                             </div>
                             @error('price')
@@ -123,7 +123,7 @@
                             <div class="relative">
                                 <i class="fas fa-boxes absolute left-3 top-3 text-gray-400"></i>
                                 <input type="number" name="quantity" value="{{ old('quantity', 0) }}" required
-                                    class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-[#D7B259] focus:border-[#D7B259] @error('quantity') border-red-500 @enderror"
+                                    class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D7B259] focus:border-transparent @error('quantity') border-red-500 @enderror"
                                     placeholder="Stock quantity">
                             </div>
                             @error('quantity')
@@ -135,7 +135,7 @@
                         <div class="md:col-span-2">
                             <label class="block text-sm font-medium text-gray-700 mb-2">Specification (English)</label>
                             <textarea name="specification_en" rows="5"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-[#D7B259] focus:border-[#D7B259] @error('specification_en') border-red-500 @enderror"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D7B259] focus:border-transparent @error('specification_en') border-red-500 @enderror"
                                 placeholder="Enter product specifications in English...">{{ old('specification_en') }}</textarea>
                             @error('specification_en')
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -146,7 +146,7 @@
                         <div class="md:col-span-2">
                             <label class="block text-sm font-medium text-gray-700 mb-2">Specification (Khmer)</label>
                             <textarea name="specification_kh" rows="5"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-[#D7B259] focus:border-[#D7B259] @error('specification_kh') border-red-500 @enderror"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D7B259] focus:border-transparent @error('specification_kh') border-red-500 @enderror"
                                 placeholder="បញ្ចូលព័ត៌មានលម្អិតផលិតផលជាភាសាខ្មែរ...">{{ old('specification_kh') }}</textarea>
                             @error('specification_kh')
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -226,13 +226,15 @@
         function handleFiles(files) {
             const remainingSlots = 4 - selectedFiles.length;
             const validFiles = files.filter(file => file.type.startsWith('image/'));
+
             if (validFiles.length > remainingSlots) {
-                alert(`Maximum ${remainingSlots} more image(s) allowed`);
+                showToast(`Maximum ${remainingSlots} more image(s) allowed`, 'error');
                 return;
             }
+
             validFiles.forEach(file => {
                 if (file.size > 2 * 1024 * 1024) {
-                    alert(`Image ${file.name} exceeds 2MB limit`);
+                    showToast(`Image ${file.name} exceeds 2MB limit`, 'error');
                     return;
                 }
                 selectedFiles.push(file);

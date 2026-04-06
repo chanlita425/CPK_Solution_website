@@ -21,12 +21,6 @@
             'showReset' => true,
         ])
 
-        @if (session('success'))
-            <div class="bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-lg p-4">
-                <i class="fas fa-check-circle mr-2"></i> {{ session('success') }}
-            </div>
-        @endif
-
         <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="w-full">

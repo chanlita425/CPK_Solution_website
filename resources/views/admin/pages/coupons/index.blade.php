@@ -14,18 +14,16 @@
         </div>
 
         <!-- Filter Toolbar -->
+        @php
+            $filters = [['type' => 'status', 'name' => 'status']];
+        @endphp
+
         @include('admin.components.filter-toolbar', [
             'searchPlaceholder' => 'Search coupons by code...',
             'searchValue' => request('search'),
-            'filters' => [['type' => 'status']],
+            'filters' => $filters,
             'showReset' => true,
         ])
-
-        @if (session('success'))
-            <div class="bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-lg p-4">
-                <i class="fas fa-check-circle mr-2"></i> {{ session('success') }}
-            </div>
-        @endif
 
         <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
             <div class="overflow-x-auto">
@@ -129,27 +127,13 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        if (typeof showToast === 'function') {
-                            showToast('Status updated successfully', 'success');
-                        } else {
-                            alert('Status updated successfully');
-                        }
+                        showToast('Status updated successfully', 'success');
                         setTimeout(() => location.reload(), 1000);
                     } else {
-                        if (typeof showToast === 'function') {
-                            showToast('Failed to update status', 'error');
-                        } else {
-                            alert('Failed to update status');
-                        }
+                        showToast('Failed to update status', 'error');
                     }
                 })
-                .catch(() => {
-                    if (typeof showToast === 'function') {
-                        showToast('An error occurred', 'error');
-                    } else {
-                        alert('An error occurred');
-                    }
-                });
+                .catch(() => showToast('An error occurred', 'error'));
         }
     </script>
 @endsection

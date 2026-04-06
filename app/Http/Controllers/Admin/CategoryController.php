@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
@@ -15,9 +16,9 @@ class CategoryController extends Controller
 
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('name_en', 'like', "%{$search}%")
-                  ->orWhere('name_kh', 'like', "%{$search}%");
+                    ->orWhere('name_kh', 'like', "%{$search}%");
             });
         }
 
@@ -66,7 +67,7 @@ class CategoryController extends Controller
         $category->save();
 
         return redirect()->route('admin.categories.index')
-            ->with('success', 'Category created successfully!');
+            ->with('toast', ['message' => 'Category created successfully!', 'type' => 'success']);
     }
 
     public function edit($id)

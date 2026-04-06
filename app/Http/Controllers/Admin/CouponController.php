@@ -9,16 +9,28 @@ use Illuminate\Http\Request;
 
 class CouponController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $coupons = Coupon::orderBy('id', 'desc')->paginate(10);
-        // FIXED: Changed from 'admin.coupons.index' to 'admin.pages.coupons.index'
+        $query = Coupon::query();
+
+        // Search filter
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where('code', 'like', "%{$search}%");
+        }
+
+        // Status filter
+        if ($request->filled('status')) {
+            $query->where('is_active', $request->status == 'active');
+        }
+
+        $coupons = $query->orderBy('id', 'desc')->paginate(10);
+
         return view('admin.pages.coupons.index', compact('coupons'));
     }
 
     public function create()
     {
-        // FIXED: Changed from 'admin.coupons.create' to 'admin.pages.coupons.create'
         return view('admin.pages.coupons.create');
     }
 
@@ -37,7 +49,7 @@ class CouponController extends Controller
         Coupon::create($request->all());
 
         return redirect()->route('admin.coupons.index')
-            ->with('success', 'Coupon created successfully!');
+            ->with('toast', ['message' => 'Coupon created successfully!', 'type' => 'success']);
     }
 
     public function edit($id)

@@ -7,21 +7,6 @@
 
 @section('content')
     <div class="max-w-4xl mx-auto">
-        @if (session('success'))
-            <div class="bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-lg p-4 mb-6">
-                <i class="fas fa-check-circle mr-2"></i> {{ session('success') }}
-            </div>
-        @endif
-
-        @if ($errors->any())
-            <div class="bg-red-50 border border-red-200 text-red-800 rounded-lg p-4 mb-6">
-                <ul class="list-disc list-inside">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <!-- Update Profile Form -->

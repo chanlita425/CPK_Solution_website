@@ -26,6 +26,10 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="fixed top-20 right-4 z-50 space-y-3"></div>
+
     <style>
         * {
             font-family: 'Inter', sans-serif;
@@ -402,8 +406,26 @@
                     document.querySelector('#modalContainer .fixed')?.remove();
                 });
         }
+
+        // Display toast from session flash data
+        document.addEventListener('DOMContentLoaded', function() {
+            @if (session('toast'))
+                showToast('{{ session('toast.message') }}', '{{ session('toast.type') }}');
+            @endif
+
+            @if (session('success'))
+                showToast('{{ session('success') }}', 'success');
+            @endif
+
+            @if (session('error'))
+                showToast('{{ session('error') }}', 'error');
+            @endif
+        });
     </script>
 
+
+    <!-- Include Toast Component -->
+    @include('admin.components.toast')
     @stack('scripts')
 </body>
 

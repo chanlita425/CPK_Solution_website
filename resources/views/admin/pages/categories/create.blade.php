@@ -20,7 +20,7 @@
                     <div>
                         <label class="form-label">Name (English) <span class="text-red-500">*</span></label>
                         <input type="text" name="name_en" value="{{ old('name_en') }}" required
-                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-[#D7B259] focus:border-[#D7B259] @error('name_en') border-red-500 @enderror"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D7B259] focus:border-transparent @error('name_en') border-red-500 @enderror"
                             placeholder="Enter category name in English">
                         @error('name_en')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -30,7 +30,7 @@
                     <div>
                         <label class="form-label">Name (Khmer) <span class="text-red-500">*</span></label>
                         <input type="text" name="name_kh" value="{{ old('name_kh') }}" required
-                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-[#D7B259] focus:border-[#D7B259] @error('name_kh') border-red-500 @enderror"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D7B259] focus:border-transparent @error('name_kh') border-red-500 @enderror"
                             placeholder="បញ្ចូលឈ្មោះប្រភេទជាភាសាខ្មែរ">
                         @error('name_kh')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>

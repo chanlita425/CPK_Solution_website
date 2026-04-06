@@ -101,9 +101,8 @@ class ProductController extends Controller
                 ]);
             }
         }
-
         return redirect()->route('admin.products.index')
-            ->with('success', 'Product created successfully!');
+            ->with('toast', ['message' => 'Product created successfully!', 'type' => 'success']);
     }
 
     public function edit($id)

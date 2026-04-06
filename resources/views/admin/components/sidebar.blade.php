@@ -1,9 +1,9 @@
 {{-- resources/views/admin/components/sidebar.blade.php --}}
 <aside id="sidebar"
-    class="fixed left-0 top-0 h-full bg-gradient-to-b from-gray-900 to-gray-800 w-64 z-40 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 overflow-y-auto">
+    class="fixed left-0 top-0 h-full bg-gradient-to-b from-gray-900 to-gray-800 w-64 z-40 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 overflow-y-auto pb-20">
 
     <!-- Logo Area -->
-    <div class="flex items-center justify-between px-6 py-5 border-b border-gray-700">
+    <div class="flex items-center justify-between px-6 py-5 border-b border-gray-700 sticky top-0 bg-gray-900 z-10">
         <div class="flex items-center gap-3">
             <div class="w-8 h-8 bg-[#D7B259] rounded-lg flex items-center justify-center">
                 <i class="fas fa-store text-gray-900 text-sm"></i>
@@ -28,8 +28,8 @@
         </div>
     </div>
 
-    <!-- Navigation Menu -->
-    <nav class="px-3 py-4">
+    <!-- Navigation Menu - Added padding bottom for logout space -->
+    <nav class="px-3 py-4 pb-24">
         <!-- Main Section -->
         <div class="mb-6">
             <p class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Main</p>
@@ -99,7 +99,7 @@
         </div>
     </nav>
 
-    <!-- Logout Button -->
+    <!-- Logout Button - Fixed at bottom -->
     <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-700 bg-gray-800">
         <form method="POST" action="{{ route('admin.logout') }}">
             @csrf
@@ -165,7 +165,6 @@
         if (closeBtn) closeBtn.addEventListener('click', closeSidebar);
         if (overlay) overlay.addEventListener('click', closeSidebar);
 
-        // Close on escape key
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape' && !sidebar.classList.contains('-translate-x-full')) {
                 closeSidebar();

@@ -63,10 +63,10 @@
                             <label class="block text-sm font-medium text-gray-700 mb-2">Name (English) <span
                                     class="text-red-500">*</span></label>
                             <div class="relative">
-                                <i class="fas fa-language absolute left-3 top-3 text-gray-400"></i>
+                                <i class="fas fa-language absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
                                 <input type="text" name="name_en" value="{{ old('name_en', $product->name_en) }}"
                                     required
-                                    class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-[#D7B259] focus:border-[#D7B259] @error('name_en') border-red-500 @enderror"
+                                    class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D7B259] focus:border-transparent @error('name_en') border-red-500 @enderror"
                                     placeholder="Enter product name in English">
                             </div>
                             @error('name_en')
@@ -79,10 +79,10 @@
                             <label class="block text-sm font-medium text-gray-700 mb-2">Name (Khmer) <span
                                     class="text-red-500">*</span></label>
                             <div class="relative">
-                                <i class="fas fa-language absolute left-3 top-3 text-gray-400"></i>
+                                <i class="fas fa-language absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
                                 <input type="text" name="name_kh" value="{{ old('name_kh', $product->name_kh) }}"
                                     required
-                                    class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-[#D7B259] focus:border-[#D7B259] @error('name_kh') border-red-500 @enderror"
+                                    class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D7B259] focus:border-transparent @error('name_kh') border-red-500 @enderror"
                                     placeholder="បញ្ចូលឈ្មោះផលិតផលជាភាសាខ្មែរ">
                             </div>
                             @error('name_kh')
@@ -95,9 +95,9 @@
                             <label class="block text-sm font-medium text-gray-700 mb-2">SKU <span
                                     class="text-red-500">*</span></label>
                             <div class="relative">
-                                <i class="fas fa-barcode absolute left-3 top-3 text-gray-400"></i>
+                                <i class="fas fa-barcode absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
                                 <input type="text" name="SKU" value="{{ old('SKU', $product->SKU) }}" required
-                                    class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-[#D7B259] focus:border-[#D7B259] @error('SKU') border-red-500 @enderror"
+                                    class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D7B259] focus:border-transparent @error('SKU') border-red-500 @enderror"
                                     placeholder="Unique product identifier">
                             </div>
                             @error('SKU')
@@ -110,10 +110,10 @@
                             <label class="block text-sm font-medium text-gray-700 mb-2">Price <span
                                     class="text-red-500">*</span></label>
                             <div class="relative">
-                                <i class="fas fa-dollar-sign absolute left-3 top-3 text-gray-400"></i>
+                                <i class="fas fa-dollar-sign absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
                                 <input type="number" name="price" value="{{ old('price', $product->price) }}"
                                     step="0.01" required
-                                    class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-[#D7B259] focus:border-[#D7B259] @error('price') border-red-500 @enderror"
+                                    class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D7B259] focus:border-transparent @error('price') border-red-500 @enderror"
                                     placeholder="0.00">
                             </div>
                             @error('price')
@@ -126,10 +126,10 @@
                             <label class="block text-sm font-medium text-gray-700 mb-2">Quantity <span
                                     class="text-red-500">*</span></label>
                             <div class="relative">
-                                <i class="fas fa-boxes absolute left-3 top-3 text-gray-400"></i>
+                                <i class="fas fa-boxes absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
                                 <input type="number" name="quantity" value="{{ old('quantity', $product->quantity) }}"
                                     required
-                                    class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-[#D7B259] focus:border-[#D7B259] @error('quantity') border-red-500 @enderror"
+                                    class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D7B259] focus:border-transparent @error('quantity') border-red-500 @enderror"
                                     placeholder="Stock quantity">
                             </div>
                             @error('quantity')
@@ -141,7 +141,7 @@
                         <div class="md:col-span-2">
                             <label class="block text-sm font-medium text-gray-700 mb-2">Specification (English)</label>
                             <textarea name="specification_en" rows="5"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-[#D7B259] focus:border-[#D7B259] @error('specification_en') border-red-500 @enderror"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D7B259] focus:border-transparent @error('specification_en') border-red-500 @enderror"
                                 placeholder="Enter product specifications in English...">{{ old('specification_en', $product->specification_en) }}</textarea>
                             @error('specification_en')
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -152,7 +152,7 @@
                         <div class="md:col-span-2">
                             <label class="block text-sm font-medium text-gray-700 mb-2">Specification (Khmer)</label>
                             <textarea name="specification_kh" rows="5"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-[#D7B259] focus:border-[#D7B259] @error('specification_kh') border-red-500 @enderror"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D7B259] focus:border-transparent @error('specification_kh') border-red-500 @enderror"
                                 placeholder="បញ្ចូលព័ត៌មានលម្អិតផលិតផលជាភាសាខ្មែរ...">{{ old('specification_kh', $product->specification_kh) }}</textarea>
                             @error('specification_kh')
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -250,13 +250,7 @@
                 buttonElement.style.opacity = '1';
                 buttonElement.style.display = 'flex';
                 deletedImagesInput.value = deletedImageIds.join(',');
-
-                // Show feedback
-                const toast = document.createElement('div');
-                toast.className = 'fixed bottom-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50';
-                toast.innerHTML = 'Image marked for deletion';
-                document.body.appendChild(toast);
-                setTimeout(() => toast.remove(), 2000);
+                showToast('Image marked for deletion', 'warning');
             }
         }
 
@@ -290,13 +284,13 @@
             const validFiles = files.filter(file => file.type.startsWith('image/'));
 
             if (validFiles.length > remainingSlots) {
-                alert(`Maximum ${remainingSlots} more image(s) allowed`);
+                showToast(`Maximum ${remainingSlots} more image(s) allowed`, 'error');
                 return;
             }
 
             validFiles.forEach(file => {
                 if (file.size > 2 * 1024 * 1024) {
-                    alert(`Image ${file.name} exceeds 2MB limit`);
+                    showToast(`Image ${file.name} exceeds 2MB limit`, 'error');
                     return;
                 }
                 selectedFiles.push(file);
@@ -311,13 +305,13 @@
                 const container = document.createElement('div');
                 container.className = 'relative group';
                 container.innerHTML = `
-            <img src="${e.target.result}" class="w-full h-32 object-cover rounded-lg border">
-            <button type="button" onclick="removeNewImage('${file.name}')"
-                    class="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 transition opacity-0 group-hover:opacity-100">
-                <i class="fas fa-times text-xs"></i>
-            </button>
-            <div class="absolute bottom-2 left-2 bg-yellow-500 text-white text-xs px-2 py-0.5 rounded">New</div>
-        `;
+                    <img src="${e.target.result}" class="w-full h-32 object-cover rounded-lg border">
+                    <button type="button" onclick="removeNewImage('${file.name}')"
+                            class="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 transition opacity-0 group-hover:opacity-100">
+                        <i class="fas fa-times text-xs"></i>
+                    </button>
+                    <div class="absolute bottom-2 left-2 bg-yellow-500 text-white text-xs px-2 py-0.5 rounded">New</div>
+                `;
                 newContainer.appendChild(container);
             };
             reader.readAsDataURL(file);

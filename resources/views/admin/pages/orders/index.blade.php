@@ -19,25 +19,12 @@
         @endphp
 
         @include('admin.components.filter-toolbar', [
-            'searchPlaceholder' => 'Search by order code or customer name...',
+            'searchPlaceholder' => 'Search by order code...',
             'searchValue' => request('search'),
             'filters' => $orderFilters,
             'showReset' => true,
         ])
 
-        @if (session('success'))
-            <div class="bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-lg p-4">
-                <i class="fas fa-check-circle mr-2"></i> {{ session('success') }}
-            </div>
-        @endif
-
-        @if (session('error'))
-            <div class="bg-red-50 border border-red-200 text-red-800 rounded-lg p-4">
-                <i class="fas fa-exclamation-circle mr-2"></i> {{ session('error') }}
-            </div>
-        @endif
-
-        <!-- Orders Table -->
         <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="w-full">
@@ -45,10 +32,6 @@
                         <tr class="border-b border-gray-200">
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order
                                 Code</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Customer Name</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone
-                            </th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Items
                             </th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -67,8 +50,6 @@
                         @forelse($orders as $order)
                             <tr class="hover:bg-gray-50 transition">
                                 <td class="px-6 py-4 font-mono font-medium text-gray-900">{{ $order->order_code }}</td>
-                                <td class="px-6 py-4 font-medium text-gray-900">{{ $order->customer_name ?? 'Guest' }}</td>
-                                <td class="px-6 py-4 text-gray-600">{{ $order->customer_phone ?? '-' }}</td>
                                 <td class="px-6 py-4 text-gray-600">{{ $order->items->count() }} items</td>
                                 <td class="px-6 py-4 text-gray-600">${{ number_format($order->subtotal, 2) }}</td>
                                 <td class="px-6 py-4 font-semibold text-[#D7B259]">${{ number_format($order->total, 2) }}
@@ -95,7 +76,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="9" class="px-6 py-12 text-center text-gray-500">
+                                <td colspan="7" class="px-6 py-12 text-center text-gray-500">
                                     <i class="fas fa-shopping-cart text-4xl text-gray-300 mb-3 block"></i>
                                     <p class="text-gray-500 mb-2">No orders found</p>
                                 </td>
@@ -110,9 +91,4 @@
             {{ $orders->appends(request()->query())->links() }}
         </div>
     </div>
-
-    <script>
-        // The filter toolbar handles the filtering automatically
-        // No additional JavaScript needed
-    </script>
 @endsection

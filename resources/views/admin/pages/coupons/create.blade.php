@@ -23,7 +23,7 @@
                     <div class="relative">
                         <i class="fas fa-ticket-alt absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm sm:text-base"></i>
                         <input type="text" name="code" value="{{ old('code') }}" required
-                               class="w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-[#D7B259] focus:border-[#D7B259] font-mono uppercase @error('code') border-red-500 @enderror text-sm sm:text-base min-h-[42px]"
+                               class="w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D7B259] focus:border-transparent font-mono uppercase @error('code') border-red-500 @enderror text-sm sm:text-base min-h-[42px]"
                                placeholder="SUMMER2024">
                     </div>
                     <p class="text-xs text-gray-500 mt-1">Use uppercase letters and numbers only.</p>
@@ -53,7 +53,7 @@
                         <div class="relative">
                             <i class="fas fa-dollar-sign absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm sm:text-base"></i>
                             <input type="number" name="value" value="{{ old('value') }}" step="0.01" required
-                                   class="w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-[#D7B259] focus:border-[#D7B259] @error('value') border-red-500 @enderror text-sm sm:text-base min-h-[42px]"
+                                   class="w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D7B259] focus:border-transparent @error('value') border-red-500 @enderror text-sm sm:text-base min-h-[42px]"
                                    placeholder="0.00">
                         </div>
                         @error('value') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
@@ -66,7 +66,7 @@
                     <div class="relative">
                         <i class="fas fa-dollar-sign absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm sm:text-base"></i>
                         <input type="number" name="min_order_amount" value="{{ old('min_order_amount', 0) }}" step="0.01"
-                               class="w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-[#D7B259] focus:border-[#D7B259] text-sm sm:text-base min-h-[42px]">
+                               class="w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D7B259] focus:border-transparent text-sm sm:text-base min-h-[42px]">
                     </div>
                     <p class="text-xs text-gray-500 mt-1">Minimum order amount required. Leave 0 for no minimum.</p>
                 </div>
