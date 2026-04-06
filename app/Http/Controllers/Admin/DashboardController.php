@@ -21,6 +21,8 @@ class DashboardController extends Controller
         $totalOrders = Order::count();
         $pendingOrders = Order::where('status', 'pending')->count();
         $confirmedOrders = Order::where('status', 'confirmed')->count();
+
+        // Get recent orders with items count
         $recentOrders = Order::with('items')->latest()->take(5)->get();
 
         return view('admin.dashboard', compact(

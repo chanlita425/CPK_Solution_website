@@ -18,10 +18,6 @@ class Order extends Model
         'tax',
         'total',
         'coupon_code',
-        'customer_name',
-        'customer_phone',
-        'customer_address',
-        'note',
         'status',
     ];
 

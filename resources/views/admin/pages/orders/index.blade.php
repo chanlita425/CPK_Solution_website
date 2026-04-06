@@ -13,9 +13,20 @@
             </a>
         </div>
 
-        <!-- Filter Toolbar -->
+        <!-- Filter Toolbar with custom order status options -->
         @php
-            $orderFilters = [['type' => 'status', 'name' => 'status']];
+            $orderFilters = [
+                [
+                    'type' => 'status',
+                    'name' => 'status',
+                    'placeholder' => 'All Status',
+                    'options' => [
+                        ['value' => 'pending', 'label' => 'Pending'],
+                        ['value' => 'confirmed', 'label' => 'Confirmed'],
+                        ['value' => 'cancelled', 'label' => 'Cancelled'],
+                    ],
+                ],
+            ];
         @endphp
 
         @include('admin.components.filter-toolbar', [
@@ -24,6 +35,12 @@
             'filters' => $orderFilters,
             'showReset' => true,
         ])
+
+        @if (session('error'))
+            <div class="bg-red-50 border border-red-200 text-red-800 rounded-lg p-4">
+                <i class="fas fa-exclamation-circle mr-2"></i> {{ session('error') }}
+            </div>
+        @endif
 
         <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
             <div class="overflow-x-auto">

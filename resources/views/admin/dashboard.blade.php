@@ -150,43 +150,53 @@
             </div>
 
             <div class="overflow-x-auto">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>Order Code</th>
-                            <th>Customer</th>
-                            <th>Total</th>
-                            <th>Status</th>
-                            <th>Date</th>
-                            <th class="text-right">Action</th>
+                <table class="w-full">
+                    <thead class="bg-gray-50">
+                        <tr class="border-b border-gray-200">
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order
+                                Code</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Items
+                            </th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total
+                            </th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Status</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date
+                            </th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Action</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="divide-y divide-gray-200">
                         @forelse($recentOrders ?? [] as $order)
-                            <tr>
-                                <td class="font-medium text-gray-900">{{ $order->order_code }}</td>
-                                <td>{{ $order->customer_name ?? 'Guest' }}</td>
-                                <td class="font-semibold text-[#D7B259]">${{ number_format($order->total, 2) }}</td>
-                                <td>
+                            <tr class="hover:bg-gray-50 transition">
+                                <td class="px-6 py-4 font-mono font-medium text-gray-900">{{ $order->order_code }}</td>
+                                <td class="px-6 py-4 text-gray-600">{{ $order->items->count() }} items</td>
+                                <td class="px-6 py-4 font-semibold text-[#D7B259]">${{ number_format($order->total, 2) }}
+                                </td>
+                                <td class="px-6 py-4">
                                     <span
-                                        class="badge
-                                @if ($order->status == 'pending') badge-pending
-                                @elseif($order->status == 'confirmed') badge-confirmed
-                                @else badge-cancelled @endif">
+                                        class="px-2 py-1 text-xs rounded-full
+                                @if ($order->status == 'pending') bg-yellow-100 text-yellow-800
+                                @elseif($order->status == 'confirmed') bg-emerald-100 text-emerald-800
+                                @else bg-red-100 text-red-800 @endif">
                                         {{ ucfirst($order->status) }}
                                     </span>
                                 </td>
-                                <td class="text-gray-500">{{ $order->created_at->format('M d, Y H:i') }}</td>
-                                <td class="text-right">
+                                <td class="px-6 py-4 text-gray-500 text-sm">
+                                    {{ $order->created_at->format('M d, Y') }}
+                                    <div class="text-xs">{{ $order->created_at->format('H:i') }}</div>
+                                </td>
+                                <td class="px-6 py-4 text-right">
                                     <a href="{{ route('admin.orders.show', $order->id) }}"
-                                        class="text-[#D7B259] hover:text-amber-700">
-                                        <i class="fas fa-eye"></i>
+                                        class="text-[#D7B259] hover:text-amber-700 transition inline-flex items-center gap-1">
+                                        <i class="fas fa-eye"></i> View
                                     </a>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="text-center py-12">
+                                <td colspan="6" class="px-6 py-12 text-center text-gray-500">
                                     <i class="fas fa-shopping-cart text-4xl text-gray-300 mb-3 block"></i>
                                     <p class="text-gray-500">No orders found</p>
                                 </td>

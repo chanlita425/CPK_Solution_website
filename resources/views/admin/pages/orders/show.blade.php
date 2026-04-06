@@ -1,4 +1,3 @@
-{{-- resources/views/admin/pages/orders/show.blade.php --}}
 @extends('admin.layouts.app')
 
 @section('title', 'Order #' . $order->order_code)
@@ -7,10 +6,10 @@
 
 @section('content')
     <div class="space-y-6">
-        <!-- Back Button & Actions -->
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <a href="{{ route('admin.orders.index') }}" class="text-gray-600 hover:text-[#D7B259] transition">
-                <i class="fas fa-arrow-left mr-2"></i> Back to Orders
+            <a href="{{ route('admin.orders.index') }}"
+                class="text-gray-600 hover:text-[#D7B259] transition inline-flex items-center gap-2">
+                <i class="fas fa-arrow-left text-sm"></i> Back to Orders
             </a>
 
             @if ($order->status == 'pending')
@@ -36,7 +35,7 @@
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <!-- Order Items - Left Column (2/3 on desktop) -->
+            <!-- Order Items -->
             <div class="lg:col-span-2">
                 <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
                     <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
@@ -80,56 +79,26 @@
                 </div>
             </div>
 
-            <!-- Right Column - Order Info (1/3 on desktop) -->
+            <!-- Order Summary -->
             <div class="space-y-6">
-                <!-- Order Status Card -->
                 <div class="bg-white rounded-2xl border border-gray-200 p-6">
                     <h3 class="font-semibold text-gray-800 mb-4">
                         <i class="fas fa-chart-line text-[#D7B259] mr-2"></i> Order Status
                     </h3>
                     <div class="flex items-center justify-between">
                         <span
-                            class="badge text-lg px-4 py-2
-                        @if ($order->status == 'pending') badge-pending
-                        @elseif($order->status == 'confirmed') badge-confirmed
-                        @else badge-cancelled @endif">
+                            class="px-3 py-1 rounded-full text-sm font-medium
+                        @if ($order->status == 'pending') bg-yellow-100 text-yellow-800
+                        @elseif($order->status == 'confirmed') bg-emerald-100 text-emerald-800
+                        @else bg-red-100 text-red-800 @endif">
                             {{ ucfirst($order->status) }}
                         </span>
                         <span class="text-sm text-gray-500">
                             Updated: {{ $order->updated_at->format('M d, Y H:i') }}
                         </span>
                     </div>
-
-                    <!-- Status Timeline -->
-                    <div class="mt-6 space-y-3">
-                        <div class="flex items-center gap-3">
-                            <div
-                                class="w-8 h-8 rounded-full flex items-center justify-center
-                            {{ $order->created_at ? 'bg-emerald-100 text-emerald-600' : 'bg-gray-100 text-gray-400' }}">
-                                <i class="fas fa-shopping-cart text-sm"></i>
-                            </div>
-                            <div class="flex-1">
-                                <p class="text-sm font-medium text-gray-900">Order Placed</p>
-                                <p class="text-xs text-gray-500">{{ $order->created_at->format('M d, Y H:i') }}</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <div
-                                class="w-8 h-8 rounded-full flex items-center justify-center
-                            {{ $order->status == 'confirmed' ? 'bg-emerald-100 text-emerald-600' : 'bg-gray-100 text-gray-400' }}">
-                                <i class="fas fa-check-circle text-sm"></i>
-                            </div>
-                            <div class="flex-1">
-                                <p class="text-sm font-medium text-gray-900">Order Confirmed</p>
-                                @if ($order->status == 'confirmed')
-                                    <p class="text-xs text-gray-500">{{ $order->updated_at->format('M d, Y H:i') }}</p>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
                 </div>
 
-                <!-- Order Summary Card -->
                 <div class="bg-white rounded-2xl border border-gray-200 p-6">
                     <h3 class="font-semibold text-gray-800 mb-4">
                         <i class="fas fa-calculator text-[#D7B259] mr-2"></i> Order Summary
@@ -170,34 +139,6 @@
                     </div>
                 </div>
 
-                <!-- Customer Information Card -->
-                <div class="bg-white rounded-2xl border border-gray-200 p-6">
-                    <h3 class="font-semibold text-gray-800 mb-4">
-                        <i class="fas fa-user text-[#D7B259] mr-2"></i> Customer Information
-                    </h3>
-                    <div class="space-y-3">
-                        <div>
-                            <p class="text-xs text-gray-500 uppercase mb-1">Full Name</p>
-                            <p class="text-gray-900 font-medium">{{ $order->customer_name ?? 'Guest' }}</p>
-                        </div>
-                        <div>
-                            <p class="text-xs text-gray-500 uppercase mb-1">Phone Number</p>
-                            <p class="text-gray-900">{{ $order->customer_phone ?? '-' }}</p>
-                        </div>
-                        <div>
-                            <p class="text-xs text-gray-500 uppercase mb-1">Shipping Address</p>
-                            <p class="text-gray-900">{{ $order->customer_address ?? '-' }}</p>
-                        </div>
-                        @if ($order->note)
-                            <div class="pt-2 border-t">
-                                <p class="text-xs text-gray-500 uppercase mb-1">Order Note</p>
-                                <p class="text-gray-700 text-sm">{{ $order->note }}</p>
-                            </div>
-                        @endif
-                    </div>
-                </div>
-
-                <!-- Coupon Info (if applicable) -->
                 @if ($order->coupon_code)
                     <div class="bg-amber-50 rounded-2xl border border-amber-200 p-6">
                         <div class="flex items-center gap-3">

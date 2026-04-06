@@ -1,9 +1,9 @@
 {{-- resources/views/admin/components/sidebar.blade.php --}}
 <aside id="sidebar"
-    class="fixed left-0 top-0 h-full bg-gradient-to-b from-gray-900 to-gray-800 w-64 z-40 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 overflow-y-auto pb-20">
+    class="fixed left-0 top-0 h-full bg-gradient-to-b from-gray-900 to-gray-800 w-64 z-40 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 flex flex-col">
 
-    <!-- Logo Area -->
-    <div class="flex items-center justify-between px-6 py-5 border-b border-gray-700 sticky top-0 bg-gray-900 z-10">
+    <!-- Logo Area - Sticky top -->
+    <div class="flex-shrink-0 flex items-center justify-between px-6 py-5 border-b border-gray-700 bg-gray-900">
         <div class="flex items-center gap-3">
             <div class="w-8 h-8 bg-[#D7B259] rounded-lg flex items-center justify-center">
                 <i class="fas fa-store text-gray-900 text-sm"></i>
@@ -16,7 +16,7 @@
     </div>
 
     <!-- User Info -->
-    <div class="px-6 py-5 border-b border-gray-700">
+    <div class="flex-shrink-0 px-6 py-5 border-b border-gray-700">
         <div class="flex items-center gap-3">
             <div class="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center">
                 <i class="fas fa-user text-[#D7B259] text-lg"></i>
@@ -28,8 +28,8 @@
         </div>
     </div>
 
-    <!-- Navigation Menu - Added padding bottom for logout space -->
-    <nav class="px-3 py-4 pb-24">
+    <!-- Navigation Menu - Scrollable area -->
+    <nav class="flex-1 overflow-y-auto px-3 py-4">
         <!-- Main Section -->
         <div class="mb-6">
             <p class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Main</p>
@@ -99,8 +99,8 @@
         </div>
     </nav>
 
-    <!-- Logout Button - Fixed at bottom -->
-    <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-700 bg-gray-800">
+    <!-- Logout Button - Fixed at bottom, always visible -->
+    <div class="flex-shrink-0 p-4 border-t border-gray-700 bg-gray-800 mt-auto">
         <form method="POST" action="{{ route('admin.logout') }}">
             @csrf
             <button type="submit" class="sidebar-link w-full text-left">

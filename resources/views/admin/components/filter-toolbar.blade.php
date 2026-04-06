@@ -39,16 +39,19 @@
                     ])
                 @elseif($filter['type'] === 'status')
                     @php
-                        $statusOptions = [
-                            ['value' => 'active', 'label' => 'Active'],
-                            ['value' => 'inactive', 'label' => 'Inactive'],
-                        ];
+                        // Allow custom status options to be passed, otherwise use default Active/Inactive
+                        $statusOptions = isset($filter['options'])
+                            ? $filter['options']
+                            : [
+                                ['value' => 'active', 'label' => 'Active'],
+                                ['value' => 'inactive', 'label' => 'Inactive'],
+                            ];
                     @endphp
                     @include('admin.components.styled-select', [
                         'name' => 'filter_status',
                         'options' => $statusOptions,
                         'selected' => request('status'),
-                        'placeholder' => 'All Status',
+                        'placeholder' => $filter['placeholder'] ?? 'All Status',
                         'required' => false,
                     ])
                 @endif

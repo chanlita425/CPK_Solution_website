@@ -1,5 +1,4 @@
 <?php
-// app/Http/Controllers/Admin/OrderController.php
 
 namespace App\Http\Controllers\Admin;
 
@@ -46,7 +45,7 @@ class OrderController extends Controller
         try {
             $order->confirm();
             return redirect()->route('admin.orders.show', $order->id)
-                ->with('success', 'Order confirmed successfully! Stock has been updated.');
+                ->with('toast', ['message' => 'Order confirmed successfully! Stock has been updated.', 'type' => 'success']);
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Failed to confirm order: ' . $e->getMessage());
         }
@@ -63,6 +62,6 @@ class OrderController extends Controller
         $order->cancel();
 
         return redirect()->route('admin.orders.show', $order->id)
-            ->with('success', 'Order cancelled successfully!');
+            ->with('toast', ['message' => 'Order cancelled successfully!', 'type' => 'success']);
     }
 }

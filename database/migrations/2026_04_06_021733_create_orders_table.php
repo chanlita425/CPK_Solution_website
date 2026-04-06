@@ -1,5 +1,5 @@
 <?php
-// database/migrations/2026_04_06_000007_create_orders_table.php
+// database/migrations/2026_04_06_021733_create_orders_table.php
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -18,10 +18,6 @@ return new class extends Migration
             $table->decimal('tax', 10, 2)->default(0);
             $table->decimal('total', 10, 2);
             $table->string('coupon_code')->nullable();
-            $table->string('customer_name')->nullable();
-            $table->string('customer_phone')->nullable();
-            $table->string('customer_address')->nullable();
-            $table->text('note')->nullable();
             $table->enum('status', ['pending', 'confirmed', 'cancelled'])->default('pending');
             $table->timestamps();
         });

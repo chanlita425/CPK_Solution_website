@@ -25,7 +25,8 @@ class BrandController extends Controller
             $query->where('is_active', $request->status == 'active');
         }
 
-        $brands = $query->orderBy('id', 'desc')->paginate(10);
+        // Add withCount to get accurate product counts
+        $brands = $query->withCount('products')->orderBy('id', 'desc')->paginate(10);
 
         return view('admin.pages.brands.index', compact('brands'));
     }

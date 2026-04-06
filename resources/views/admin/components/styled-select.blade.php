@@ -58,15 +58,21 @@
             x-transition:leave-end="opacity-0 transform -translate-y-2"
             class="absolute z-[100] mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-xl max-h-60 overflow-auto">
             <div class="py-1">
-                @foreach ($options as $option)
-                    <div @click="selected = '{{ $option['value'] }}'; selectedLabel = '{{ addslashes($option['label']) }}'; open = false; document.getElementById('select_{{ $name }}').value = '{{ $option['value'] }}'"
-                        class="px-4 py-2.5 cursor-pointer hover:bg-gray-50 transition-colors flex items-center justify-between"
-                        :class="{ 'bg-[#D7B259]/10 text-[#D7B259]': selected == '{{ $option['value'] }}' }">
-                        <span class="text-sm">{{ $option['label'] }}</span>
-                        <i x-show="selected == '{{ $option['value'] }}'"
-                            class="fas fa-check text-[#D7B259] text-xs"></i>
+                @if (count($options) > 0)
+                    @foreach ($options as $option)
+                        <div @click="selected = '{{ $option['value'] }}'; selectedLabel = '{{ addslashes($option['label']) }}'; open = false; document.getElementById('select_{{ $name }}').value = '{{ $option['value'] }}'"
+                            class="px-4 py-2.5 cursor-pointer hover:bg-gray-50 transition-colors flex items-center justify-between"
+                            :class="{ 'bg-[#D7B259]/10 text-[#D7B259]': selected == '{{ $option['value'] }}' }">
+                            <span class="text-sm">{{ $option['label'] }}</span>
+                            <i x-show="selected == '{{ $option['value'] }}'"
+                                class="fas fa-check text-[#D7B259] text-xs"></i>
+                        </div>
+                    @endforeach
+                @else
+                    <div class="px-4 py-2.5 text-sm text-gray-400 text-center">
+                        <i class="fas fa-database mr-2"></i> No data available
                     </div>
-                @endforeach
+                @endif
             </div>
         </div>
     </div>
