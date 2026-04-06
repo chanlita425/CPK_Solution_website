@@ -10,8 +10,8 @@ return new class extends Migration
     {
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
-            $table->string('name_en');
-            $table->string('name_kh');
+            $table->string('name_en')->unique();
+            $table->string('name_kh')->unique();
             $table->string('icon_image')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();

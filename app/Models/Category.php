@@ -53,4 +53,19 @@ class Category extends Model
         }
         return null;
     }
+
+    // Check if name exists (for validation)
+    public static function isNameUnique($nameEn, $nameKh, $excludeId = null)
+    {
+        $query = self::query();
+
+        if ($excludeId) {
+            $query->where('id', '!=', $excludeId);
+        }
+
+        return !$query->where(function ($q) use ($nameEn, $nameKh) {
+            $q->where('name_en', $nameEn)
+                ->orWhere('name_kh', $nameKh);
+        })->exists();
+    }
 }

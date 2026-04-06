@@ -1,186 +1,219 @@
-{{-- resources/views/admin/settings/index.blade.php --}}
+{{-- resources/views/admin/pages/settings/index.blade.php --}}
 @extends('admin.layouts.app')
 
 @section('title', 'Settings')
 @section('header', 'System Settings')
+@section('subheader', 'Configure your store settings')
 
 @section('content')
-    @if (session('success'))
-        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-4">
-            {{ session('success') }}
-        </div>
-    @endif
+@if(session('success'))
+    <div class="bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-lg p-4 mb-6">
+        <i class="fas fa-check-circle mr-2"></i> {{ session('success') }}
+    </div>
+@endif
 
-    @if ($errors->any())
-        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-4">
-            <ul class="list-disc list-inside">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
+@if($errors->any())
+    <div class="bg-red-50 border border-red-200 text-red-800 rounded-lg p-4 mb-6">
+        <ul class="list-disc list-inside">
+            @foreach($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
 
-    <form action="{{ route('admin.settings.update') }}" method="POST" enctype="multipart/form-data"
-        class="bg-white rounded-xl shadow-sm overflow-hidden">
-        @csrf
-        @method('PUT')
+<form action="{{ route('admin.settings.update') }}" method="POST" enctype="multipart/form-data">
+    @csrf
+    @method('PUT')
 
-        <div class="p-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Company Information -->
-                <div class="md:col-span-2">
-                    <h3 class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b">Company Information</h3>
+    <div class="space-y-6">
+        <!-- Company Information Section -->
+        <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-[#D7B259]/10 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-building text-[#D7B259] text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800">Company Information</h3>
+                        <p class="text-sm text-gray-500">Your business details and contact information</p>
+                    </div>
                 </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Company Name</label>
-                    <input type="text" name="company_name" value="{{ old('company_name', $settings->company_name) }}"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Company URL</label>
-                    <input type="url" name="company_url" value="{{ old('company_url', $settings->company_url) }}"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500"
-                        placeholder="https://example.com">
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number (Primary)</label>
-                    <input type="text" name="company_phone_number_first"
-                        value="{{ old('company_phone_number_first', $settings->company_phone_number_first) }}"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500"
-                        placeholder="+855 XX XXX XXX">
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number (Secondary)</label>
-                    <input type="text" name="company_phone_number_second"
-                        value="{{ old('company_phone_number_second', $settings->company_phone_number_second) }}"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500"
-                        placeholder="+855 XX XXX XXX">
-                </div>
-
-                <div class="md:col-span-2">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">About Company</label>
-                    <textarea name="about_company" rows="4"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">{{ old('about_company', $settings->about_company) }}</textarea>
-                </div>
-
-                <!-- Company Logo -->
-                <div class="md:col-span-2">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Company Logo</label>
-                    @if ($settings->company_logo)
-                        <div class="mb-3">
-                            <img src="{{ asset('storage/' . $settings->company_logo) }}"
-                                class="w-32 h-32 object-cover rounded-lg border">
-                        </div>
-                    @endif
-                    <input type="file" name="company_logo" accept="image/*" class="w-full">
-                    <p class="text-xs text-gray-500 mt-1">PNG, JPG up to 2MB</p>
-                </div>
-
-                <!-- Social Media Links -->
-                <div class="md:col-span-2">
-                    <h3 class="text-lg font-semibold text-gray-800 mb-4 pt-4 pb-2 border-b">Social Media Links</h3>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2"><i
-                            class="fab fa-facebook text-blue-600 mr-2"></i> Facebook</label>
-                    <input type="url" name="facebook_link" value="{{ old('facebook_link', $settings->facebook_link) }}"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500"
-                        placeholder="https://facebook.com/yourpage">
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2"><i
-                            class="fab fa-telegram text-blue-500 mr-2"></i> Telegram</label>
-                    <input type="url" name="telegram_link" value="{{ old('telegram_link', $settings->telegram_link) }}"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500"
-                        placeholder="https://t.me/yourchannel">
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2"><i
-                            class="fab fa-tiktok text-black mr-2"></i> TikTok</label>
-                    <input type="url" name="tiktok_link" value="{{ old('tiktok_link', $settings->tiktok_link) }}"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500"
-                        placeholder="https://tiktok.com/@yourpage">
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2"><i
-                            class="fab fa-instagram text-pink-600 mr-2"></i> Instagram</label>
-                    <input type="url" name="instagram_link"
-                        value="{{ old('instagram_link', $settings->instagram_link) }}"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500"
-                        placeholder="https://instagram.com/yourpage">
-                </div>
-
-                <!-- Store Settings -->
-                <div class="md:col-span-2">
-                    <h3 class="text-lg font-semibold text-gray-800 mb-4 pt-4 pb-2 border-b">Store Settings</h3>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Shipping Fee ($)</label>
-                    <input type="number" name="shipping_fee" value="{{ old('shipping_fee', $settings->shipping_fee) }}"
-                        step="0.01" required
-                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Tax Percentage (%)</label>
-                    <input type="number" name="tax_percent" value="{{ old('tax_percent', $settings->tax_percent) }}"
-                        step="0.01" required
-                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
-                </div>
-
-                <div class="md:col-span-2">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Seller Telegram (for order
-                        notifications)</label>
-                    <input type="text" name="seller_telegram"
-                        value="{{ old('seller_telegram', $settings->seller_telegram) }}"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500"
-                        placeholder="@username or phone number">
-                    <p class="text-xs text-gray-500 mt-1">Orders will be sent to this Telegram account</p>
-                </div>
-
-                <!-- Banner Images -->
-                <div class="md:col-span-2">
-                    <h3 class="text-lg font-semibold text-gray-800 mb-4 pt-4 pb-2 border-b">Banner Images</h3>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Hero Banner Image</label>
-                    @if ($settings->hero_banner_image)
-                        <div class="mb-3">
-                            <img src="{{ asset('storage/' . $settings->hero_banner_image) }}"
-                                class="w-full max-w-md h-32 object-cover rounded-lg border">
-                        </div>
-                    @endif
-                    <input type="file" name="hero_banner_image" accept="image/*" class="w-full">
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Promotion Banner Image</label>
-                    @if ($settings->promotion_banner_image)
-                        <div class="mb-3">
-                            <img src="{{ asset('storage/' . $settings->promotion_banner_image) }}"
-                                class="w-full max-w-md h-32 object-cover rounded-lg border">
-                        </div>
-                    @endif
-                    <input type="file" name="promotion_banner_image" accept="image/*" class="w-full">
+            </div>
+            <div class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="form-label">Company Name</label>
+                        <input type="text" name="company_name" value="{{ old('company_name', $settings->company_name) }}"
+                               class="form-input" placeholder="Your Company Name">
+                    </div>
+                    <div>
+                        <label class="form-label">Company URL</label>
+                        <input type="url" name="company_url" value="{{ old('company_url', $settings->company_url) }}"
+                               class="form-input" placeholder="https://example.com">
+                    </div>
+                    <div>
+                        <label class="form-label">Phone Number (Primary)</label>
+                        <input type="text" name="company_phone_number_first"
+                               value="{{ old('company_phone_number_first', $settings->company_phone_number_first) }}"
+                               class="form-input" placeholder="+855 XX XXX XXX">
+                    </div>
+                    <div>
+                        <label class="form-label">Phone Number (Secondary)</label>
+                        <input type="text" name="company_phone_number_second"
+                               value="{{ old('company_phone_number_second', $settings->company_phone_number_second) }}"
+                               class="form-input" placeholder="+855 XX XXX XXX">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="form-label">About Company</label>
+                        <textarea name="about_company" rows="4" class="form-input"
+                                  placeholder="Tell customers about your company...">{{ old('about_company', $settings->about_company) }}</textarea>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="form-label">Company Logo</label>
+                        @if($settings->company_logo)
+                            <div class="mb-3">
+                                <img src="{{ asset('storage/' . $settings->company_logo) }}"
+                                     class="w-24 h-24 object-cover rounded-lg border">
+                            </div>
+                        @endif
+                        <input type="file" name="company_logo" accept="image/*" class="form-input">
+                        <p class="text-xs text-gray-500 mt-1">PNG, JPG up to 2MB. Recommended size: 200x200px</p>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end">
-            <button type="submit"
-                class="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-gray-900 rounded-lg transition">Save
-                Settings</button>
+        <!-- Store Settings Section -->
+        <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-[#D7B259]/10 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-store text-[#D7B259] text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800">Store Settings</h3>
+                        <p class="text-sm text-gray-500">Configure shipping, tax, and order notifications</p>
+                    </div>
+                </div>
+            </div>
+            <div class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="form-label">Shipping Fee ($)</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-2.5 text-gray-500">$</span>
+                            <input type="number" name="shipping_fee" value="{{ old('shipping_fee', $settings->shipping_fee) }}"
+                                   step="0.01" required class="form-input pl-8">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="form-label">Tax Percentage (%)</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-2.5 text-gray-500">%</span>
+                            <input type="number" name="tax_percent" value="{{ old('tax_percent', $settings->tax_percent) }}"
+                                   step="0.01" required class="form-input pl-8">
+                        </div>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="form-label">Seller Telegram (for order notifications)</label>
+                        <div class="relative">
+                            <i class="fab fa-telegram absolute left-3 top-4 text-[#0088cc]"></i>
+                            <input type="text" name="seller_telegram" value="{{ old('seller_telegram', $settings->seller_telegram) }}"
+                                   class="form-input pl-10" placeholder="@username or phone number">
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1">Orders will be sent to this Telegram account</p>
+                    </div>
+                </div>
+            </div>
         </div>
-    </form>
+
+        <!-- Social Media Links Section -->
+        <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-[#D7B259]/10 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-share-alt text-[#D7B259] text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800">Social Media Links</h3>
+                        <p class="text-sm text-gray-500">Connect your social media accounts</p>
+                    </div>
+                </div>
+            </div>
+            <div class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="form-label"><i class="fab fa-facebook text-blue-600 mr-2"></i> Facebook</label>
+                        <input type="url" name="facebook_link" value="{{ old('facebook_link', $settings->facebook_link) }}"
+                               class="form-input" placeholder="https://facebook.com/yourpage">
+                    </div>
+                    <div>
+                        <label class="form-label"><i class="fab fa-telegram text-[#0088cc] mr-2"></i> Telegram</label>
+                        <input type="url" name="telegram_link" value="{{ old('telegram_link', $settings->telegram_link) }}"
+                               class="form-input" placeholder="https://t.me/yourchannel">
+                    </div>
+                    <div>
+                        <label class="form-label"><i class="fab fa-tiktok text-black mr-2"></i> TikTok</label>
+                        <input type="url" name="tiktok_link" value="{{ old('tiktok_link', $settings->tiktok_link) }}"
+                               class="form-input" placeholder="https://tiktok.com/@yourpage">
+                    </div>
+                    <div>
+                        <label class="form-label"><i class="fab fa-instagram text-pink-600 mr-2"></i> Instagram</label>
+                        <input type="url" name="instagram_link" value="{{ old('instagram_link', $settings->instagram_link) }}"
+                               class="form-input" placeholder="https://instagram.com/yourpage">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Banner Images Section -->
+        <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-[#D7B259]/10 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-image text-[#D7B259] text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800">Banner Images</h3>
+                        <p class="text-sm text-gray-500">Main banners displayed on the homepage</p>
+                    </div>
+                </div>
+            </div>
+            <div class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="form-label">Hero Banner Image</label>
+                        @if($settings->hero_banner_image)
+                            <div class="mb-3">
+                                <img src="{{ asset('storage/' . $settings->hero_banner_image) }}"
+                                     class="w-full max-w-md h-32 object-cover rounded-lg border">
+                            </div>
+                        @endif
+                        <input type="file" name="hero_banner_image" accept="image/*" class="form-input">
+                        <p class="text-xs text-gray-500 mt-1">Recommended size: 1920x600px</p>
+                    </div>
+                    <div>
+                        <label class="form-label">Promotion Banner Image</label>
+                        @if($settings->promotion_banner_image)
+                            <div class="mb-3">
+                                <img src="{{ asset('storage/' . $settings->promotion_banner_image) }}"
+                                     class="w-full max-w-md h-32 object-cover rounded-lg border">
+                            </div>
+                        @endif
+                        <input type="file" name="promotion_banner_image" accept="image/*" class="form-input">
+                        <p class="text-xs text-gray-500 mt-1">Recommended size: 1200x400px</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="flex justify-end sticky bottom-4">
+            <button type="submit" class="btn-primary px-6 py-3 shadow-lg">
+                <i class="fas fa-save mr-2"></i> Save All Settings
+            </button>
+        </div>
+    </div>
+</form>
 @endsection

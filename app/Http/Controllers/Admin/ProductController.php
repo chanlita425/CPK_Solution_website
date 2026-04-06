@@ -13,11 +13,43 @@ use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
-    public function index()
+
+    public function index(Request $request)
     {
-        $products = Product::with(['category', 'brand', 'images'])->orderBy('id', 'desc')->paginate(10);
-        // FIXED: Changed from 'admin.products.index' to 'admin.pages.products.index'
-        return view('admin.pages.products.index', compact('products'));
+        $query = Product::with(['category', 'brand', 'images']);
+
+        // Search filter
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name_en', 'like', "%{$search}%")
+                    ->orWhere('name_kh', 'like', "%{$search}%")
+                    ->orWhere('SKU', 'like', "%{$search}%");
+            });
+        }
+
+        // Category filter
+        if ($request->filled('category')) {
+            $query->where('category_id', $request->category);
+        }
+
+        // Brand filter
+        if ($request->filled('brand')) {
+            $query->where('brand_id', $request->brand);
+        }
+
+        // Status filter
+        if ($request->filled('status')) {
+            $query->where('is_active', $request->status == 'active');
+        }
+
+        $products = $query->orderBy('id', 'desc')->paginate(10);
+
+        // Get categories and brands for filters
+        $categories = Category::where('is_active', true)->get();
+        $brands = Brand::where('is_active', true)->get();
+
+        return view('admin.pages.products.index', compact('products', 'categories', 'brands'));
     }
 
     public function create()

@@ -9,17 +9,33 @@ use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $orders = Order::with('items')->orderBy('created_at', 'desc')->paginate(15);
-        // FIXED: Changed from 'admin.orders.index' to 'admin.pages.orders.index'
+        $query = Order::with('items');
+
+        // Search filter - by order code or customer name/phone
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('order_code', 'like', "%{$search}%")
+                    ->orWhere('customer_name', 'like', "%{$search}%")
+                    ->orWhere('customer_phone', 'like', "%{$search}%");
+            });
+        }
+
+        // Status filter
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $orders = $query->orderBy('created_at', 'desc')->paginate(15);
+
         return view('admin.pages.orders.index', compact('orders'));
     }
 
     public function show($id)
     {
         $order = Order::with('items.product')->findOrFail($id);
-        // FIXED: Changed from 'admin.orders.show' to 'admin.pages.orders.show'
         return view('admin.pages.orders.show', compact('order'));
     }
 

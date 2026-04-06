@@ -1,207 +1,175 @@
 {{-- resources/views/admin/components/sidebar.blade.php --}}
-<aside class="admin-sidebar" id="adminSidebar">
-    <!-- Logo Section -->
-    <div class="sidebar-header" style="padding: 1.5rem; border-bottom: 1px solid #3f3f46;">
-        <div style="display: flex; align-items: center; gap: 0.75rem;">
-            <div style="width: 36px; height: 36px; background: #D7B259; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
-                <i class="fas fa-store" style="color: #28282A; font-size: 1.125rem;"></i>
+<aside id="sidebar"
+    class="fixed left-0 top-0 h-full bg-gradient-to-b from-gray-900 to-gray-800 w-64 z-40 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 overflow-y-auto">
+
+    <!-- Logo Area -->
+    <div class="flex items-center justify-between px-6 py-5 border-b border-gray-700">
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 bg-[#D7B259] rounded-lg flex items-center justify-center">
+                <i class="fas fa-store text-gray-900 text-sm"></i>
             </div>
-            <h1 class="logo-text" style="color: #D7B259; font-size: 1.25rem; font-weight: 700; margin: 0;">CPK Admin</h1>
+            <h1 class="text-xl font-bold text-[#D7B259]">CPK Admin</h1>
         </div>
+        <button id="closeSidebar" class="lg:hidden text-gray-400 hover:text-white">
+            <i class="fas fa-times"></i>
+        </button>
     </div>
 
-    <!-- User Info Section -->
-    <div style="padding: 1rem; border-bottom: 1px solid #3f3f46;">
-        <div style="display: flex; align-items: center; gap: 0.75rem;">
-            <div style="width: 44px; height: 44px; background: rgba(215, 178, 89, 0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                <i class="fas fa-user" style="color: #D7B259; font-size: 1.125rem;"></i>
+    <!-- User Info -->
+    <div class="px-6 py-5 border-b border-gray-700">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center">
+                <i class="fas fa-user text-[#D7B259] text-lg"></i>
             </div>
-            <div class="user-info-text">
-                <p style="color: white; font-size: 0.875rem; font-weight: 500; margin: 0;">{{ Auth::user()->name ?? 'Admin' }}</p>
-                <p style="color: #9ca3af; font-size: 0.7rem; margin: 0;">Administrator</p>
+            <div>
+                <p class="text-white font-medium text-sm">{{ Auth::user()->name ?? 'Administrator' }}</p>
+                <p class="text-gray-400 text-xs">Administrator</p>
             </div>
         </div>
     </div>
 
     <!-- Navigation Menu -->
-    <nav style="flex: 1; overflow-y: auto; padding: 1rem 0;" class="custom-scrollbar">
-        <div style="padding: 0 1rem 0.5rem 1.5rem;">
-            <p class="menu-group-title" style="color: #6b7280; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px;">Main</p>
+    <nav class="px-3 py-4">
+        <!-- Main Section -->
+        <div class="mb-6">
+            <p class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Main</p>
+
+            <a href="{{ route('admin.dashboard') }}"
+                class="sidebar-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+                <i class="fas fa-chart-line w-5"></i>
+                <span>Dashboard</span>
+            </a>
         </div>
 
-        <a href="{{ route('admin.dashboard') }}"
-           class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}"
-           style="display: flex; align-items: center; padding: 0.75rem 1.5rem; color: #d1d5db; text-decoration: none; gap: 12px;">
-            <i class="fas fa-chart-line" style="width: 20px; font-size: 1rem;"></i>
-            <span class="sidebar-text" style="font-size: 0.875rem;">Dashboard</span>
-        </a>
+        <!-- Catalog Section -->
+        <div class="mb-6">
+            <p class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Catalog</p>
 
-        <div style="padding: 0.75rem 1rem 0.5rem 1.5rem; margin-top: 0.5rem;">
-            <p class="menu-group-title" style="color: #6b7280; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px;">Catalog</p>
+            <a href="{{ route('admin.categories.index') }}"
+                class="sidebar-link {{ request()->routeIs('admin.categories.*') ? 'active' : '' }}">
+                <i class="fas fa-folder w-5"></i>
+                <span>Categories</span>
+            </a>
+
+            <a href="{{ route('admin.brands.index') }}"
+                class="sidebar-link {{ request()->routeIs('admin.brands.*') ? 'active' : '' }}">
+                <i class="fas fa-trademark w-5"></i>
+                <span>Brands</span>
+            </a>
+
+            <a href="{{ route('admin.products.index') }}"
+                class="sidebar-link {{ request()->routeIs('admin.products.*') ? 'active' : '' }}">
+                <i class="fas fa-box w-5"></i>
+                <span>Products</span>
+            </a>
         </div>
 
-        <a href="{{ route('admin.categories.index') }}"
-           class="nav-link {{ request()->routeIs('admin.categories.*') ? 'active' : '' }}"
-           style="display: flex; align-items: center; padding: 0.75rem 1.5rem; color: #d1d5db; text-decoration: none; gap: 12px;">
-            <i class="fas fa-folder" style="width: 20px; font-size: 1rem;"></i>
-            <span class="sidebar-text" style="font-size: 0.875rem;">Categories</span>
-        </a>
+        <!-- Sales Section -->
+        <div class="mb-6">
+            <p class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Sales</p>
 
-        <a href="{{ route('admin.brands.index') }}"
-           class="nav-link {{ request()->routeIs('admin.brands.*') ? 'active' : '' }}"
-           style="display: flex; align-items: center; padding: 0.75rem 1.5rem; color: #d1d5db; text-decoration: none; gap: 12px;">
-            <i class="fas fa-trademark" style="width: 20px; font-size: 1rem;"></i>
-            <span class="sidebar-text" style="font-size: 0.875rem;">Brands</span>
-        </a>
+            <a href="{{ route('admin.orders.index') }}"
+                class="sidebar-link {{ request()->routeIs('admin.orders.*') ? 'active' : '' }}">
+                <i class="fas fa-shopping-cart w-5"></i>
+                <span>Orders</span>
+            </a>
 
-        <a href="{{ route('admin.products.index') }}"
-           class="nav-link {{ request()->routeIs('admin.products.*') ? 'active' : '' }}"
-           style="display: flex; align-items: center; padding: 0.75rem 1.5rem; color: #d1d5db; text-decoration: none; gap: 12px;">
-            <i class="fas fa-box" style="width: 20px; font-size: 1rem;"></i>
-            <span class="sidebar-text" style="font-size: 0.875rem;">Products</span>
-        </a>
-
-        <div style="padding: 0.75rem 1rem 0.5rem 1.5rem; margin-top: 0.5rem;">
-            <p class="menu-group-title" style="color: #6b7280; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px;">Sales</p>
+            <a href="{{ route('admin.coupons.index') }}"
+                class="sidebar-link {{ request()->routeIs('admin.coupons.*') ? 'active' : '' }}">
+                <i class="fas fa-ticket-alt w-5"></i>
+                <span>Coupons</span>
+            </a>
         </div>
 
-        <a href="{{ route('admin.orders.index') }}"
-           class="nav-link {{ request()->routeIs('admin.orders.*') ? 'active' : '' }}"
-           style="display: flex; align-items: center; padding: 0.75rem 1.5rem; color: #d1d5db; text-decoration: none; gap: 12px;">
-            <i class="fas fa-shopping-cart" style="width: 20px; font-size: 1rem;"></i>
-            <span class="sidebar-text" style="font-size: 0.875rem;">Orders</span>
-        </a>
+        <!-- Settings Section -->
+        <div class="mb-6">
+            <p class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Settings</p>
 
-        <a href="{{ route('admin.coupons.index') }}"
-           class="nav-link {{ request()->routeIs('admin.coupons.*') ? 'active' : '' }}"
-           style="display: flex; align-items: center; padding: 0.75rem 1.5rem; color: #d1d5db; text-decoration: none; gap: 12px;">
-            <i class="fas fa-ticket-alt" style="width: 20px; font-size: 1rem;"></i>
-            <span class="sidebar-text" style="font-size: 0.875rem;">Coupons</span>
-        </a>
+            <a href="{{ route('admin.profile.index') }}"
+                class="sidebar-link {{ request()->routeIs('admin.profile.*') ? 'active' : '' }}">
+                <i class="fas fa-user-circle w-5"></i>
+                <span>Profile</span>
+            </a>
 
-        <div style="padding: 0.75rem 1rem 0.5rem 1.5rem; margin-top: 0.5rem;">
-            <p class="menu-group-title" style="color: #6b7280; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px;">Settings</p>
+            <a href="{{ route('admin.settings.index') }}"
+                class="sidebar-link {{ request()->routeIs('admin.settings.*') ? 'active' : '' }}">
+                <i class="fas fa-cog w-5"></i>
+                <span>Settings</span>
+            </a>
         </div>
-
-        <a href="{{ route('admin.settings.index') }}"
-           class="nav-link {{ request()->routeIs('admin.settings.*') ? 'active' : '' }}"
-           style="display: flex; align-items: center; padding: 0.75rem 1.5rem; color: #d1d5db; text-decoration: none; gap: 12px;">
-            <i class="fas fa-cog" style="width: 20px; font-size: 1rem;"></i>
-            <span class="sidebar-text" style="font-size: 0.875rem;">Settings</span>
-        </a>
     </nav>
 
-    <!-- Footer Section with Logout -->
-    <div style="border-top: 1px solid #3f3f46; padding: 1rem;">
+    <!-- Logout Button -->
+    <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-700 bg-gray-800">
         <form method="POST" action="{{ route('admin.logout') }}">
             @csrf
-            <button type="submit" class="nav-link" style="display: flex; align-items: center; padding: 0.75rem 1.5rem; color: #d1d5db; background: none; border: none; width: 100%; text-align: left; cursor: pointer; gap: 12px;">
-                <i class="fas fa-sign-out-alt" style="width: 20px; font-size: 1rem;"></i>
-                <span class="sidebar-text" style="font-size: 0.875rem;">Logout</span>
+            <button type="submit" class="sidebar-link w-full text-left">
+                <i class="fas fa-sign-out-alt w-5"></i>
+                <span>Logout</span>
             </button>
         </form>
     </div>
 </aside>
 
 <style>
-    .custom-scrollbar::-webkit-scrollbar {
-        width: 4px;
+    .sidebar-link {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.625rem 0.875rem;
+        margin-bottom: 0.25rem;
+        border-radius: 0.5rem;
+        color: #cbd5e1;
+        font-size: 0.875rem;
+        font-weight: 500;
+        transition: all 0.2s ease;
     }
 
-    .custom-scrollbar::-webkit-scrollbar-track {
-        background: #3f3f46;
-        border-radius: 10px;
+    .sidebar-link:hover {
+        background: rgba(215, 178, 89, 0.1);
+        color: #D7B259;
     }
 
-    .custom-scrollbar::-webkit-scrollbar-thumb {
-        background: #D7B259;
-        border-radius: 10px;
+    .sidebar-link.active {
+        background: rgba(215, 178, 89, 0.15);
+        color: #D7B259;
     }
 
-    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-        background: #c4a145;
-    }
-
-    .nav-link.active {
-        background-color: rgba(215, 178, 89, 0.15);
-        color: #D7B259 !important;
-    }
-
-    .admin-sidebar.collapsed .sidebar-header {
-        justify-content: center;
-        padding: 1rem !important;
-    }
-
-    .admin-sidebar.collapsed .nav-link {
-        justify-content: center;
-        padding: 0.75rem !important;
-    }
-
-    .admin-sidebar.collapsed .nav-link i {
-        margin-right: 0;
+    .sidebar-link i {
+        width: 1.25rem;
+        font-size: 1rem;
     }
 </style>
 
 <script>
-    // Sidebar toggle functionality
     document.addEventListener('DOMContentLoaded', function() {
-        const sidebar = document.getElementById('adminSidebar');
-        const mainContent = document.getElementById('adminMain');
-        const sidebarToggle = document.getElementById('sidebarToggle');
-        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        const closeBtn = document.getElementById('closeSidebar');
+        const menuToggle = document.getElementById('menuToggle');
 
-        function toggleSidebar() {
-            if (window.innerWidth <= 768) {
-                sidebar.classList.toggle('mobile-open');
-                if (sidebarOverlay) sidebarOverlay.classList.toggle('active');
-                document.body.style.overflow = sidebar.classList.contains('mobile-open') ? 'hidden' : '';
-            } else {
-                sidebar.classList.toggle('collapsed');
-                if (mainContent) mainContent.classList.toggle('expanded');
-                localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
-            }
-        }
-
-        if (sidebarToggle) {
-            sidebarToggle.addEventListener('click', toggleSidebar);
-        }
-
-        if (sidebarOverlay) {
-            sidebarOverlay.addEventListener('click', function() {
-                sidebar.classList.remove('mobile-open');
-                sidebarOverlay.classList.remove('active');
-                document.body.style.overflow = '';
+        if (menuToggle) {
+            menuToggle.addEventListener('click', function() {
+                sidebar.classList.remove('-translate-x-full');
+                if (overlay) overlay.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
             });
         }
 
-        // Load saved state on desktop
-        if (window.innerWidth > 768) {
-            const savedState = localStorage.getItem('sidebarCollapsed');
-            if (savedState === 'true') {
-                sidebar.classList.add('collapsed');
-                if (mainContent) mainContent.classList.add('expanded');
-            }
-        }
+        const closeSidebar = () => {
+            sidebar.classList.add('-translate-x-full');
+            if (overlay) overlay.classList.add('hidden');
+            document.body.style.overflow = '';
+        };
 
-        // Handle window resize
-        let resizeTimer;
-        window.addEventListener('resize', function() {
-            clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(function() {
-                if (window.innerWidth > 768) {
-                    sidebar.classList.remove('mobile-open');
-                    if (sidebarOverlay) sidebarOverlay.classList.remove('active');
-                    document.body.style.overflow = '';
-                    const savedState = localStorage.getItem('sidebarCollapsed');
-                    if (savedState === 'true' && !sidebar.classList.contains('collapsed')) {
-                        sidebar.classList.add('collapsed');
-                        if (mainContent) mainContent.classList.add('expanded');
-                    }
-                } else {
-                    sidebar.classList.remove('collapsed');
-                    if (mainContent) mainContent.classList.remove('expanded');
-                }
-            }, 250);
+        if (closeBtn) closeBtn.addEventListener('click', closeSidebar);
+        if (overlay) overlay.addEventListener('click', closeSidebar);
+
+        // Close on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && !sidebar.classList.contains('-translate-x-full')) {
+                closeSidebar();
+            }
         });
     });
 </script>

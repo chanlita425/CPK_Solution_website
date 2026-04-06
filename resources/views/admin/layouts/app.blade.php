@@ -1,291 +1,241 @@
 {{-- resources/views/admin/layouts/app.blade.php --}}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Admin Panel') - CPK</title>
+    <title>@yield('title', 'Admin Dashboard') - CPK Solution</title>
 
-    <!-- Tailwind CSS CDN -->
+    <script>
+        // Set default timezone for Flatpickr
+        window.flatpickr = {
+            l10n: {
+                firstDayOfWeek: 1
+            }
+        };
+    </script>
+
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Font Awesome -->
+    <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-    <!-- Custom Styles -->
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap"
+        rel="stylesheet">
+
+    <!-- Alpine.js for interactive components -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <!-- Flatpickr CSS & JS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+    <!-- Flatpickr Mobile Theme (Optional but looks better on mobile) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_blue.css">
+
     <style>
-        /* User Dropdown */
-        .user-dropdown {
-            position: relative;
+        * {
+            font-family: 'Inter', sans-serif;
         }
 
-        .user-dropdown-menu {
-            position: absolute;
-            top: 100%;
-            right: 0;
-            margin-top: 8px;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
-            min-width: 200px;
-            display: none;
-            z-index: 50;
-            overflow: hidden;
+
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
         }
 
-        .user-dropdown-menu.show {
-            display: block;
-            animation: dropdownFade 0.2s ease;
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
         }
 
-        @keyframes dropdownFade {
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Transitions */
+        .sidebar-transition {
+            transition: transform 0.3s ease-in-out, width 0.3s ease-in-out;
+        }
+
+        /* Toast Animations */
+        @keyframes slideInRight {
             from {
+                transform: translateX(100%);
                 opacity: 0;
-                transform: translateY(-10px);
             }
 
             to {
+                transform: translateX(0);
                 opacity: 1;
-                transform: translateY(0);
             }
         }
 
-        .dropdown-item {
-            display: block;
-            padding: 10px 16px;
-            color: #374151;
-            text-decoration: none;
-            transition: all 0.2s;
-            width: 100%;
-            text-align: left;
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 0.875rem;
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
         }
 
-        .dropdown-item:hover {
-            background: #f9fafb;
-            color: #D7B259;
+        .toast-slide-in {
+            animation: slideInRight 0.3s ease forwards;
         }
 
-        .dropdown-divider {
-            height: 1px;
-            background: #e5e7eb;
-            margin: 4px 0;
+        .toast-slide-out {
+            animation: slideOutRight 0.3s ease forwards;
         }
 
-        /* Custom Sidebar Styles */
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 280px;
-            height: 100vh;
-            background: linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%);
-            transition: all 0.3s ease;
-            z-index: 1000;
-            overflow-y: auto;
-        }
-
-        .sidebar.collapsed {
-            width: 80px;
-        }
-
-        .sidebar.collapsed .sidebar-text,
-        .sidebar.collapsed .menu-title {
-            display: none;
-        }
-
-        .sidebar.collapsed .nav-link {
-            justify-content: center;
-            padding: 12px;
-        }
-
-        .sidebar.collapsed .nav-link i {
-            margin: 0;
-            font-size: 1.25rem;
-        }
-
-        .sidebar.collapsed .logo-text {
-            display: none;
-        }
-
-        .sidebar.collapsed .logo-icon {
-            margin: 0 auto;
-        }
-
-        .main-content {
-            margin-left: 280px;
-            transition: all 0.3s ease;
-            min-height: 100vh;
-            background: #f5f7fb;
-        }
-
-        .main-content.expanded {
-            margin-left: 80px;
-        }
-
-        .nav-link {
-            display: flex;
-            align-items: center;
-            padding: 12px 20px;
-            color: #a0aec0;
-            text-decoration: none;
-            transition: all 0.2s ease;
-            border-left: 3px solid transparent;
-        }
-
-        .nav-link:hover {
-            background: rgba(215, 178, 89, 0.1);
-            color: #D7B259;
-        }
-
-        .nav-link.active {
-            background: rgba(215, 178, 89, 0.15);
-            color: #D7B259;
-            border-left-color: #D7B259;
-        }
-
-        .nav-link i {
-            width: 24px;
-            margin-right: 12px;
-            font-size: 1.1rem;
-        }
-
-        /* Sidebar Toggle Button */
-        .sidebar-toggle {
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .sidebar-toggle:hover {
-            color: #D7B259;
-        }
-
-        /* User Dropdown */
-        .user-dropdown {
-            position: relative;
-        }
-
-        .user-dropdown-menu {
-            position: absolute;
-            top: 100%;
-            right: 0;
-            margin-top: 8px;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-            min-width: 200px;
-            display: none;
-            z-index: 50;
-        }
-
-        .user-dropdown-menu.show {
-            display: block;
-            animation: fadeIn 0.2s ease;
-        }
-
+        /* Modal Animation */
         @keyframes fadeIn {
             from {
                 opacity: 0;
-                transform: translateY(-10px);
             }
 
             to {
                 opacity: 1;
-                transform: translateY(0);
             }
         }
 
-        /* Scrollbar */
-        .sidebar::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        .sidebar::-webkit-scrollbar-track {
-            background: #2d2d2d;
-        }
-
-        .sidebar::-webkit-scrollbar-thumb {
-            background: #D7B259;
-            border-radius: 4px;
-        }
-
-        /* Mobile Responsive */
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
+        @keyframes scaleIn {
+            from {
+                transform: scale(0.95);
+                opacity: 0;
             }
 
-            .sidebar.mobile-open {
-                transform: translateX(0);
-            }
-
-            .main-content {
-                margin-left: 0;
-            }
-
-            .sidebar-overlay {
-                position: fixed;
-                inset: 0;
-                background: rgba(0, 0, 0, 0.5);
-                z-index: 999;
-                display: none;
-            }
-
-            .sidebar-overlay.active {
-                display: block;
+            to {
+                transform: scale(1);
+                opacity: 1;
             }
         }
 
-        /* Card Styles */
-        .stat-card {
-            background: white;
-            border-radius: 16px;
-            padding: 20px;
-            transition: all 0.3s ease;
-            border: 1px solid #e2e8f0;
+        .modal-fade-in {
+            animation: fadeIn 0.2s ease forwards;
         }
 
-        .stat-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        .modal-scale-in {
+            animation: scaleIn 0.2s ease forwards;
         }
 
         /* Table Styles */
-        .admin-table {
-            background: white;
-            border-radius: 16px;
-            overflow: hidden;
-            border: 1px solid #e2e8f0;
+        .data-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
         }
 
-        .admin-table th {
+        .data-table thead th {
             background: #f8fafc;
-            padding: 16px 20px;
-            font-weight: 600;
+            padding: 1rem 1.5rem;
             font-size: 0.75rem;
+            font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.05em;
             color: #64748b;
-        }
-
-        .admin-table td {
-            padding: 16px 20px;
             border-bottom: 1px solid #e2e8f0;
         }
 
-        /* Button Styles */
+        .data-table tbody td {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 0.875rem;
+            color: #334155;
+        }
+
+        .data-table tbody tr:hover {
+            background: #fafbff;
+        }
+
+        /* Form Styles */
+        .form-input {
+            width: 100%;
+            padding: 0.625rem 0.875rem;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 0.5rem;
+            transition: all 0.2s ease;
+            outline: none;
+        }
+
+        .form-input:focus {
+            border-color: #D7B259;
+            box-shadow: 0 0 0 3px rgba(215, 178, 89, 0.1);
+        }
+
+        .form-input.error {
+            border-color: #ef4444;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #334155;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Status Badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .badge-pending {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .badge-confirmed {
+            background: #d1fae5;
+            color: #059669;
+        }
+
+        .badge-cancelled {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .badge-active {
+            background: #d1fae5;
+            color: #059669;
+        }
+
+        .badge-inactive {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        /* Buttons */
         .btn-primary {
             background: #D7B259;
-            color: #1a1a1a;
-            padding: 10px 20px;
-            border-radius: 10px;
-            font-weight: 600;
+            color: #1e293b;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
             transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .btn-primary:hover {
@@ -293,274 +243,173 @@
             transform: translateY(-1px);
         }
 
-        /* Status Badge */
-        .badge-active {
-            background: #dcfce7;
-            color: #166534;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        .badge-inactive {
-            background: #fee2e2;
-            color: #991b1b;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        /* Pagination */
-        .pagination {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            margin-top: 24px;
-        }
-
-        .pagination .page-item {
-            display: inline-block;
-        }
-
-        .pagination .page-link {
-            padding: 8px 14px;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            color: #64748b;
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #475569;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
             transition: all 0.2s ease;
         }
 
-        .pagination .page-link:hover {
-            background: #D7B259;
-            color: white;
-            border-color: #D7B259;
+        .btn-secondary:hover {
+            background: #e2e8f0;
         }
 
-        .pagination .active .page-link {
-            background: #D7B259;
+        .btn-danger {
+            background: #ef4444;
             color: white;
-            border-color: #D7B259;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        /* Card Styles */
+        .stat-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: all 0.2s ease;
+            border: 1px solid #e2e8f0;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
         }
     </style>
 
     @stack('styles')
 </head>
 
-<body>
+<body class="bg-gray-50 antialiased">
 
-    <!-- Sidebar Overlay for Mobile -->
-    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <!-- Sidebar Overlay (Mobile) -->
+    <div id="sidebarOverlay" class="fixed inset-0 bg-black/50 z-30 hidden lg:hidden transition-opacity duration-300">
+    </div>
 
     <!-- Sidebar -->
-    <aside class="sidebar" id="sidebar">
-        <!-- Logo Section -->
-        <div class="p-5 border-b border-gray-700">
-            <div class="flex items-center gap-3">
-                <div class="logo-icon w-10 h-10 bg-yellow-500 rounded-xl flex items-center justify-center">
-                    <i class="fas fa-store text-gray-900 text-xl"></i>
-                </div>
-                <h1 class="logo-text text-xl font-bold text-yellow-500">CPK Admin</h1>
-            </div>
-        </div>
+    @include('admin.components.sidebar')
 
-        <!-- User Info -->
-        <div class="p-5 border-b border-gray-700">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center">
-                    <i class="fas fa-user text-yellow-500"></i>
-                </div>
-                <div class="sidebar-text">
-                    <p class="text-white font-medium">{{ Auth::user()->name ?? 'Admin' }}</p>
-                    <p class="text-gray-400 text-xs">Administrator</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Navigation -->
-        <nav class="py-4">
-            <div class="px-4 mb-2">
-                <p class="menu-title text-gray-500 text-xs uppercase tracking-wider px-4 mb-2">Main</p>
-
-                <a href="{{ route('admin.dashboard') }}"
-                    class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
-                    <i class="fas fa-chart-line"></i>
-                    <span class="sidebar-text">Dashboard</span>
-                </a>
-            </div>
-
-            <div class="px-4 mb-2">
-                <p class="menu-title text-gray-500 text-xs uppercase tracking-wider px-4 mb-2">Catalog</p>
-
-                <a href="{{ route('admin.categories.index') }}"
-                    class="nav-link {{ request()->routeIs('admin.categories.*') ? 'active' : '' }}">
-                    <i class="fas fa-folder"></i>
-                    <span class="sidebar-text">Categories</span>
-                </a>
-
-                <a href="{{ route('admin.brands.index') }}"
-                    class="nav-link {{ request()->routeIs('admin.brands.*') ? 'active' : '' }}">
-                    <i class="fas fa-trademark"></i>
-                    <span class="sidebar-text">Brands</span>
-                </a>
-
-                <a href="{{ route('admin.products.index') }}"
-                    class="nav-link {{ request()->routeIs('admin.products.*') ? 'active' : '' }}">
-                    <i class="fas fa-box"></i>
-                    <span class="sidebar-text">Products</span>
-                </a>
-            </div>
-
-            <div class="px-4 mb-2">
-                <p class="menu-title text-gray-500 text-xs uppercase tracking-wider px-4 mb-2">Sales</p>
-
-                <a href="{{ route('admin.orders.index') }}"
-                    class="nav-link {{ request()->routeIs('admin.orders.*') ? 'active' : '' }}">
-                    <i class="fas fa-shopping-cart"></i>
-                    <span class="sidebar-text">Orders</span>
-                </a>
-
-                <a href="{{ route('admin.coupons.index') }}"
-                    class="nav-link {{ request()->routeIs('admin.coupons.*') ? 'active' : '' }}">
-                    <i class="fas fa-ticket-alt"></i>
-                    <span class="sidebar-text">Coupons</span>
-                </a>
-            </div>
-
-            <div class="px-4 mb-2">
-                <p class="menu-title text-gray-500 text-xs uppercase tracking-wider px-4 mb-2">Settings</p>
-
-                <a href="{{ route('admin.settings.index') }}"
-                    class="nav-link {{ request()->routeIs('admin.settings.*') ? 'active' : '' }}">
-                    <i class="fas fa-cog"></i>
-                    <span class="sidebar-text">Settings</span>
-                </a>
-            </div>
-        </nav>
-
-        <!-- Logout -->
-        <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-700">
-            <form method="POST" action="{{ route('admin.logout') }}">
-                @csrf
-                <button type="submit" class="nav-link w-full text-left">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span class="sidebar-text">Logout</span>
-                </button>
-            </form>
-        </div>
-    </aside>
-
-    <!-- Main Content -->
-    <main class="main-content" id="mainContent">
+    <!-- Main Content Wrapper -->
+    <div id="mainContent" class="lg:ml-64 min-h-screen transition-all duration-300">
         <!-- Header -->
-        <header class="bg-white shadow-sm sticky top-0 z-50">
-            <div class="px-6 py-4 flex justify-between items-center">
-                <div class="flex items-center gap-4">
-                    <i class="fas fa-bars text-gray-600 text-xl sidebar-toggle cursor-pointer" id="sidebarToggle"></i>
-                    <h2 class="text-xl font-semibold text-gray-800">@yield('header', 'Dashboard')</h2>
-                </div>
-
-                <div class="user-dropdown">
-                    <div class="flex items-center gap-3 cursor-pointer" id="userDropdownBtn">
-                        <div class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
-                            <i class="fas fa-user text-gray-600"></i>
-                        </div>
-                        <span class="text-gray-700 hidden sm:inline">{{ Auth::user()->name ?? 'Admin' }}</span>
-                        <i class="fas fa-chevron-down text-gray-400 text-xs"></i>
-                    </div>
-                    <div class="user-dropdown-menu" id="userDropdownMenu">
-                        <a href="{{ route('admin.profile.index') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-50">
-                            <i class="fas fa-user mr-2"></i> Profile
-                        </a>
-                        <div class="border-t my-1"></div>
-                        <form method="POST" action="{{ route('admin.logout') }}">
-                            @csrf
-                            <button type="submit" class="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-50">
-                                <i class="fas fa-sign-out-alt mr-2"></i> Logout
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </header>
+        @include('admin.components.header')
 
         <!-- Page Content -->
-        <div class="p-6">
+        <main class="p-4 md:p-6">
             @yield('content')
-        </div>
-    </main>
+        </main>
 
+        <!-- Footer -->
+        @include('admin.components.footer')
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="fixed top-20 right-4 z-50 space-y-3"></div>
+
+    <!-- Modal Container -->
+    <div id="modalContainer"></div>
+
+    <!-- Toast JavaScript -->
     <script>
-        // Sidebar Toggle
-        const sidebar = document.getElementById('sidebar');
-        const mainContent = document.getElementById('mainContent');
-        const sidebarToggle = document.getElementById('sidebarToggle');
-        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
 
-        function toggleSidebar() {
-            if (window.innerWidth <= 768) {
-                sidebar.classList.toggle('mobile-open');
-                sidebarOverlay.classList.toggle('active');
-            } else {
-                sidebar.classList.toggle('collapsed');
-                mainContent.classList.toggle('expanded');
-                localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
-            }
-        }
+            const icons = {
+                success: 'fa-check-circle',
+                error: 'fa-exclamation-circle',
+                warning: 'fa-exclamation-triangle'
+            };
 
-        sidebarToggle.addEventListener('click', toggleSidebar);
+            const colors = {
+                success: 'bg-emerald-50 border-emerald-200 text-emerald-800',
+                error: 'bg-red-50 border-red-200 text-red-800',
+                warning: 'bg-amber-50 border-amber-200 text-amber-800'
+            };
 
-        if (sidebarOverlay) {
-            sidebarOverlay.addEventListener('click', () => {
-                sidebar.classList.remove('mobile-open');
-                sidebarOverlay.classList.remove('active');
-            });
-        }
+            toast.className =
+                `toast-slide-in ${colors[type]} border rounded-lg shadow-lg p-4 min-w-[280px] max-w-md flex items-start gap-3`;
+            toast.innerHTML = `
+                <i class="fas ${icons[type]} text-lg mt-0.5"></i>
+                <div class="flex-1 text-sm font-medium">${message}</div>
+                <button onclick="this.closest('.toast-slide-in').classList.add('toast-slide-out'); setTimeout(() => this.closest('.toast-slide-in')?.remove(), 300)" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
 
-        // Load saved state
-        if (window.innerWidth > 768) {
-            const saved = localStorage.getItem('sidebarCollapsed');
-            if (saved === 'true') {
-                sidebar.classList.add('collapsed');
-                mainContent.classList.add('expanded');
-            }
-        }
+            container.appendChild(toast);
 
-        // User Dropdown
-        const userBtn = document.getElementById('userDropdownBtn');
-        const userMenu = document.getElementById('userDropdownMenu');
-
-        if (userBtn && userMenu) {
-            userBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                userMenu.classList.toggle('show');
-            });
-
-            document.addEventListener('click', () => {
-                userMenu.classList.remove('show');
-            });
-        }
-
-        // Handle window resize
-        let resizeTimer;
-        window.addEventListener('resize', () => {
-            clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(() => {
-                if (window.innerWidth > 768) {
-                    sidebar.classList.remove('mobile-open');
-                    if (sidebarOverlay) sidebarOverlay.classList.remove('active');
-                    const saved = localStorage.getItem('sidebarCollapsed');
-                    if (saved === 'true' && !sidebar.classList.contains('collapsed')) {
-                        sidebar.classList.add('collapsed');
-                        mainContent.classList.add('expanded');
-                    }
-                } else {
-                    sidebar.classList.remove('collapsed');
-                    mainContent.classList.remove('expanded');
+            setTimeout(() => {
+                if (toast && toast.parentNode) {
+                    toast.classList.add('toast-slide-out');
+                    setTimeout(() => toast.remove(), 300);
                 }
-            }, 250);
-        });
+            }, 5000);
+        }
+
+        // Delete Confirmation Modal
+        function confirmDelete(url, itemName = 'this item') {
+            const modalContainer = document.getElementById('modalContainer');
+
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 z-50 flex items-center justify-center p-4 modal-fade-in';
+            modal.style.background = 'rgba(0, 0, 0, 0.5)';
+            modal.innerHTML = `
+                <div class="bg-white rounded-2xl max-w-md w-full modal-scale-in overflow-hidden">
+                    <div class="p-6">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-trash-alt text-red-600"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-900">Delete Confirmation</h3>
+                        </div>
+                        <p class="text-gray-600 mb-2">Are you sure you want to delete <strong>${itemName}</strong>?</p>
+                        <p class="text-sm text-gray-500 mb-6">This action cannot be undone.</p>
+                        <div class="flex gap-3 justify-end">
+                            <button onclick="this.closest('.fixed').remove()" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition">
+                                Cancel
+                            </button>
+                            <button onclick="performDelete('${url}')" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition">
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            modalContainer.appendChild(modal);
+        }
+
+        function performDelete(url) {
+            fetch(url, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showToast(data.message || 'Deleted successfully!', 'success');
+                        setTimeout(() => location.reload(), 1500);
+                    } else {
+                        showToast(data.message || 'Failed to delete', 'error');
+                    }
+                    document.querySelector('#modalContainer .fixed')?.remove();
+                })
+                .catch(() => {
+                    showToast('An error occurred', 'error');
+                    document.querySelector('#modalContainer .fixed')?.remove();
+                });
+        }
     </script>
 
     @stack('scripts')
