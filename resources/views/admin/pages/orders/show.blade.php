@@ -14,22 +14,14 @@
 
             @if ($order->status == 'pending')
                 <div class="flex gap-3">
-                    <form action="{{ route('admin.orders.confirm', $order->id) }}" method="POST" class="inline">
-                        @csrf
-                        <button type="submit"
-                            class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg transition flex items-center gap-2"
-                            onclick="return confirm('Confirm this order? Stock will be reduced.')">
-                            <i class="fas fa-check-circle"></i> Confirm Order
-                        </button>
-                    </form>
-                    <form action="{{ route('admin.orders.cancel', $order->id) }}" method="POST" class="inline">
-                        @csrf
-                        <button type="submit"
-                            class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition flex items-center gap-2"
-                            onclick="return confirm('Cancel this order?')">
-                            <i class="fas fa-times-circle"></i> Cancel Order
-                        </button>
-                    </form>
+                    <button type="button" onclick="showConfirmOrderModal()"
+                        class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg transition flex items-center gap-2">
+                        <i class="fas fa-check-circle"></i> Confirm Order
+                    </button>
+                    <button type="button" onclick="showCancelOrderModal()"
+                        class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition flex items-center gap-2">
+                        <i class="fas fa-times-circle"></i> Cancel Order
+                    </button>
                 </div>
             @endif
         </div>
@@ -153,4 +145,147 @@
             </div>
         </div>
     </div>
+
+    <!-- Confirm Order Modal -->
+    <div id="confirmOrderModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4"
+        style="background: rgba(0, 0, 0, 0.5);">
+        <div class="bg-white rounded-2xl max-w-md w-full modal-scale-in overflow-hidden">
+            <div class="p-6">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-check-circle text-emerald-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900">Confirm Order</h3>
+                        <p class="text-sm text-gray-500">Are you sure you want to confirm this order?</p>
+                    </div>
+                </div>
+                <div class="mb-6">
+                    <div class="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">
+                        <p class="text-sm text-amber-800">
+                            <i class="fas fa-exclamation-triangle mr-2"></i>
+                            <strong>Stock will be reduced</strong> for all items in this order.
+                        </p>
+                    </div>
+                    <div class="space-y-2">
+                        <p class="text-sm text-gray-600">Order: <span
+                                class="font-mono font-medium">{{ $order->order_code }}</span></p>
+                        <p class="text-sm text-gray-600">Total amount: <span
+                                class="font-semibold text-emerald-600">${{ number_format($order->total, 2) }}</span></p>
+                        <p class="text-sm text-gray-600">Items: <span class="font-medium">{{ $order->items->count() }}
+                                product(s)</span></p>
+                    </div>
+                </div>
+                <div class="flex gap-3 justify-end">
+                    <button onclick="closeConfirmOrderModal()"
+                        class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition font-medium">
+                        Cancel
+                    </button>
+                    <form id="confirmOrderForm" action="{{ route('admin.orders.confirm', $order->id) }}" method="POST"
+                        class="inline">
+                        @csrf
+                        <button type="submit"
+                            class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition font-medium">
+                            <i class="fas fa-check-circle mr-1"></i> Yes, Confirm Order
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cancel Order Modal -->
+    <div id="cancelOrderModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4"
+        style="background: rgba(0, 0, 0, 0.5);">
+        <div class="bg-white rounded-2xl max-w-md w-full modal-scale-in overflow-hidden">
+            <div class="p-6">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-times-circle text-red-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900">Cancel Order</h3>
+                        <p class="text-sm text-gray-500">Are you sure you want to cancel this order?</p>
+                    </div>
+                </div>
+                <div class="mb-6">
+                    <div class="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
+                        <p class="text-sm text-red-800">
+                            <i class="fas fa-exclamation-triangle mr-2"></i>
+                            <strong>This action cannot be undone.</strong>
+                        </p>
+                    </div>
+                    <div class="space-y-2">
+                        <p class="text-sm text-gray-600">Order: <span
+                                class="font-mono font-medium">{{ $order->order_code }}</span></p>
+                        <p class="text-sm text-gray-600">Total amount: <span
+                                class="font-semibold text-red-600">${{ number_format($order->total, 2) }}</span></p>
+                        <p class="text-sm text-gray-600">Status will be changed to: <span
+                                class="font-medium text-red-600">Cancelled</span></p>
+                    </div>
+                </div>
+                <div class="flex gap-3 justify-end">
+                    <button onclick="closeCancelOrderModal()"
+                        class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition font-medium">
+                        Go Back
+                    </button>
+                    <form id="cancelOrderForm" action="{{ route('admin.orders.cancel', $order->id) }}" method="POST"
+                        class="inline">
+                        @csrf
+                        <button type="submit"
+                            class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition font-medium">
+                            <i class="fas fa-times-circle mr-1"></i> Yes, Cancel Order
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showConfirmOrderModal() {
+            document.getElementById('confirmOrderModal').classList.remove('hidden');
+            document.getElementById('confirmOrderModal').classList.add('flex');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeConfirmOrderModal() {
+            document.getElementById('confirmOrderModal').classList.add('hidden');
+            document.getElementById('confirmOrderModal').classList.remove('flex');
+            document.body.style.overflow = '';
+        }
+
+        function showCancelOrderModal() {
+            document.getElementById('cancelOrderModal').classList.remove('hidden');
+            document.getElementById('cancelOrderModal').classList.add('flex');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeCancelOrderModal() {
+            document.getElementById('cancelOrderModal').classList.add('hidden');
+            document.getElementById('cancelOrderModal').classList.remove('flex');
+            document.body.style.overflow = '';
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('confirmOrderModal')?.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeConfirmOrderModal();
+            }
+        });
+
+        document.getElementById('cancelOrderModal')?.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeCancelOrderModal();
+            }
+        });
+
+        // Close modal on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeConfirmOrderModal();
+                closeCancelOrderModal();
+            }
+        });
+    </script>
 @endsection

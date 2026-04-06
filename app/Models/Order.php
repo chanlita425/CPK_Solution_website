@@ -57,13 +57,25 @@ class Order extends Model
     {
         $prefix = 'ORD';
         $date = date('Ymd');
-        $lastOrder = self::whereDate('created_at', today())->latest()->first();
+
+        // Get the last order for today
+        $lastOrder = self::whereDate('created_at', today())
+            ->orderBy('order_code', 'desc')
+            ->first();
 
         if ($lastOrder) {
+            // Extract the numeric part
             $lastNumber = intval(substr($lastOrder->order_code, -4));
             $newNumber = str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
         } else {
             $newNumber = '0001';
+        }
+
+        // Add microseconds to ensure uniqueness in seeder
+        $uniqueSuffix = '';
+        if (app()->runningInConsole()) {
+            $uniqueSuffix = substr(microtime(), 2, 2);
+            $newNumber = str_pad(intval($newNumber) + intval($uniqueSuffix), 4, '0', STR_PAD_LEFT);
         }
 
         return $prefix . $date . $newNumber;

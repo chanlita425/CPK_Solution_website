@@ -39,14 +39,24 @@ class OrderController extends Controller
         $order = Order::findOrFail($id);
 
         if ($order->status !== 'pending') {
+            if (request()->ajax()) {
+                return response()->json(['success' => false, 'message' => 'Order cannot be confirmed.'], 400);
+            }
             return redirect()->back()->with('error', 'Order cannot be confirmed.');
         }
 
         try {
             $order->confirm();
+
+            if (request()->ajax()) {
+                return response()->json(['success' => true, 'message' => 'Order confirmed successfully! Stock has been updated.']);
+            }
             return redirect()->route('admin.orders.show', $order->id)
                 ->with('toast', ['message' => 'Order confirmed successfully! Stock has been updated.', 'type' => 'success']);
         } catch (\Exception $e) {
+            if (request()->ajax()) {
+                return response()->json(['success' => false, 'message' => 'Failed to confirm order: ' . $e->getMessage()], 500);
+            }
             return redirect()->back()->with('error', 'Failed to confirm order: ' . $e->getMessage());
         }
     }
@@ -56,11 +66,17 @@ class OrderController extends Controller
         $order = Order::findOrFail($id);
 
         if ($order->status !== 'pending') {
+            if (request()->ajax()) {
+                return response()->json(['success' => false, 'message' => 'Order cannot be cancelled.'], 400);
+            }
             return redirect()->back()->with('error', 'Order cannot be cancelled.');
         }
 
         $order->cancel();
 
+        if (request()->ajax()) {
+            return response()->json(['success' => true, 'message' => 'Order cancelled successfully!']);
+        }
         return redirect()->route('admin.orders.show', $order->id)
             ->with('toast', ['message' => 'Order cancelled successfully!', 'type' => 'success']);
     }
