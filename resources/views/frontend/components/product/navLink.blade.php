@@ -1,5 +1,5 @@
     
-    <nav class="px-[5rem] sm:px-[8rem] lg:px-[6rem] mt-8 text-sm sm:text-sm text-gray-500 flex flex-wrap items-center gap-1" x-data="{ open: false }">
+    <nav class="px-[5rem] sm:px-[8rem] lg:px-[7rem] mt-[5rem] text-sm sm:text-sm text-gray-500 flex flex-wrap items-center gap-1" x-data="{ open: false }">
         
         @foreach($product['breadcrumbs'] as $crumb)
             <a href="{{ url($crumb['url']) }}" class="hover:text-yellow-600 transition-colors">{{ $crumb['label'] }}</a>

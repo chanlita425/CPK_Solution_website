@@ -10,14 +10,17 @@
             </div>
         @endif
     </a>
+
     <a href="{{ url('/product/'.$product['slug']) }}"
         class="text-center text-xs font-bold text-gray-700 hover:text-yellow-600 transition-colors leading-snug uppercase tracking-wide">
         {{ $product['name'] }}<br>
         <span class="font-normal text-gray-500 normal-case">{{ $product['model'] }}</span>
     </a>
+
     <span class="px-4 py-1 rounded-full bg-gray-800 text-white text-xs font-bold">
         ${{ number_format($product['price'], 2) }}
     </span>
+    
     <button onclick="addToCart({{ $product['id'] }})"
             class="w-full py-2.5 rounded-full text-sm font-semibold hover:brightness-95 transition-all"
             style="background:#C9A84C; color:#fff;">Add to Cart

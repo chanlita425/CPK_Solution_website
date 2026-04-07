@@ -5,277 +5,141 @@
 @section('content')
 
 @php
-$cartItems = $cartItems ?? [
-    [
+
+    $allProducts = collect([
+        ['id'=>1,  'name'=>'Smart Lock Pro X1',     'model'=>'Wi-Fi + Fingerprint · SLP-X1', 'price'=>89.90,   'image'=>null,'slug'=>'smart-lock-pro-x1'],
+        ['id'=>2,  'name'=>'Yale Assure Lock 2',    'model'=>'Bluetooth · YAL-2022',          'price'=>124.99, 'image'=>null,'slug'=>'yale-assure-lock-2'],
+        ['id'=>3,  'name'=>'Schlage Encode Plus',   'model'=>'Apple HomeKey · SEP-100',       'price'=>149.00, 'image'=>null,'slug'=>'schlage-encode-plus'],
+        ['id'=>4,  'name'=>'August Wi-Fi Lock',     'model'=>'4th Gen · AUG-WF4',             'price'=>99.95,  'image'=>null,'slug'=>'august-wifi-lock'],
+        ['id'=>5,  'name'=>'Ultraloq U-Bolt Pro',   'model'=>'6-in-1 · UL3-PRO',             'price'=>109.99,  'image'=>null,'slug'=>'ultraloq-u-bolt-pro'],
+        ['id'=>6,  'name'=>'Kwikset Halo Touch',    'model'=>'Fingerprint · KWI-HT1',         'price'=>118.00, 'image'=>null,'slug'=>'kwikset-halo-touch'],
+        ['id'=>7,  'name'=>'Lockly Secure Pro',     'model'=>'PIN Genie · LKL-SP2',           'price'=>199.00, 'image'=>null,'slug'=>'lockly-secure-pro'],
+        ['id'=>8,  'name'=>'Level Lock+',           'model'=>'HomeKey · LVL-LKP',             'price'=>179.00, 'image'=>null,'slug'=>'level-lock-plus'],
+        ['id'=>9,  'name'=>'Eufy Security Lock',    'model'=>'Touch & Wi-Fi · EUF-T10',       'price'=>79.99,  'image'=>null,'slug'=>'eufy-security-lock'],
+        ['id'=>10, 'name'=>'Igloohome Deadbolt 2S', 'model'=>'Bluetooth · IGL-DB2S',          'price'=>139.00, 'image'=>null,'slug'=>'igloohome-deadbolt-2s'],
+        ['id'=>11, 'name'=>'Wyze Lock Bolt',        'model'=>'Fingerprint · WYZ-LB1',         'price'=>49.99,  'image'=>null,'slug'=>'wyze-lock-bolt'],
+        ['id'=>12, 'name'=>'Nuki Smart Lock Pro',   'model'=>'Matter · NUK-SL40',             'price'=>229.00, 'image'=>null,'slug'=>'nuki-smart-lock-pro'],
+        ['id'=>13, 'name'=>'Friday Lock Lite',      'model'=>'Bluetooth · FRI-LT1',           'price'=>69.00,  'image'=>null,'slug'=>'friday-lock-lite'],
+        ['id'=>14, 'name'=>'Teeho Fingerprint',     'model'=>'Keyless · TEE-F1',              'price'=>55.90,  'image'=>null,'slug'=>'teeho-fingerprint'],
+        ['id'=>15, 'name'=>'Sifely Keyless Entry',  'model'=>'Keypad · SIF-K22',              'price'=>44.99,  'image'=>null,'slug'=>'sifely-keyless-entry'],
+        ['id'=>16, 'name'=>'Master Lock Connect',   'model'=>'Bluetooth · MST-CON1',          'price'=>59.99,  'image'=>null,'slug'=>'master-lock-connect'],
+        ['id'=>17, 'name'=>'Bosma X1 Smart Lock',   'model'=>'Wi-Fi · BOS-X1',               'price'=>74.99,  'image'=>null,'slug'=>'bosma-x1-smart-lock'],
+        ['id'=>18, 'name'=>'Samsung SHP-DP728',     'model'=>'Push-Pull · SHD-728',           'price'=>299.00, 'image'=>null,'slug'=>'samsung-shp-dp728'],
+        ['id'=>19, 'name'=>'Igloohome Rim Lock',    'model'=>'Bluetooth · IGL-RM1',           'price'=>119.00, 'image'=>null,'slug'=>'igloohome-rim-lock'],
+        ['id'=>20, 'name'=>'Hornbill Smart Lock',   'model'=>'Keypad · HBL-KP3',             'price'=>62.99,  'image'=>null,'slug'=>'hornbill-smart-lock'],
+        ['id'=>21, 'name'=>'Turbolock TL-111',      'model'=>'Keypad · TBL-111',             'price'=>39.99,  'image'=>null,'slug'=>'turbolock-tl-111'],
+        ['id'=>22, 'name'=>'Danalock V3',           'model'=>'Bluetooth · DAN-V3',            'price'=>159.00, 'image'=>null,'slug'=>'danalock-v3'],
+        ['id'=>23, 'name'=>'Brinks Smart Deadbolt', 'model'=>'Smart Deadbolt · BRK-SD1',      'price'=>84.99,  'image'=>null,'slug'=>'brinks-smart-deadbolt'],
+        ['id'=>24, 'name'=>'Anviz W1 Pro',          'model'=>'Fingerprint · ANV-W1P',         'price'=>95.00,  'image'=>null,'slug'=>'anviz-w1-pro'],
+        ['id'=>25, 'name'=>'Aqara Smart Lock U100', 'model'=>'HomeKey · AQR-U100',            'price'=>189.99, 'image'=>null,'slug'=>'aqara-smart-lock-u100'],
+        ['id'=>26, 'name'=>'Welock PCB41',          'model'=>'Cylinder · WLK-PCB41',          'price'=>129.00, 'image'=>null,'slug'=>'welock-pcb41'],
+        ['id'=>27, 'name'=>'Philips EasyKey 9300',  'model'=>'Wi-Fi · PHI-9300',             'price'=>249.00, 'image'=>null,'slug'=>'philips-easykey-9300'],
+        ['id'=>28, 'name'=>'Igloohome Keybox 3',    'model'=>'Bluetooth · IGL-KB3',           'price'=>159.00, 'image'=>null,'slug'=>'igloohome-keybox-3'],
+        ['id'=>29, 'name'=>'Ttlock G2 Pro',         'model'=>'Fingerprint · TTL-G2P',         'price'=>68.99,  'image'=>null,'slug'=>'ttlock-g2-pro'],
+        ['id'=>30, 'name'=>'Ultraloq U-Bolt',       'model'=>'5-in-1 · UL3-STD',             'price'=>79.99,  'image'=>null,'slug'=>'ultraloq-u-bolt'],
+    ]);
+
+    $categoryName = $categoryName ?? 'Smart Lock';
+    $totalItems   = $allProducts->count();
+    $currentPage  = max(1, (int) request('page', 1));
+
+    $perXs = 2;   // xs:  1 col × 4 rows
+    $perSm = 2;  // sm/md: 2 col × 2 rows
+    $perLg = 4;  // lg+: 4 col × ~4 rows (+ 1 promo slot = effectively 14 product cards per page)
+
+    $totalPagesXs = (int) ceil($totalItems / $perXs);   // 6
+    $totalPagesSm = (int) ceil($totalItems / $perSm);   // 3
+    $totalPagesLg = (int) ceil($totalItems / $perLg);   // 2
+
+    $pageXs = max(1, min($currentPage, $totalPagesXs));
+    $pageSm = max(1, min($currentPage, $totalPagesSm));
+    $pageLg = max(1, min($currentPage, $totalPagesLg));
+
+    $productsXs = $allProducts->slice(($pageXs - 1) * $perXs, $perXs)->values();
+    $productsSm = $allProducts->slice(($pageSm - 1) * $perSm, $perSm)->values();
+    $productsLg = $allProducts->slice(($pageLg - 1) * $perLg, $perLg)->values();
+
+    $promoPosition = 4;
+
+    $lgCount     = $productsLg->count();
+    $lgTotalSlots = $lgCount + 1; // +1 for promo card
+    $lgRemainder  = $lgTotalSlots % 4;
+    $lgFillCount  = $lgRemainder === 0 ? 0 : (4 - $lgRemainder);
+
+    $pgUrl = fn(int $p) => request()->url() . '?page=' . $p . '#product-grid';
+
+    $cartItems = $cartItems ?? [
+        [
+            'id'    => 1,
+            'name'  => 'AKIRA AIR-FRYER 3.5L 1400W - AFR-261A',
+            'price' => 39.90,
+            'qty'   => 1,
+            'image' => null,
+            'slug'  => 'akira-air-fryer-afr-261a',
+        ],
+        [
+            'id'    => 2,
+            'name'  => 'AKIRA AIR-FRYER 3.5L 1400W - AFR-261A',
+            'price' => 39.90,
+            'qty'   => 1,
+            'image' => null,
+            'slug'  => 'akira-air-fryer-afr-261a',
+        ],
+        [
+            'id'    => 3,
+            'name'  => 'AKIRA AIR-FRYER 3.5L 1400W - AFR-261A',
+            'price' => 39.90,
+            'qty'   => 1,
+            'image' => null,
+            'slug'  => 'akira-air-fryer-afr-261a',
+        ],
+        [
+            'id'    => 4,
+            'name'  => 'AKIRA AIR-FRYER 3.5L 1400W - AFR-261A',
+            'price' => 39.90,
+            'qty'   => 1,
+            'image' => null,
+            'slug'  => 'akira-air-fryer-afr-261a',
+        ],
+    ];
+
+    $subtotal = $subtotal ?? 208.00;
+    $shipping = $shipping ?? 2.00;
+    $tax      = $tax      ?? 0.00;
+    $total    = $subtotal + $shipping + $tax;
+
+    $similarItems = $similarItems ?? collect(array_fill(0, 4, [
         'id'    => 1,
-        'name'  => 'AKIRA AIR-FRYER 3.5L 1400W - AFR-261A',
+        'name'  => 'AKIRA AIR-FRYER',
+        'model' => '3.5L 1400W - AFR-261A',
         'price' => 39.90,
-        'qty'   => 1,
         'image' => null,
         'slug'  => 'akira-air-fryer-afr-261a',
-    ],
-    [
-        'id'    => 2,
-        'name'  => 'AKIRA AIR-FRYER 3.5L 1400W - AFR-261A',
-        'price' => 39.90,
-        'qty'   => 1,
-        'image' => null,
-        'slug'  => 'akira-air-fryer-afr-261a',
-    ],
-];
+    ]));
 
-$subtotal = $subtotal ?? 208.00;
-$shipping = $shipping ?? 2.00;
-$tax      = $tax      ?? 0.00;
-$total    = $subtotal + $shipping + $tax;
-
-$similarItems = $similarItems ?? collect(array_fill(0, 4, [
-    'id'    => 1,
-    'name'  => 'AKIRA AIR-FRYER',
-    'model' => '3.5L 1400W - AFR-261A',
-    'price' => 39.90,
-    'image' => null,
-    'slug'  => 'akira-air-fryer-afr-261a',
-]));
-
-$currentPage = $currentPage ?? 1;
-$totalPages  = $totalPages  ?? 10;
-$nextPage    = $currentPage + 1;
+    $currentPage = $currentPage ?? 1;
+    $totalPages  = $totalPages  ?? 10;
+    $nextPage    = $currentPage + 1;
 @endphp
 
-{{-- ══════════════════════════════════════
-     CART + SUMMARY (two-column on lg)
-══════════════════════════════════════ --}}
-<section class="px-3 sm:px-6 lg:px-14 py-4 sm:py-6">
-    <div class="flex flex-col lg:flex-row gap-4 lg:gap-6 items-start">
-
-        {{-- ── LEFT: Cart items ── --}}
-        <div class="w-full lg:w-[55%] flex flex-col gap-3 sm:gap-4">
-            @foreach($cartItems as $item)
-            <div class="bg-white rounded-2xl sm:rounded-[20px] border border-gray-100 shadow-sm
-                        flex items-center gap-3 sm:gap-5 p-3 sm:p-4">
-
-                {{-- Product image --}}
-                <a href="{{ url('/product/' . $item['slug']) }}"
-                   class="shrink-0 w-20 h-20 sm:w-28 sm:h-28 lg:w-32 lg:h-32 flex items-center justify-center">
-                    @if($item['image'])
-                        <img src="{{ asset($item['image']) }}" alt="{{ $item['name'] }}"
-                             class="w-full h-full object-contain">
-                    @else
-                        <div class="w-full h-full bg-gray-100 rounded-xl flex items-center justify-center">
-                            <i class="fas fa-box text-gray-300 text-2xl sm:text-3xl"></i>
-                        </div>
-                    @endif
-                </a>
-
-                {{-- Info + qty --}}
-                <div class="flex-1 min-w-0 flex flex-col gap-1 sm:gap-2">
-                    <p class="text-xs sm:text-sm font-semibold text-gray-700 truncate leading-snug">
-                        {{ $item['name'] }}
-                    </p>
-                    <p class="text-lg sm:text-2xl font-bold text-gray-900">
-                        ${{ number_format($item['price'], 2) }}
-                    </p>
-
-                    {{-- Qty stepper --}}
-                    <div class="flex items-center gap-0 mt-1 border border-gray-200 rounded-full w-fit overflow-hidden">
-                        <button onclick="changeCartQty({{ $item['id'] }}, -1)"
-                                class="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center text-gray-500
-                                       hover:bg-gray-100 transition-colors text-sm font-bold">
-                            −
-                        </button>
-                        <span id="qty-{{ $item['id'] }}"
-                              class="w-8 sm:w-10 text-center text-sm sm:text-base font-semibold text-gray-700">
-                            {{ $item['qty'] }}
-                        </span>
-                        <button onclick="changeCartQty({{ $item['id'] }}, 1)"
-                                class="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center text-gray-500
-                                       hover:bg-gray-100 transition-colors text-sm font-bold">
-                            +
-                        </button>
-                    </div>
-                </div>
-            </div>
-            @endforeach
-        </div>
-
-        {{-- ── RIGHT: Order summary ── --}}
-        <div class="w-full lg:w-[45%] bg-white rounded-2xl sm:rounded-[20px] border border-gray-100 shadow-sm p-4 sm:p-6 flex flex-col gap-4 sm:gap-5">
-
-            {{-- Coupon --}}
-            <div class="flex items-center gap-2">
-                <input type="text"
-                       placeholder="Coupon Code"
-                       class="flex-1 bg-[#FAF6EE] rounded-full px-4 py-2.5 text-sm text-gray-600 placeholder-gray-400
-                              outline-none focus:ring-2 focus:ring-yellow-300 transition-all">
-                <button class="px-5 py-2.5 rounded-full text-sm font-semibold text-gray-700 hover:brightness-95 transition-all"
-                        style="background:#F5E6C8;">
-                    Apply
-                </button>
-            </div>
-
-            {{-- Divider --}}
-            <hr class="border-gray-100">
-
-            {{-- Line items --}}
-            <div class="flex flex-col gap-2 sm:gap-3 text-sm sm:text-base text-gray-600">
-                <div class="flex justify-between">
-                    <span>Subtotal</span>
-                    <span class="font-medium text-gray-800">${{ number_format($subtotal, 2) }}</span>
-                </div>
-                <div class="flex justify-between">
-                    <span>Shipping</span>
-                    <span class="font-medium text-gray-800">${{ number_format($shipping, 2) }}</span>
-                </div>
-                <div class="flex justify-between">
-                    <span>Tax</span>
-                    <span class="font-medium text-gray-800">${{ number_format($tax, 2) }}</span>
-                </div>
-            </div>
-
-            {{-- Total --}}
-            <div class="flex justify-between items-center pt-1">
-                <span class="text-xl sm:text-2xl font-black text-gray-900">Total</span>
-                <span class="text-2xl sm:text-3xl font-black" style="color:#C9A84C;">
-                    ${{ number_format($total, 2) }}
-                </span>
-            </div>
-
-            {{-- Action buttons --}}
-            <div class="flex flex-wrap gap-2 pt-1">
-                {{-- Clear Cart --}}
-                <button onclick="clearCart()"
-                        class="flex items-center gap-2 px-4 py-2.5 rounded-full border border-gray-200
-                               text-xs sm:text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-all">
-                    <i class="fas fa-shopping-cart text-xs"></i>
-                    Clear Cart
-                </button>
-
-                {{-- Shopping --}}
-                <a href="{{ url('/products') }}"
-                   class="flex items-center gap-2 px-4 py-2.5 rounded-full border border-gray-200
-                          text-xs sm:text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-all">
-                    <i class="fas fa-bag-shopping text-xs"></i>
-                    Shopping
-                </a>
-
-                {{-- Check Out --}}
-                <a href="{{ url('/checkout') }}"
-                   class="flex items-center gap-2 px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold text-white
-                          hover:brightness-95 transition-all shadow-md ml-auto"
-                   style="background:#C9A84C;">
-                    <i class="fas fa-arrow-right-to-bracket text-xs"></i>
-                    Check Out Now
-                </a>
-            </div>
-        </div>
+{{-- Order card --}}
+<section id="product-detail" class="px-6 sm:px-8 lg:px-12 mt-6 sm:mt-8 py-5">
+    <div class="flex flex-col md:flex-row gap-10 lg:gap-8 items-start">
+        @include('frontend.components.order.orderProduct')
     </div>
 </section>
 
-{{-- ══════════════════════════════════════
-     SIMILAR ITEMS
-══════════════════════════════════════ --}}
-<section class="px-3 sm:px-6 lg:px-14 py-6 sm:py-10">
-
+{{-- CARD PRODUCT --}}
+<section id="product-grid" class="mt-6 lg:mt-16 sm:px-12 px-8 lg:px-4 sm:px-4">
+    
     <h2 class="text-center text-base sm:text-lg font-semibold mb-6 sm:mb-8" style="color:#C9A84C;">
         Similar Items
     </h2>
 
-    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-        @foreach($similarItems as $index => $item)
+    {{-- Product --}}
+    @include('frontend.components.cards.cardResponsive')
 
-            {{-- Last card → next page --}}
-            @if($loop->last && $currentPage < $totalPages)
-                <a href="?page={{ $nextPage }}"
-                   class="rounded-[20px] sm:rounded-[24px] bg-[#FAF6EE] flex flex-col items-center justify-center
-                          p-4 gap-2 sm:gap-3 hover:shadow-md transition-all group
-                          border-2 border-dashed border-yellow-300 hover:border-yellow-500 min-h-[200px] sm:min-h-[240px]">
-                    <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center
-                                transition-transform group-hover:scale-110" style="background:#C9A84C;">
-                        <i class="fas fa-chevron-right text-white text-base sm:text-xl"></i>
-                    </div>
-                    <div class="text-center">
-                        <p class="text-xs sm:text-sm font-bold text-gray-700 group-hover:text-yellow-600 transition-colors">Next Page</p>
-                        <p class="text-[10px] sm:text-xs text-gray-400 mt-0.5">Page {{ $nextPage }} of {{ $totalPages }}</p>
-                    </div>
-                    <span class="px-3 py-1 rounded-full text-[10px] sm:text-xs font-semibold text-white" style="background:#C9A84C;">
-                        View More →
-                    </span>
-                </a>
-
-            @else
-                <div class="rounded-[20px] sm:rounded-[24px] bg-[#FAF6EE] flex flex-col items-center p-3 sm:p-4 gap-2 hover:shadow-md transition-shadow">
-
-                    <a href="{{ url('/product/' . $item['slug']) }}"
-                       class="w-full flex items-center justify-center h-28 sm:h-36 lg:h-40">
-                        @if($item['image'])
-                            <img src="{{ asset($item['image']) }}" alt="{{ $item['name'] }}"
-                                 class="max-h-full object-contain">
-                        @else
-                            <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-gray-200 flex items-center justify-center">
-                                <i class="fas fa-box text-gray-400 text-2xl sm:text-3xl"></i>
-                            </div>
-                        @endif
-                    </a>
-
-                    <a href="{{ url('/product/' . $item['slug']) }}"
-                       class="text-center font-semibold text-gray-700 hover:text-yellow-600 transition-colors
-                              leading-snug uppercase tracking-wide text-[10px] sm:text-xs">
-                        {{ $item['name'] }}<br>
-                        <span class="font-normal text-gray-500">{{ $item['model'] }}</span>
-                    </a>
-
-                    <span class="px-3 sm:px-4 py-1 rounded-full bg-gray-800 text-white font-bold text-[10px] sm:text-xs">
-                        ${{ number_format($item['price'], 2) }}
-                    </span>
-
-                    <button onclick="addToCart({{ $item['id'] }})"
-                            class="w-full py-2 sm:py-2.5 rounded-full font-semibold text-white
-                                   hover:brightness-95 transition-all shadow-sm text-xs sm:text-sm"
-                            style="background:#C9A84C;">
-                        Add to Cart
-                    </button>
-                </div>
-            @endif
-
-        @endforeach
-    </div>
 </section>
-
-{{-- ══════════════════════════════════════
-     PAGINATION
-══════════════════════════════════════ --}}
-<div class="flex items-center justify-center gap-1 pb-10 flex-wrap px-4">
-    @if($currentPage > 1)
-        <a href="?page={{ $currentPage - 1 }}"
-           class="w-2.5 h-2.5 rounded-full bg-yellow-500 mx-1 hover:bg-yellow-600 transition-colors"></a>
-    @else
-        <span class="w-2.5 h-2.5 rounded-full bg-yellow-200 mx-1"></span>
-    @endif
-
-    @for($p = 1; $p <= $totalPages; $p++)
-        @if($p == $currentPage)
-            <a href="?page={{ $p }}"
-               class="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center
-                      text-xs sm:text-sm font-bold text-white shadow"
-               style="background:#C9A84C;">{{ $p }}</a>
-        @else
-            <a href="?page={{ $p }}"
-               class="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center
-                      text-xs sm:text-sm font-medium text-gray-500 hover:bg-yellow-100 transition-colors">
-               {{ $p }}
-            </a>
-        @endif
-    @endfor
-
-    @if($currentPage < $totalPages)
-        <a href="?page={{ $nextPage }}"
-           class="w-2.5 h-2.5 rounded-full bg-yellow-500 mx-1 hover:bg-yellow-600 transition-colors"></a>
-    @else
-        <span class="w-2.5 h-2.5 rounded-full bg-yellow-200 mx-1"></span>
-    @endif
-</div>
-
 @endsection
 
 @push('scripts')

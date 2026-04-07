@@ -32,16 +32,21 @@
         </div>
 
         {{-- Quantity --}}
-        <div class="flex items-center gap-3 text-sm sm:text-base text-gray-700">
-            <span class="font-medium">Quantity</span>
-            <div class="flex items-center gap-2">
+        <div class="flex flex-col xs:flex-col sm:flex-row items-center sm:items-start gap-2 sm:gap-3 text-md sm:text-[20px] text-gray-700">
+            <span class="font-medium text-center sm:text-left">Quantity</span>
+
+            <div class="flex items-center gap-1 sm:gap-2">
                 <button onclick="changeQty(-1)"
-                        class="w-7 h-7 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 hover:bg-gray-100 transition-colors text-base leading-none">
-                        -
+                        class="w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 hover:bg-gray-100 transition-colors text-base sm:text-base md:text-lg leading-none">
+                    -
                 </button>
-                <span id="qty-display" class="w-8 text-center font-semibold">1</span>
+
+                <span id="qty-display" class="w-8 sm:w-10 md:w-12 text-center font-semibold text-sm sm:text-base md:text-lg">
+                    1
+                </span>
+
                 <button onclick="changeQty(1)"
-                        class="w-7 h-7 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 hover:bg-gray-100 transition-colors text-base leading-none">
+                        class="w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 hover:bg-gray-100 transition-colors text-base sm:text-base md:text-lg leading-none">
                     +
                 </button>
             </div>
@@ -50,7 +55,7 @@
         {{-- Add to Cart --}}
         <div class="pt-2">
             <button onclick="addToCart({{ $product['id'] }})"
-                    class="w-full sm:w-auto px-10 py-3 rounded-full text-sm sm:text-base font-semibold text-white hover:brightness-95 transition-all shadow-md active:scale-95"
+                    class="w-full sm:w-auto px-2 py-2 rounded-full text-sm sm:text-base font-semibold text-white hover:brightness-95 transition-all shadow-md active:scale-95"
                     style="background:#C9A84C;">
                 Add to Cart
             </button>

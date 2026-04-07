@@ -72,26 +72,26 @@ $brands = $brands ?? [
 
 @push('scripts')
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    const brandSwiper = new Swiper('.brands-swiper', {
-        slidesPerView: 'auto',
-        spaceBetween: 8,
-        grabCursor: true,
-        freeMode: true,
-        navigation: {
-            nextEl: '.brand-next',
-            prevEl: '.brand-prev',
-        },
-        on: {
-            init: function () {
-                const wrapperWidth  = this.wrapperEl.scrollWidth;
-                const containerWidth = this.el.clientWidth;
-                const hide = wrapperWidth <= containerWidth;
-                this.navigation.prevEl.style.display = hide ? 'none' : '';
-                this.navigation.nextEl.style.display = hide ? 'none' : '';
+    document.addEventListener('DOMContentLoaded', function () {
+        const brandSwiper = new Swiper('.brands-swiper', {
+            slidesPerView: 'auto',
+            spaceBetween: 8,
+            grabCursor: true,
+            freeMode: true,
+            navigation: {
+                nextEl: '.brand-next',
+                prevEl: '.brand-prev',
+            },
+            on: {
+                init: function () {
+                    const wrapperWidth  = this.wrapperEl.scrollWidth;
+                    const containerWidth = this.el.clientWidth;
+                    const hide = wrapperWidth <= containerWidth;
+                    this.navigation.prevEl.style.display = hide ? 'none' : '';
+                    this.navigation.nextEl.style.display = hide ? 'none' : '';
+                }
             }
-        }
+        });
     });
-});
 </script>
 @endpush

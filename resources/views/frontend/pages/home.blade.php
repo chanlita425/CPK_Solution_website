@@ -96,7 +96,7 @@
     <div class="block sm:hidden px-4 pb-2">
         <div class="flex flex-col gap-3">
             @foreach($productsXs as $product)
-                @include('frontend.components.cards.card_xs')
+                @include('frontend.components.cards.card')
             @endforeach
         </div>
 

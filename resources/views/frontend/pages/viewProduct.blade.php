@@ -35,11 +35,11 @@
     ];
 
      $allProducts = collect([
-        ['id'=>1,  'name'=>'Smart Lock Pro X1',     'model'=>'Wi-Fi + Fingerprint · SLP-X1', 'price'=>89.90,  'image'=>null,'slug'=>'smart-lock-pro-x1'],
+        ['id'=>1,  'name'=>'Smart Lock Pro X1',     'model'=>'Wi-Fi + Fingerprint · SLP-X1', 'price'=>89.90,   'image'=>null,'slug'=>'smart-lock-pro-x1'],
         ['id'=>2,  'name'=>'Yale Assure Lock 2',    'model'=>'Bluetooth · YAL-2022',          'price'=>124.99, 'image'=>null,'slug'=>'yale-assure-lock-2'],
         ['id'=>3,  'name'=>'Schlage Encode Plus',   'model'=>'Apple HomeKey · SEP-100',       'price'=>149.00, 'image'=>null,'slug'=>'schlage-encode-plus'],
         ['id'=>4,  'name'=>'August Wi-Fi Lock',     'model'=>'4th Gen · AUG-WF4',             'price'=>99.95,  'image'=>null,'slug'=>'august-wifi-lock'],
-        ['id'=>5,  'name'=>'Ultraloq U-Bolt Pro',   'model'=>'6-in-1 · UL3-PRO',             'price'=>109.99, 'image'=>null,'slug'=>'ultraloq-u-bolt-pro'],
+        ['id'=>5,  'name'=>'Ultraloq U-Bolt Pro',   'model'=>'6-in-1 · UL3-PRO',             'price'=>109.99,  'image'=>null,'slug'=>'ultraloq-u-bolt-pro'],
         ['id'=>6,  'name'=>'Kwikset Halo Touch',    'model'=>'Fingerprint · KWI-HT1',         'price'=>118.00, 'image'=>null,'slug'=>'kwikset-halo-touch'],
         ['id'=>7,  'name'=>'Lockly Secure Pro',     'model'=>'PIN Genie · LKL-SP2',           'price'=>199.00, 'image'=>null,'slug'=>'lockly-secure-pro'],
         ['id'=>8,  'name'=>'Level Lock+',           'model'=>'HomeKey · LVL-LKP',             'price'=>179.00, 'image'=>null,'slug'=>'level-lock-plus'],
@@ -117,66 +117,12 @@
 
     {{-- CARD PRODUCT --}}
     <section id="product-grid" class="mt-8 lg:mt-16 sm:px-12 px-8 lg:px-4 sm:px-4">
+        <h2 class="text-center text-base sm:text-lg font-semibold mb-6 sm:mb-8" style="color:#C9A84C;">
+            Similar Items
+        </h2>   
+        
+        @include('frontend.components.cards.cardResponsive')
 
-        <div class="block sm:hidden px-4 pb-2">
-            <div class="flex flex-col gap-3">
-                @foreach($productsXs as $product)
-                    @include('frontend.components.cards.card_xs')
-                @endforeach
-            </div>
-
-            {{-- XS Pagination --}}
-            <div class="flex items-center justify-center gap-1 mt-5 pb-4">
-                @include('frontend.components.pagination', [
-                    'page' => $pageXs,
-                    'total' => $totalPagesXs,
-                    'size' => 'xs',
-                    'pgUrl' => $pgUrl
-                ])
-            </div>
-        </div>
-
-
-        {{--- SM/MD GRID (540–899px) — 2 col · 5 rows = 10 cards ---}}
-        <div class="hidden sm:block lg:hidden px-4 sm:px-8 pb-2">
-            <div class="grid grid-cols-2 gap-4">
-                @foreach($productsSm as $product)
-                    {{-- card prodect --}}
-                    @include('frontend.components.cards.card')
-                @endforeach
-            </div>
-
-            {{-- SM/MD Pagination --}}
-            <div class="flex items-center justify-center gap-1 mt-5 pb-4">  
-            @include('frontend.components.pagination', [
-                    'page' => $pageSm,
-                    'total' => $totalPagesSm,
-                    'size' => 'sm',
-                    'pgUrl' => $pgUrl
-                ])
-            </div>
-        </div>
-
-
-        <div class="hidden lg:block px-14 pb-2">
-            <div class="grid grid-cols-4 gap-4">
-                @foreach($productsLg as $index => $product)
-                        {{--- product card ---}}
-                        @include('frontend.components.cards.card')
-                @endforeach
-            </div>
-
-            {{-- LG+ Pagination --}}
-            <div class="flex items-center justify-center gap-1 mt-6 pb-10">
-                @include('frontend.components.pagination', [
-                    'page' => $pageLg,
-                    'total' => $totalPagesLg,
-                    'size' => 'lg',
-                    'pgUrl' => $pgUrl
-                ])
-            </div>
-        </div>
-    
     </section>
 
 
