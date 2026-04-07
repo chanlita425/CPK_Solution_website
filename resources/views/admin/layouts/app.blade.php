@@ -31,6 +31,19 @@
     <div id="toastContainer" class="fixed top-20 right-4 z-50 space-y-3"></div>
 
     <style>
+        
+        /* Ensure pagination doesn't have default ul/li styles */
+        nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav li {
+            display: inline-block;
+            margin: 0;
+        }
+
         * {
             font-family: 'Inter', sans-serif;
         }

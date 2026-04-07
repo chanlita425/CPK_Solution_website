@@ -12,7 +12,6 @@ class OrderSeeder extends Seeder
 {
     public function run(): void
     {
-        // Get all products
         $products = Product::all();
 
         if ($products->isEmpty()) {
@@ -20,114 +19,31 @@ class OrderSeeder extends Seeder
             return;
         }
 
-        // Create orders with different statuses using unique order codes
-        $ordersData = [
-            [
-                'subtotal' => 1299.99,
-                'discount' => 0,
-                'shipping' => 5.00,
-                'tax' => 129.99,
-                'total' => 1434.98,
-                'coupon_code' => null,
-                'status' => 'pending',
-                'created_at' => Carbon::now(),
-            ],
-            [
-                'subtotal' => 1199.99,
-                'discount' => 119.99,
-                'shipping' => 5.00,
-                'tax' => 108.00,
-                'total' => 1193.00,
-                'coupon_code' => 'WELCOME10',
-                'status' => 'confirmed',
-                'created_at' => Carbon::now()->subDays(1),
-            ],
-            [
-                'subtotal' => 299.99,
-                'discount' => 0,
-                'shipping' => 5.00,
-                'tax' => 30.00,
-                'total' => 334.99,
-                'coupon_code' => null,
-                'status' => 'cancelled',
-                'created_at' => Carbon::now()->subDays(2),
-            ],
-            [
-                'subtotal' => 179.99,
-                'discount' => 35.99,
-                'shipping' => 5.00,
-                'tax' => 14.40,
-                'total' => 163.40,
-                'coupon_code' => 'SAVE20',
-                'status' => 'pending',
-                'created_at' => Carbon::now()->subHours(5),
-            ],
-            [
-                'subtotal' => 499.99,
-                'discount' => 0,
-                'shipping' => 5.00,
-                'tax' => 50.00,
-                'total' => 554.99,
-                'coupon_code' => null,
-                'status' => 'confirmed',
-                'created_at' => Carbon::now()->subDays(3),
-            ],
-            [
-                'subtotal' => 89.99,
-                'discount' => 8.99,
-                'shipping' => 5.00,
-                'tax' => 8.10,
-                'total' => 94.10,
-                'coupon_code' => 'WEEKEND15',
-                'status' => 'pending',
-                'created_at' => Carbon::now()->subHours(2),
-            ],
-            [
-                'subtotal' => 349.99,
-                'discount' => 0,
-                'shipping' => 5.00,
-                'tax' => 35.00,
-                'total' => 389.99,
-                'coupon_code' => null,
-                'status' => 'confirmed',
-                'created_at' => Carbon::now()->subDays(5),
-            ],
-            [
-                'subtotal' => 699.99,
-                'discount' => 69.99,
-                'shipping' => 5.00,
-                'tax' => 63.00,
-                'total' => 698.00,
-                'coupon_code' => 'SUMMER25',
-                'status' => 'cancelled',
-                'created_at' => Carbon::now()->subDays(7),
-            ],
-        ];
+        // Create 30 orders for pagination testing
+        $statuses = ['pending', 'confirmed', 'cancelled'];
 
-        foreach ($ordersData as $index => $orderData) {
-            // Generate unique order code with different timestamps
-            $prefix = 'ORD';
-            $date = Carbon::parse($orderData['created_at'])->format('Ymd');
-            $sequence = str_pad($index + 1, 4, '0', STR_PAD_LEFT);
-            $orderCode = $prefix . $date . $sequence;
+        for ($i = 1; $i <= 30; $i++) {
+            $status = $statuses[array_rand($statuses)];
+            $createdAt = Carbon::now()->subDays(rand(0, 30));
+            $orderCode = 'ORD' . $createdAt->format('Ymd') . str_pad($i, 4, '0', STR_PAD_LEFT);
 
             $order = Order::create([
                 'order_code' => $orderCode,
-                'subtotal' => $orderData['subtotal'],
-                'discount' => $orderData['discount'],
-                'shipping' => $orderData['shipping'],
-                'tax' => $orderData['tax'],
-                'total' => $orderData['total'],
-                'coupon_code' => $orderData['coupon_code'],
-                'status' => $orderData['status'],
-                'created_at' => $orderData['created_at'],
-                'updated_at' => $orderData['created_at'],
+                'subtotal' => 0,
+                'discount' => rand(0, 1) ? rand(5, 30) : 0,
+                'shipping' => 5.00,
+                'tax' => 0,
+                'total' => 0,
+                'coupon_code' => rand(0, 1) ? ['WELCOME10', 'SAVE20', 'SUMMER25'][array_rand(['WELCOME10', 'SAVE20', 'SUMMER25'])] : null,
+                'status' => $status,
+                'created_at' => $createdAt,
+                'updated_at' => $createdAt,
             ]);
 
-            // Add random order items (1-3 items per order)
-            $randomProducts = $products->random(min(rand(1, 3), $products->count()));
+            // Add 1-4 items per order
+            $randomProducts = $products->random(min(rand(1, 4), $products->count()));
             foreach ($randomProducts as $product) {
-                $quantity = rand(1, 2);
+                $quantity = rand(1, 3);
                 OrderItem::create([
                     'order_id' => $order->id,
                     'product_id' => $product->id,
@@ -138,15 +54,17 @@ class OrderSeeder extends Seeder
                 ]);
             }
 
-            // Recalculate order totals based on actual items
-            $newSubtotal = $order->items->sum('line_total');
-            $newTax = $newSubtotal * 0.10;
-            $newTotal = $newSubtotal + 5.00 + $newTax;
+            // Recalculate totals
+            $subtotal = $order->items->sum('line_total');
+            $discount = $order->discount;
+            $shipping = 5.00;
+            $tax = ($subtotal - $discount) * 0.10;
+            $total = $subtotal - $discount + $shipping + $tax;
 
             $order->update([
-                'subtotal' => $newSubtotal,
-                'tax' => $newTax,
-                'total' => $newTotal,
+                'subtotal' => $subtotal,
+                'tax' => $tax,
+                'total' => $total,
             ]);
         }
     }

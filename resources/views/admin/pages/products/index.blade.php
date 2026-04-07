@@ -137,8 +137,8 @@
             </div>
         </div>
 
-        <div class="mt-4">
-            {{ $products->appends(request()->query())->links() }}
+        <div class="mt-6">
+            @include('admin.components.pagination', ['paginator' => $products])
         </div>
     </div>
 
