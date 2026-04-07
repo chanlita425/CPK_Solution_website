@@ -86,7 +86,7 @@
                             {{ ucfirst($order->status) }}
                         </span>
                         <span class="text-sm text-gray-500">
-                            Updated: {{ $order->updated_at->format('M d, Y H:i') }}
+                            Updated: {{ $order->updated_at->format('M d, Y h:i A') }}
                         </span>
                     </div>
                 </div>
@@ -102,7 +102,7 @@
                         </div>
                         <div class="flex justify-between text-sm">
                             <span class="text-gray-600">Date Placed:</span>
-                            <span>{{ $order->created_at->format('M d, Y H:i') }}</span>
+                            <span>{{ $order->created_at->format('M d, Y h:i A') }}</span>
                         </div>
                         <div class="border-t pt-3 mt-3">
                             <div class="flex justify-between text-sm">

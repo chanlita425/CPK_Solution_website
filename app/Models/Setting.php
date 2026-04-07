@@ -1,5 +1,4 @@
 <?php
-// app/Models/Setting.php
 
 namespace App\Models;
 
@@ -33,6 +32,7 @@ class Setting extends Model
         'tax_percent' => 'decimal:2',
     ];
 
+    // Remove caching to avoid serialization issues
     public static function getSettings()
     {
         $settings = self::first();
@@ -44,5 +44,21 @@ class Setting extends Model
             ]);
         }
         return $settings;
+    }
+
+    // Helper methods
+    public static function getShippingFee()
+    {
+        return self::getSettings()->shipping_fee;
+    }
+
+    public static function getTaxPercent()
+    {
+        return self::getSettings()->tax_percent;
+    }
+
+    public static function getSellerTelegram()
+    {
+        return self::getSettings()->seller_telegram;
     }
 }

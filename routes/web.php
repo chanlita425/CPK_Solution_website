@@ -1,18 +1,71 @@
 <?php
-// routes/web.php
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\BrandController;
-use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\OrderController;
-use App\Http\Controllers\Admin\CouponController;
+use App\Http\Controllers\Admin\CouponController as AdminCouponController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\ProfileController;
 
-// Admin Routes
+// Frontend Controllers
+use App\Http\Controllers\Frontend\HomeController;
+use App\Http\Controllers\Frontend\ProductController;
+use App\Http\Controllers\Frontend\CartController;
+use App\Http\Controllers\Frontend\CheckoutController;
+use App\Http\Controllers\Frontend\CouponController;
+use App\Http\Controllers\Frontend\SearchController;
+use App\Http\Controllers\Frontend\LocaleController;
+
+/*
+|--------------------------------------------------------------------------
+| Frontend Routes (Public)
+|--------------------------------------------------------------------------
+*/
+
+// Home & Product
+Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/products/{id}', [ProductController::class, 'show'])->name('product.detail');
+
+// Real-time search
+Route::get('/search', [SearchController::class, 'search'])->name('search');
+
+// Locale switching
+Route::post('/locale/switch', [LocaleController::class, 'switch'])->name('locale.switch');
+
+// Cart Routes
+Route::prefix('cart')->name('cart.')->group(function () {
+    Route::get('/', [CartController::class, 'index'])->name('index');
+    Route::post('/add/{id}', [CartController::class, 'add'])->name('add');
+    Route::put('/update/{id}', [CartController::class, 'update'])->name('update');
+    Route::delete('/remove/{id}', [CartController::class, 'remove'])->name('remove');
+    Route::delete('/clear', [CartController::class, 'clear'])->name('clear');
+    Route::get('/count', [CartController::class, 'count'])->name('count');
+});
+
+// Coupon Routes
+Route::prefix('coupon')->name('coupon.')->group(function () {
+    Route::post('/apply', [CouponController::class, 'apply'])->name('apply');
+    Route::delete('/remove', [CouponController::class, 'remove'])->name('remove');
+});
+
+// Checkout Routes
+Route::prefix('checkout')->name('checkout.')->group(function () {
+    Route::post('/process', [CheckoutController::class, 'process'])->name('process');
+});
+
+// Filter products via AJAX (legacy support)
+Route::get('/filter', [HomeController::class, 'filter'])->name('filter.products');
+
+/*
+|--------------------------------------------------------------------------
+| Admin Routes
+|--------------------------------------------------------------------------
+*/
+
 Route::prefix('admin')->name('admin.')->group(function () {
     // Guest routes
     Route::middleware('guest')->group(function () {
@@ -31,31 +84,16 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::put('profile/password', [ProfileController::class, 'updatePassword'])->name('password.update');
 
         // Categories
-        Route::get('categories', [CategoryController::class, 'index'])->name('categories.index');
-        Route::get('categories/create', [CategoryController::class, 'create'])->name('categories.create');
-        Route::post('categories', [CategoryController::class, 'store'])->name('categories.store');
-        Route::get('categories/{id}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
-        Route::put('categories/{id}', [CategoryController::class, 'update'])->name('categories.update');
-        Route::delete('categories/{id}', [CategoryController::class, 'destroy'])->name('categories.destroy');
+        Route::resource('categories', CategoryController::class)->except(['show']);
         Route::post('categories/{id}/toggle-status', [CategoryController::class, 'toggleStatus'])->name('categories.toggle-status');
 
         // Brands
-        Route::get('brands', [BrandController::class, 'index'])->name('brands.index');
-        Route::get('brands/create', [BrandController::class, 'create'])->name('brands.create');
-        Route::post('brands', [BrandController::class, 'store'])->name('brands.store');
-        Route::get('brands/{id}/edit', [BrandController::class, 'edit'])->name('brands.edit');
-        Route::put('brands/{id}', [BrandController::class, 'update'])->name('brands.update');
-        Route::delete('brands/{id}', [BrandController::class, 'destroy'])->name('brands.destroy');
+        Route::resource('brands', BrandController::class)->except(['show']);
         Route::post('brands/{id}/toggle-status', [BrandController::class, 'toggleStatus'])->name('brands.toggle-status');
 
         // Products
-        Route::get('products', [ProductController::class, 'index'])->name('products.index');
-        Route::get('products/create', [ProductController::class, 'create'])->name('products.create');
-        Route::post('products', [ProductController::class, 'store'])->name('products.store');
-        Route::get('products/{id}/edit', [ProductController::class, 'edit'])->name('products.edit');
-        Route::put('products/{id}', [ProductController::class, 'update'])->name('products.update');
-        Route::delete('products/{id}', [ProductController::class, 'destroy'])->name('products.destroy');
-        Route::post('products/{id}/toggle-status', [ProductController::class, 'toggleStatus'])->name('products.toggle-status');
+        Route::resource('products', AdminProductController::class)->except(['show']);
+        Route::post('products/{id}/toggle-status', [AdminProductController::class, 'toggleStatus'])->name('products.toggle-status');
 
         // Orders
         Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
@@ -64,13 +102,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('orders/{id}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
 
         // Coupons
-        Route::get('coupons', [CouponController::class, 'index'])->name('coupons.index');
-        Route::get('coupons/create', [CouponController::class, 'create'])->name('coupons.create');
-        Route::post('coupons', [CouponController::class, 'store'])->name('coupons.store');
-        Route::get('coupons/{id}/edit', [CouponController::class, 'edit'])->name('coupons.edit');
-        Route::put('coupons/{id}', [CouponController::class, 'update'])->name('coupons.update');
-        Route::delete('coupons/{id}', [CouponController::class, 'destroy'])->name('coupons.destroy');
-        Route::post('coupons/{id}/toggle-status', [CouponController::class, 'toggleStatus'])->name('coupons.toggle-status');
+        Route::resource('coupons', AdminCouponController::class)->except(['show']);
+        Route::post('coupons/{id}/toggle-status', [AdminCouponController::class, 'toggleStatus'])->name('coupons.toggle-status');
 
         // Settings
         Route::get('settings', [SettingController::class, 'index'])->name('settings.index');

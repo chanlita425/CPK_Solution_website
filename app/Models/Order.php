@@ -1,10 +1,10 @@
 <?php
-// app/Models/Order.php
 
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Order extends Model
 {
@@ -34,50 +34,92 @@ class Order extends Model
         return $this->hasMany(OrderItem::class);
     }
 
+    // Confirm order - reduces stock
     public function confirm()
     {
-        foreach ($this->items as $item) {
-            $product = Product::find($item->product_id);
-            if ($product) {
-                $product->decreaseStock($item->quantity);
+        DB::transaction(function () {
+            foreach ($this->items as $item) {
+                $product = Product::find($item->product_id);
+                if ($product) {
+                    if (!$product->hasStock($item->quantity)) {
+                        throw new \Exception("Insufficient stock for product: {$product->name_en}");
+                    }
+                    $product->decreaseStock($item->quantity);
+                }
             }
-        }
+            $this->status = 'confirmed';
+            $this->save();
+        });
 
-        $this->status = 'confirmed';
-        return $this->save();
+        return true;
     }
 
+    // Cancel order - no stock change
     public function cancel()
     {
         $this->status = 'cancelled';
         return $this->save();
     }
 
+    // Generate unique order code
     public static function generateOrderCode()
     {
         $prefix = 'ORD';
         $date = date('Ymd');
 
-        // Get the last order for today
         $lastOrder = self::whereDate('created_at', today())
-            ->orderBy('order_code', 'desc')
+            ->orderBy('id', 'desc')
             ->first();
 
         if ($lastOrder) {
-            // Extract the numeric part
             $lastNumber = intval(substr($lastOrder->order_code, -4));
             $newNumber = str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
         } else {
             $newNumber = '0001';
         }
 
-        // Add microseconds to ensure uniqueness in seeder
-        $uniqueSuffix = '';
-        if (app()->runningInConsole()) {
-            $uniqueSuffix = substr(microtime(), 2, 2);
-            $newNumber = str_pad(intval($newNumber) + intval($uniqueSuffix), 4, '0', STR_PAD_LEFT);
+        return $prefix . $date . $newNumber;
+    }
+
+    // Build Telegram message
+    public function getTelegramMessage()
+    {
+        $itemsList = "";
+        foreach ($this->items as $index => $item) {
+            $itemsList .= ($index + 1) . ". {$item->product_name}\n";
+            $itemsList .= "   Quantity: {$item->quantity} x \${$item->price} = \${$item->line_total}\n\n";
         }
 
-        return $prefix . $date . $newNumber;
+        $message = "🛍️ *NEW ORDER #{$this->order_code}*\n\n";
+        $message .= "*Order Details:*\n";
+        $message .= $itemsList;
+        $message .= "---\n";
+        $message .= "📊 *Summary:*\n";
+        $message .= "Subtotal: \${$this->subtotal}\n";
+
+        if ($this->discount > 0) {
+            $message .= "Discount: -\${$this->discount}\n";
+        }
+
+        $message .= "Shipping: \${$this->shipping}\n";
+        $message .= "Tax: \${$this->tax}\n";
+        $message .= "*Total: \${$this->total}*\n\n";
+        $message .= "📅 Date: " . $this->created_at->format('M d, Y h:i A') . "\n";
+        $message .= "🔗 Order ID: #{$this->id}";
+
+        return $message;
+    }
+
+    // Get Telegram redirect URL with prefilled message
+    public function getTelegramRedirectUrl()
+    {
+        $sellerTelegram = Setting::getSellerTelegram();
+
+        // Remove @ if present and clean username
+        $username = ltrim($sellerTelegram, '@');
+
+        $message = urlencode($this->getTelegramMessage());
+
+        return "https://t.me/{$username}?text={$message}";
     }
 }

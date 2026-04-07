@@ -81,8 +81,7 @@
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 text-gray-500 text-sm">
-                                    {{ $order->created_at->format('M d, Y') }}
-                                    <div class="text-xs">{{ $order->created_at->format('H:i') }}</div>
+                                    {{ $order->created_at->format('M d, Y h:i A') }}
                                 </td>
                                 <td class="px-6 py-4 text-right">
                                     <a href="{{ route('admin.orders.show', $order->id) }}"
