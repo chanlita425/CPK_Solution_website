@@ -22,7 +22,7 @@ $categories = $categories ?? [
 ];
 @endphp
 
-<section class="category px-14">
+<section class="category px-8">
 
     <div class="relative  bg-[#FFEDD0] rounded-[40px] shadow-sm border border-gray-100 p-4"">
             <p class="text-center text-xs font-Inter text-[#000000] uppercase tracking-widest mb-3">Categories</p>

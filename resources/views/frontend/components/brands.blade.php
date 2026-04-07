@@ -11,11 +11,21 @@ $brands = $brands ?? [
     ['logo' => 'lsr.png',      'slug' => 'lsr'],
     ['logo' => 'alaska.png',   'slug' => 'alaska'],
     ['logo' => 'khind.png',    'slug' => 'khind'],
+    ['logo' => 'icold.png',    'slug' => 'icold'],
+    ['logo' => 'lg.png',       'slug' => 'lg'], 
+    ['logo' => 'samsung.png',  'slug' => 'samsung'],
+    ['logo' => 'panasonic.png','slug' => 'panasonic'],
+    ['logo' => 'sharp.png',    'slug' => 'sharp'],
+    ['logo' => 'toshiba.png',  'slug' => 'toshiba'],
+    ['logo' => 'midea.png',    'slug' => 'midea'],
+    ['logo' => 'lsr.png',      'slug' => 'lsr'],
+    ['logo' => 'alaska.png',   'slug' => 'alaska'],
+    ['logo' => 'khind.png',    'slug' => 'khind'],
 ];
 @endphp
 
-<section class="px-14 mt-2">
-    <div class="relative bg-[#FCF6ED] rounded-[40px] px-10 py-5">
+<section class="px-8 mt-2">
+    <div class="relative bg-[#FCF6ED] rounded-[40px] px-6 py-5">
 
         {{-- Label --}}
         <p class="text-center text-xs font-semibold text-[#000000] uppercase tracking-widest mb-4">Brands</p>
@@ -47,18 +57,15 @@ $brands = $brands ?? [
 
         {{-- Prev button --}}
         <button class="brand-prev absolute left-3 top-1/2 -translate-y-1/2 z-10
-                        w-8 h-8 flex items-center justify-center
-                        bg-white rounded-full shadow hover:shadow-md
-                        text-gray-400 hover:text-yellow-500 transition-all">
-            <i class="fa fa-chevron-left text-xs"></i>
+            w-8 h-8 flex items-center justify-center
+            text-gray-400 hover:text-yellow-500 transition-all">
+          
         </button>
 
         {{-- Next button --}}
         <button class="brand-next absolute right-3 top-1/2 -translate-y-1/2 z-10
-                        w-8 h-8 flex items-center justify-center
-                        bg-white rounded-full shadow hover:shadow-md
-                        text-gray-400 hover:text-yellow-500 transition-all">
-            <i class="fa fa-chevron-right text-xs"></i>
+            w-8 h-8 flex items-center justify-center
+            text-gray-400 hover:text-yellow-500 transition-all">
         </button>
     </div>
 </section>

@@ -76,15 +76,13 @@
 <body class="bg-gray-50 text-gray-800 antialiased">
 
     {{-- Top Header --}}
-    @include('userUI.components.header')
-
+    @include('frontend.components.header')
+    
     {{-- Main Navbar --}}
-    @include('userUI.components.navbar')
-
-    @include('userUI.components.banner')
-
-    @include('userUI.components.categories')
-    @include('userUI.components.brands')
+    @include('frontend.components.navbar')
+    @include('frontend.components.banner')
+    @include('frontend.components.categories')
+    @include('frontend.components.brands')
 
     {{-- Page Content --}}
     <main class="animate-fade-in">
@@ -92,7 +90,7 @@
     </main>
 
     {{-- Footer --}}
-    @include('userUI.components.footer')
+    @include('frontend.components.footer')
 
     {{-- Swiper JS --}}
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
