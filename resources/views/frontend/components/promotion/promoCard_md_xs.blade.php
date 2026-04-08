@@ -4,7 +4,7 @@
 <!-- Promotion Card md -> xs -->
 <div class="lg:hidden px-4 sm:px-8 mb-5">
     <div class="rounded-[24px] overflow-hidden relative flex items-center justify-between px-6 py-5 gap-4"
-         style="background:linear-gradient(135deg,#FFCF6B 0%,#F5A623 60%,#E8940A 100%); min-height:120px;">
+         style="background:linear-gradient(135deg,#FFCF6B 0%,#e5c085 60%,#edb356 100%); min-height:120px;">
         
         <div class="absolute -top-6 -right-6 w-28 h-28 rounded-full opacity-20" style="background:#fff;"></div>
         <div class="absolute -bottom-8 -left-4 w-20 h-20 rounded-full opacity-15" style="background:#fff;"></div>
@@ -17,7 +17,7 @@
             </p>
             <p class="text-xs font-semibold text-amber-900 mt-1">Promotion Board</p>
             <a href="{{ $promoUrl ?? '#' }}"
-               class="inline-block mt-3 px-5 py-1.5 rounded-full text-xs font-bold text-white shadow hover:brightness-95 transition-all"
+               class="inline-block mt-3 p-2 rounded-full text-xs font-bold text-white shadow hover:brightness-95 transition-all"
                style="background:#7C4F00;">Shop Now →</a>
         </div>
 

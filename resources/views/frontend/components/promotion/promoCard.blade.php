@@ -1,5 +1,5 @@
 <div class="rounded-[24px] flex flex-col justify-between p-5 relative overflow-hidden row-span-2"
-    style="background:linear-gradient(160deg,#FFCF6B 0%,#F5A623 100%); min-height:420px;">
+   style="background:linear-gradient(135deg,#FFCF6B 0%,#e5c085 60%,#edb356 100%);  min-height:420px;">
     
     <div class="absolute -top-8 -right-8 w-36 h-36 rounded-full opacity-20" style="background:#fff;"></div>
     

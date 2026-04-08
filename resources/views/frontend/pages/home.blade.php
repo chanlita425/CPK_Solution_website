@@ -80,8 +80,8 @@
         </h2>
 
         <!-- item  -->
-        <span class="absolute right-4 sm:right-8 lg:right-14 px-5 py-1.5 rounded-full text-sm font-semibold text-white shadow"
-            style="background:#C9A84C;">
+        <span class="absolute right-4 sm:right-8 lg:right-14 px-5 py-1.5 rounded-full text-sm font-bold text-white shadow" 
+            style="background:#D7B259;">
             {{ number_format($totalItems) }} Items
         </span>
 

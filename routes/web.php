@@ -111,11 +111,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('settings', [SettingController::class, 'index'])->name('settings.index');
         Route::put('settings', [SettingController::class, 'update'])->name('settings.update');
     }); });
-    
+
 
     Route::get('/', function () {
         return view('frontend.pages.home');
-    });
+    })->name('home');
 
     Route::get('/viewProduct', function () {
         return view('frontend.pages/viewProduct');
