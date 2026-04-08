@@ -10,10 +10,12 @@ use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\CouponController as AdminCouponController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\ProfileController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ProductController;
 
 // Frontend Controllers
-use App\Http\Controllers\Frontend\HomeController;
-use App\Http\Controllers\Frontend\ProductController;
+// use App\Http\Controllers\Frontend\HomeController;
+// use App\Http\Controllers\Frontend\ProductController;
 use App\Http\Controllers\Frontend\CartController;
 use App\Http\Controllers\Frontend\CheckoutController;
 use App\Http\Controllers\Frontend\CouponController;
@@ -108,5 +110,17 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Settings
         Route::get('settings', [SettingController::class, 'index'])->name('settings.index');
         Route::put('settings', [SettingController::class, 'update'])->name('settings.update');
+    }); });
+    
+
+    Route::get('/', function () {
+        return view('frontend.pages.home');
     });
-});
+
+    Route::get('/viewProduct', function () {
+        return view('frontend.pages/viewProduct');
+    });
+
+    Route::get('/addProduct', function () {
+        return view('frontend.pages/addProduct');
+    });
