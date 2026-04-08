@@ -23,8 +23,8 @@
             <p class="text-xs sm:text-sm font-bold text-gray-700 mb-1.5">Specification:</p>
             <ul class="space-y-0.5">
                 @foreach($product['specs'] as $spec)
-                <li class="flex items-start gap-1.5 text-xs sm:text-sm text-gray-600">
-                    <span class="mt-1.5 w-1.5 h-1.5 rounded-full bg-gray-400 shrink-0"></span>
+                <li class="flex items-start gap-1.5 text-xs sm:text-sm text-black">
+                    <span class="mt-1.5 w-1.5 h-1.5 rounded-full bg-gray-600 shrink-0"></span>
                     {{ $spec }}
                 </li>
                 @endforeach

@@ -5,7 +5,7 @@
 
             @foreach($cartItems as $item)
                 <div class="flex flex-col xs:flex-col sm:flex-row items-center sm:items-start gap-3 sm:gap-5 border border-gray-100 shadow-sm 
-                            px-4 py-4 sm:py-6 rounded-2xl bg-gray-100">
+                            px-4 py-4 sm:py-6 rounded-[40px] bg-gray-100">
 
                     {{-- Product image --}}
                     <a href="{{ url('/product/' . $item['slug']) }}"
@@ -102,7 +102,7 @@
 
             {{-- Total --}}
             <div class="flex sm:flex-row justify-between items-start sm:items-center pt-7 w-full">
-                <span class="text-xl sm:text-2xl font-black">Total</span>
+                <span class="text-xl sm:text-3xl font-black">Total</span>
                 <span class="text-xl sm:text-3xl font-black text-yellow-600  sm:mt-0  ">
                     ${{ number_format($total, 2) }}
                 </span>
@@ -110,17 +110,17 @@
             
             <div class="flex flex-wrap gap-2 pt-3 mt-2 w-full items-center">
                 <button onclick="clearCart()"
-                        class="px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border border-gray-300 text-sm hover:bg-gray-50 transition-colors">
+                        class="px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border border-[#D7B259] text-sm hover:bg-gray-50 transition-colors">
                     Clear Cart
                 </button>
 
                 <a href="{{ url('/products') }}"
-                class="px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border border-gray-300 text-sm hover:bg-gray-50 transition-colors">
+                class="px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border border-[#D7B259] text-sm hover:bg-gray-50 transition-colors">
                     Shopping
                 </a>
 
                 <a href="{{ url('/checkout') }}"
-                class="px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-sm sm:text-base font-bold text-white shadow-md order-last sm:order-last"
+                class="px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border border-[#D7B259] text-sm sm:text-base font-bold text-white shadow-md order-last sm:order-last"
                 style="background:#C9A84C;">
                     Check Out
                 </a>

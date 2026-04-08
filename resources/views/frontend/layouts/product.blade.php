@@ -80,19 +80,13 @@
     
     {{-- Main Navbar --}}
     @include('frontend.components.navbar')
-
-    {{-- Show ONLY on homepage --}}
-    @if (Route::currentRouteName() === 'home')
-        @include('frontend.components.banner')
-        
-    @endif
-
+    @include('frontend.components.banner')
     @include('frontend.components.categories')
     @include('frontend.components.brands')
 
     {{-- Page Content --}}
     <main class="animate-fade-in">
-        @yield('content')
+        @yield('product')
     </main>
 
     {{-- Footer --}}

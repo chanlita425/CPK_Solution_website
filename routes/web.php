@@ -10,7 +10,7 @@ use App\Http\Controllers\ProductController;
 
 Route::get('/', function () {
     return view('frontend.pages.home');
-});
+})->name('home');
 
 Route::get('/viewProduct', function () {
     return view('frontend.pages/viewProduct');

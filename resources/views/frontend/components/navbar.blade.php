@@ -1,6 +1,6 @@
 {{-- resources/views/components/navbar.blade.php --}}
 <nav class="nav mt-2">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-3">
+    <div class="max-w-7xl mx-auto px-10 sm:px-12 lg:px-12">
         <div class="flex items-center justify-between h-20 gap-4">
 
             {{-- Logo --}}
@@ -61,6 +61,9 @@
         </div>
     </div>
 </nav>
+
+    
+
 
 <script>
     document.getElementById('mobileSearchBtn')?.addEventListener('click', () => {
