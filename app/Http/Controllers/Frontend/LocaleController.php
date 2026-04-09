@@ -9,13 +9,21 @@ class LocaleController extends Controller
 {
     public function switch(Request $request)
     {
-        $request->validate([
-            'locale' => 'required|in:en,kh',
-        ]);
+        // Get the locale from query ?locale=kh or ?locale=en
+        $locale = $request->query('locale');
 
-        session()->put('locale', $request->input('locale'));
-        app()->setLocale($request->input('locale'));
+        // Validate locale
+        if (!in_array($locale, ['en', 'kh'])) {
+            abort(400, 'Invalid locale');
+        }
 
+        // Save to session
+        session()->put('locale', $locale);
+
+        // Set app locale for current request
+        app()->setLocale($locale);
+
+        // Redirect back to previous page
         return redirect()->back();
     }
 }

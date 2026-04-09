@@ -31,7 +31,7 @@ use App\Http\Controllers\Frontend\LocaleController;
 // Home & Product
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-Route::get('/products/{id}', [ProductController::class, 'show'])->name('product.detail');
+Route::get('/products/{id}', [ProductController::class, 'show'])->name('pages.viewProduct');
 
 // Real-time search
 Route::get('/search', [SearchController::class, 'search'])->name('search');

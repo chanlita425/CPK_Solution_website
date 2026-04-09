@@ -11,34 +11,31 @@
         <div class="swiper categories-swiper overflow-hidden">
             <div class="swiper-wrapper">
 
-                @foreach($categories as $index => $cat)
+                 @foreach($categories as $index => $cat)
                     <div class="swiper-slide !w-auto">
-                        <a href="{{ url('category/' . $cat->id) }}"
-                           class="flex flex-col items-center gap-3 px-3 py-3 hover:bg-primary-50 rounded-xl transition-colors group w-30 text-center
-                                  {{ $index === 0 ? 'bg-[#FFE3A1] shadow-sm' : '' }}">
+                        <a href="{{ url()->current() }}?category_id={{ $cat->id }}{{ $brandId ? '&brand_id=' . $brandId : '' }}{{ request('search') ? '&search=' . request('search') : '' }}#product-grid"
+                        class="flex flex-col items-center gap-3 px-3 py-3 hover:bg-primary-50 rounded-xl transition-colors group w-30 text-center
+                        {{ $categoryId == $cat->id ? 'bg-[#FFE3A1] shadow-sm' : '' }}">
                             
-                            {{-- Category Icon --}}
                             <div class="w-14 h-14 bg-white group-hover:bg-primary-100 rounded-xl flex items-center justify-center transition-colors shadow-sm">
                                 @if($cat->icon_url)
-                                    <img src="{{ $cat->icon_url }}" alt="{{ $cat->name }}" class="w-6 h-6 object-contain">
+                                    <img src="{{ asset($cat->icon_url) }}" alt="{{ $cat->name }}" class="w-6 h-6 object-contain">
                                 @else
                                     <i class="fa fa-folder text-primary-600 text-base"></i>
                                 @endif
                             </div>
 
-                            {{-- Category Name --}}
                             <span class="text-[10px] font-medium text-gray-600 group-hover:text-primary-700 leading-tight transition-colors">
                                 {{ $cat->name }}
                             </span>
-                            
                         </a>
                     </div>
                 @endforeach
                 
             </div>
         </div>
- 
-       {{-- Nav buttons --}}
+
+        {{-- Nav buttons --}}
         <button id="cat-prev" class="cat-prev absolute left-6 top-1/2 -translate-y-1/2 -translate-x-3 z-10 w-7 h-7 flex items-center justify-center hover:shadow-lg transition-all">
             <svg width="60" height="60" viewBox="0 0 24 24" fill="#C9A84C" xmlns="http://www.w3.org/2000/svg">
                 <polygon points="19,12 10,5 10,19"/>

@@ -49,67 +49,90 @@ class HomeController extends Controller
 
 public function index(Request $request)
 {
-
     $settings = Setting::getSettings();
-    $promoImage = $settings->promotion_banner_image; 
-    
-    // filter
+    $promoImage = $settings->promotion_banner_image;
+
+    // Filters
     $categoryId = $request->input('category_id');
     $brandId = $request->input('brand_id');
+    $searchQuery = $request->input('search');
 
-    // Build query with relationships
+    // Build query
     $query = Product::with('mainImage')->active();
 
-    // category
+    // Apply category filter
     if ($categoryId) {
-        $query->ofCategory($categoryId);
+        $query->where('category_id', $categoryId);
         $categoryName = Category::find($categoryId)?->name_en ?? 'Category';
     } else {
-        $categoryName = 'Smart lock key';
+        $categoryName = 'All Products';
     }
 
-    // brand
-     if ($brandId) {
-        $query->ofBrand($brandId); // scopeOfBrand in Product model
-        $brandName = Brand::find($brandId)?->name_en ?? null;
+    // Apply brand filter
+    if ($brandId) {
+        $query->where('brand_id', $brandId);
+        $brandName = Brand::find($brandId)?->name_en ?? 'Brand';
     } else {
-        $brandName = null;
+        $brandName = 'All Brands';
     }
 
-    // Get all matching products
+    // Apply search filter
+    if ($searchQuery) {
+        $query->where(function ($q) use ($searchQuery) {
+            // Search product names
+            $q->where('name_en', 'like', "%{$searchQuery}%")
+            ->orWhere('name_kh', 'like', "%{$searchQuery}%")
+            ->orWhere('SKU', 'like', "%{$searchQuery}%")
+            
+            // Search category names
+            ->orWhereHas('category', function ($q2) use ($searchQuery) {
+                $q2->where('name_en', 'like', "%{$searchQuery}%")
+                    ->orWhere('name_kh', 'like', "%{$searchQuery}%");
+            })
+            
+            // Search brand names
+            ->orWhereHas('brand', function ($q3) use ($searchQuery) {
+                $q3->where('name_en', 'like', "%{$searchQuery}%")
+                    ->orWhere('name_kh', 'like', "%{$searchQuery}%");
+            });
+        });
+    }
+
+    // Fetch products
     $allProducts = $query->latest()->get();
     $totalItems = $allProducts->count();
 
     // Pagination per screen size
-    $perPage = [
-        'xs' => 5,
-        'sm' => 10,
-        'lg' => 14,
-    ];
-
+    $perPage = ['xs' => 5, 'sm' => 10, 'lg' => 14];
     $pageXs = max(1, (int) $request->input('page_xs', 1));
     $pageSm = max(1, (int) $request->input('page_sm', 1));
     $pageLg = max(1, (int) $request->input('page_lg', 1));
 
-    // Slice products for each screen size (values() resets array keys)
     $productsXs = $allProducts->forPage($pageXs, $perPage['xs'])->values();
     $productsSm = $allProducts->forPage($pageSm, $perPage['sm'])->values();
     $productsLg = $allProducts->forPage($pageLg, $perPage['lg'])->values();
 
-    // Total pages
     $totalPagesXs = ceil($totalItems / $perPage['xs']);
     $totalPagesSm = ceil($totalItems / $perPage['sm']);
     $totalPagesLg = ceil($totalItems / $perPage['lg']);
 
-    // Pagination base URL
     $pgUrl = url()->current();
-
-    // Promo card position for LG
     $promoPosition = 3;
 
+    // Load all categories and brands
+    $categories = Category::where('is_active', true)->get();
+    $brands = Brand::where('is_active', true)->get();
+
     return view('frontend.pages.home', compact(
+        'settings',
+        'promoImage',
+        'categories',
+        'brands',
+        'categoryId',
+        'brandId',
         'categoryName',
-        'totalItems',
+        'brandName',
+        'allProducts',
         'productsXs',
         'productsSm',
         'productsLg',
@@ -121,9 +144,8 @@ public function index(Request $request)
         'totalPagesLg',
         'pgUrl',
         'promoPosition',
-        'promoImage',
-        'categoryId',
-        'brandId'
+        'totalItems',
+        'searchQuery'
     ));
 }
 

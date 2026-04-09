@@ -25,7 +25,8 @@
                 <form action="" method="GET" class="relative">
                     <input
                         type="text"
-                        name="q"
+                        name="search"
+                        value="{{ request('search') }}" 
                         placeholder="Search products ..."
                         class="w-full border border-gray-400 bg-gray-50  rounded-[18px]  py-2 pl-4 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent transition"
                     >

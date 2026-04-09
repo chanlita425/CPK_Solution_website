@@ -45,8 +45,9 @@
                 <ul class="grid grid-cols-1 gap-2 text-[16px]">
                     @foreach($categories as $cat)
                         <li>
-                            <a href="{{ url('category/' . $cat->id) }}"
-                               class="hover:text-primary-400 transition-colors duration-200">
+                            <a href="{{ url()->current() }}?category_id={{ $cat->id }}{{ request('brand_id') ? '&brand_id=' . request('brand_id') : '' }}#product-grid"
+                            class="hover:text-primary-400 transition-colors duration-200
+                                    {{ request('category_id') == $cat->id ? 'text-primary-500 font-semibold' : '' }}">
                                 {{ $cat->name }}
                             </a>
                         </li>
