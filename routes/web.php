@@ -10,8 +10,8 @@ use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\CouponController as AdminCouponController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\ProfileController;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\ProductController;
+use App\Http\Controllers\Frontend\HomeController;
+use App\Http\Controllers\Frontend\ProductController;
 
 // Frontend Controllers
 // use App\Http\Controllers\Frontend\HomeController;
@@ -27,9 +27,10 @@ use App\Http\Controllers\Frontend\LocaleController;
 | Frontend Routes (Public)
 |--------------------------------------------------------------------------
 */
-
+ 
 // Home & Product
 Route::get('/', [HomeController::class, 'index'])->name('home');
+
 Route::get('/products/{id}', [ProductController::class, 'show'])->name('product.detail');
 
 // Real-time search
@@ -113,9 +114,14 @@ Route::prefix('admin')->name('admin.')->group(function () {
     }); });
 
 
-    Route::get('/', function () {
-        return view('frontend.pages.home');
-    })->name('home');
+
+
+    // // FRONTEND 
+    // Route::get('/', function () {
+    //     return view('frontend.pages.home');
+    // })->name('home');
+
+    
 
     Route::get('/viewProduct', function () {
         return view('frontend.pages/viewProduct');

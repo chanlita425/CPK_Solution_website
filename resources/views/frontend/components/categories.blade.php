@@ -1,72 +1,94 @@
-{{-- resources/views/components/categories.blade.php --}}
 @php
-$categories = $categories ?? [
-    ['name' => 'Smart Lock Key', 'icon' => 'fa-lock',            'slug' => 'smart-lock-key'],
-    ['name' => 'CCTV',           'icon' => 'fa-video',           'slug' => 'cctv'],
-    ['name' => 'Air Conditioner & Air Cooler', 'icon' => 'fa-wind', 'slug' => 'air-conditioner'],
-    ['name' => 'Beauty & Health','icon' => 'fa-spa',             'slug' => 'beauty-health'],
-    ['name' => 'Computer & Accessories', 'icon' => 'fa-laptop',  'slug' => 'computer-accessories'],
-    ['name' => 'Camera & Lens',  'icon' => 'fa-camera',          'slug' => 'camera-lens'],
-    ['name' => 'Furniture',      'icon' => 'fa-couch',           'slug' => 'furniture'],
-    ['name' => 'Home Appliance', 'icon' => 'fa-blender',         'slug' => 'home-appliance'],
-    ['name' => 'Home Audio & Video', 'icon' => 'fa-tv',          'slug' => 'home-audio-video'],
-    ['name' => 'Kitchen Appliance', 'icon' => 'fa-utensils',     'slug' => 'kitchen-appliance'],
-    ['name' => 'Computer & Accessories', 'icon' => 'fa-laptop',  'slug' => 'computer-accessories'],
-    ['name' => 'Camera & Lens',  'icon' => 'fa-camera',          'slug' => 'camera-lens'],
-    ['name' => 'Furniture',      'icon' => 'fa-couch',           'slug' => 'furniture'],
-    ['name' => 'Home Appliance', 'icon' => 'fa-blender',         'slug' => 'home-appliance'],
-    ['name' => 'Home Audio & Video', 'icon' => 'fa-tv',          'slug' => 'home-audio-video'],
-    ['name' => 'Kitchen Appliance', 'icon' => 'fa-utensils',     'slug' => 'kitchen-appliance'],
-    ['name' => 'Phone & Accessory', 'icon' => 'fa-mobile-screen','slug' => 'phone-accessory'],
-    ['name' => 'Phone & Accessory', 'icon' => 'fa-mobile-screen','slug' => 'phone-accessory'],
-];
+    use App\Models\Category;
+    $categories = Category::where('is_active', true)->get();
 @endphp
 
 <section class="category px-8">
-
-    <div class="relative  bg-[#FFEDD0] rounded-[40px] shadow-sm border border-gray-100 p-4"">
-            <p class="text-center text-xs font-Inter text-[#000000] uppercase tracking-widest mb-3">Categories</p>
+    <div class="relative bg-[#FFEDD0] rounded-[40px] shadow-sm border border-gray-100 p-14 py-6">
+        <p class="text-center text-xs font-Inter text-[#000000] uppercase tracking-widest mb-3">Categories</p>
 
         {{-- Swiper --}}
         <div class="swiper categories-swiper overflow-hidden">
             <div class="swiper-wrapper">
-                @foreach($categories as $cat)
-                <div class="swiper-slide !w-auto">
-                    <a href=""
-                       class="flex flex-col items-center gap-1.5 px-3 py-2 rounded-xl hover:bg-primary-50 transition-colors group w-20 text-center">
-                        <div class="w-11 h-11 bg-primary-50 group-hover:bg-primary-100 rounded-xl flex items-center justify-center transition-colors shadow-sm">
-                            <i class="fa {{ $cat['icon'] }} text-primary-600 text-base"></i>
-                        </div>
-                        <span class="text-[10px] font-medium text-gray-600 group-hover:text-primary-700 leading-tight transition-colors">
-                            {{ $cat['name'] }}
-                        </span>
-                    </a>
-                </div>
+
+                @foreach($categories as $index => $cat)
+                    <div class="swiper-slide !w-auto">
+                        <a href="{{ url('category/' . $cat->id) }}"
+                           class="flex flex-col items-center gap-3 px-3 py-3 hover:bg-primary-50 rounded-xl transition-colors group w-30 text-center
+                                  {{ $index === 0 ? 'bg-[#FFE3A1] shadow-sm' : '' }}">
+                            
+                            {{-- Category Icon --}}
+                            <div class="w-14 h-14 bg-white group-hover:bg-primary-100 rounded-xl flex items-center justify-center transition-colors shadow-sm">
+                                @if($cat->icon_url)
+                                    <img src="{{ $cat->icon_url }}" alt="{{ $cat->name }}" class="w-6 h-6 object-contain">
+                                @else
+                                    <i class="fa fa-folder text-primary-600 text-base"></i>
+                                @endif
+                            </div>
+
+                            {{-- Category Name --}}
+                            <span class="text-[10px] font-medium text-gray-600 group-hover:text-primary-700 leading-tight transition-colors">
+                                {{ $cat->name }}
+                            </span>
+                            
+                        </a>
+                    </div>
                 @endforeach
+                
             </div>
         </div>
-
-        {{-- Nav buttons --}}
-        <button class="cat-prev absolute left-0 top-1/2 -translate-y-1/2 -translate-x-3 z-10 w-7 h-7 bg-white rounded-full shadow-md flex items-center justify-center text-gray-500 hover:text-primary-600 hover:shadow-lg transition-all">
-            <i class="fa fa-chevron-left text-xs"></i>
+ 
+       {{-- Nav buttons --}}
+        <button id="cat-prev" class="cat-prev absolute left-6 top-1/2 -translate-y-1/2 -translate-x-3 z-10 w-7 h-7 flex items-center justify-center hover:shadow-lg transition-all">
+            <svg width="60" height="60" viewBox="0 0 24 24" fill="#C9A84C" xmlns="http://www.w3.org/2000/svg">
+                <polygon points="19,12 10,5 10,19"/>
+                <rect x="7" y="5" width="3" height="14" rx="1"/>
+            </svg>        
         </button>
-        <button class="cat-next absolute right-0 top-1/2 -translate-y-1/2 translate-x-3 z-10 w-7 h-7 bg-white rounded-full shadow-md flex items-center justify-center text-gray-500 hover:text-primary-600 hover:shadow-lg transition-all">
-            <i class="fa fa-chevron-right text-xs"></i>
+        <button id="cat-next" class="cat-next absolute right-6 top-1/2 -translate-y-1/2 translate-x-3 z-10 w-7 h-7 flex items-center justify-center hover:shadow-lg transition-all">
+            <svg width="60" height="60" viewBox="0 0 24 24" fill="#C9A84C" xmlns="http://www.w3.org/2000/svg">
+                <polygon points="19,12 10,5 10,19"/>
+                <rect x="7" y="5" width="3" height="14" rx="1"/>
+            </svg>
         </button>
     </div>
 </section>
 
 @push('scripts')
 <script>
-    new Swiper('.categories-swiper', {
-        slidesPerView: 'auto',
-        spaceBetween: 4,
-        navigation: {
-            nextEl: '.cat-next',
-            prevEl: '.cat-prev',
-        },
-        grabCursor: true,
-        freeMode: true,
+    document.addEventListener('DOMContentLoaded', function () {
+        const swiperEl = document.querySelector('.categories-swiper');
+        const prevBtn = document.getElementById('cat-prev');
+        const nextBtn = document.getElementById('cat-next');
+
+        const categorySwiper = new Swiper(swiperEl, {
+            slidesPerView: 'auto',
+            spaceBetween: 4,
+            navigation: {
+                nextEl: nextBtn,
+                prevEl: prevBtn,
+            },
+            grabCursor: true,
+            freeMode: true,
+            on: {
+                init: function () {
+                    // Show buttons only if swiper overflows
+                    const wrapperWidth  = this.wrapperEl.scrollWidth;
+                    const containerWidth = this.el.clientWidth;
+                    const showButtons = wrapperWidth > containerWidth;
+                    prevBtn.style.display = showButtons ? 'flex' : 'none';
+                    nextBtn.style.display = showButtons ? 'flex' : 'none';
+                },
+                resize: function () {
+                    // Recheck on window resize
+                    const wrapperWidth  = this.wrapperEl.scrollWidth;
+                    const containerWidth = this.el.clientWidth;
+                    const showButtons = wrapperWidth > containerWidth;
+                    prevBtn.style.display = showButtons ? 'flex' : 'none';
+                    nextBtn.style.display = showButtons ? 'flex' : 'none';
+                }
+            }
+        });
     });
 </script>
-@endpush
+@endpush 

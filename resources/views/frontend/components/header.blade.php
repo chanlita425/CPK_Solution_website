@@ -1,121 +1,80 @@
 {{-- resources/views/components/header.blade.php --}}
-{{-- <div class="bg-gray-800 text-gray-300 text-xs py-1.5 px-4">
-    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-1.5 sm:gap-2">
+@php
+    $settings = \App\Models\Setting::getSettings();
+@endphp
 
-        <div class="flex flex-wrap items-center justify-center sm:justify-start gap-x-3 gap-y-1 text-sm w-full sm:w-auto">
-
-          
-            <a href="https://www.cpksolution.com" class="hidden md:inline mr-10 text-primary-350 hover:text-primary-300 transition-colors">
-                www.cpksolution.com
-            </a> 
-
-           
-            <a href="tel:012345678" class="flex items-center gap-1 text-primary-350  hover:text-primary-300 transition-colors">
-                <i class="fa-solid fa-phone text-xs"></i>
-                012 345 678
-            </a>
-
-            <span class="text-gray-600">|</span>
-
-            <a href="tel:010234567" class="flex items-center gap-1 text-primary-350  hover:text-primary-300 transition-colors">
-                <i class="fa-solid fa-phone text-xs"></i>
-                010 234 567
-            </a>
-        </div>
-
- 
-        <div class="flex items-center justify-center sm:justify-end gap-3 sm:gap-4 w-full sm:w-auto">
-
-          
-            <div class="flex items-center gap-1.5 sm:gap-2 mr-4">
-                <a href="https://www.facebook.com/yourpage" class="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center bg-white text-black rounded-full border border-gray-500 hover:bg-gray-100 transition-colors">
-                    <i class="fa-brands fa-facebook-f text-xs sm:text-sm"></i>
-                </a>
-                <a href="https://www.tiktok.com/@yourusername" class="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center bg-white text-black rounded-full border border-gray-300 hover:bg-gray-100 transition-colors">
-                    <i class="fa-brands fa-tiktok text-xs sm:text-sm"></i>
-                </a>
-                <a href="https://www.instagram.com/yourusername" class="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center bg-white text-black rounded-full border border-gray-500 hover:bg-gray-100 transition-colors">
-                    <i class="fa-brands fa-instagram text-xs sm:text-sm"></i>
-                </a>
-                <a href="https://t.me/yourchannel" class="w-6 h-6  flex items-center justify-center bg-white text-black rounded-full border border-gray-500 hover:bg-gray-100 transition-colors">
-                    <i class="fa-brands fa-telegram text-xs sm:text-sm"></i>
-                </a>
-            </div>
-
-           
-            <div class="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm">
-                <a href="?lang=km"
-                class="hover:text-primary-400 transition-colors {{ app()->getLocale() === 'km' ? 'text-primary-400 font-semibold' : '' }}">
-                    Khmer
-                </a>
-                <span class="text-gray-600">\</span>
-                <a href="?lang=en"
-                    class="hover:text-primary-400 transition-colors {{ app()->getLocale() === 'en' ? 'text-primary-0 font-semibold' : '' }}">
-                    English
-                </a>
-            </div>
-        </div>
-    </div>
-</div> --}}
-
- 
-{{-- resources/views/components/header.blade.php --}}
 <div class="bg-gray-800 text-gray-300 text-xs py-1.5 px-4">
     <div class="max-w-7xl mx-auto flex items-center justify-between">
         {{-- Left: contact info --}}
         <div class="flex items-center gap-4 text-sm">
-              {{-- Website: hidden on mobile --}}
-            <a href="https://www.cpksolution.com" class="hidden md:inline mr-10 text-primary-350 hover:text-primary-300 transition-colors">
-                www.cpksolution.com
-            </a> 
+            {{-- Website: hidden on mobile --}}
+            @if($settings->company_url)
+                <a href="{{ $settings->company_url }}" 
+                   class="hidden md:inline mr-10 text-primary-350 hover:text-primary-300 transition-colors">
+                    {{ parse_url($settings->company_url, PHP_URL_HOST) ?? $settings->company_name }}
+                </a>
+            @endif
 
-            {{-- Phone Numbers: always visible --}}
-            <a href="tel:012345678" class="flex  text-xs   items-center gap-1 text-primary-350  hover:text-primary-300 transition-colors">
-                <i class="fa-solid fa-phone text-xs"></i>
-                012 345 678
-            </a>
+            {{-- Phone Numbers --}}
+            @if($settings->company_phone_number_first)
+                <a href="tel:{{ preg_replace('/\D/', '', $settings->company_phone_number_first) }}" 
+                   class="flex text-xs items-center gap-1 text-primary-350 hover:text-primary-300 transition-colors">
+                    <i class="fa-solid fa-phone text-xs"></i>
+                    {{ $settings->company_phone_number_first }}
+                </a>
+            @endif
 
-            <span class="text-gray-600">|</span>
-
-            <a href="tel:010234567" class="flex text-xs  items-center gap-1 text-primary-350  hover:text-primary-300 transition-colors">
-                <i class="fa-solid fa-phone text-xs"></i>
-                010 234 567
-            </a>
+            @if($settings->company_phone_number_second)
+                <span class="text-gray-600">|</span>
+                <a href="tel:{{ preg_replace('/\D/', '', $settings->company_phone_number_second) }}" 
+                   class="flex text-xs items-center gap-1 text-primary-350 hover:text-primary-300 transition-colors">
+                    <i class="fa-solid fa-phone text-xs"></i>
+                    {{ $settings->company_phone_number_second }}
+                </a>
+            @endif
         </div>
 
-            {{-- Right: language --}}
-            <div class="flex items-center gap-3">
-                <div class="flex items-center justify-center sm:justify-end gap-3 sm:gap-4 w-full sm:w-auto">
+        {{-- Right: social + language --}}
+        <div class="flex items-center gap-3">
+            <div class="flex items-center justify-center sm:justify-end gap-3 sm:gap-4 w-full sm:w-auto">
 
-                {{-- Social Icons: always visible --}}
+                {{-- Social Icons --}}
                 <div class="hidden sm:flex items-center gap-1.5 sm:gap-2 mr-4">
-                    <a href="https://www.facebook.com/yourpage" class="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center bg-white text-black rounded-full border border-gray-500 hover:bg-gray-100 transition-colors">
-                        <i class="fa-brands fa-facebook-f text-xs sm:text-sm"></i>
-                    </a>
-                    <a href="https://www.tiktok.com/@yourusername" class="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center bg-white text-black rounded-full border border-gray-300 hover:bg-gray-100 transition-colors">
-                        <i class="fa-brands fa-tiktok text-xs sm:text-sm"></i>
-                    </a>
-                    <a href="https://www.instagram.com/yourusername" class="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center bg-white text-black rounded-full border border-gray-500 hover:bg-gray-100 transition-colors">
-                        <i class="fa-brands fa-instagram text-xs sm:text-sm"></i>
-                    </a>
-                    <a href="https://t.me/yourchannel" class="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center bg-white text-black rounded-full border border-gray-500 hover:bg-gray-100 transition-colors">
-                        <i class="fa-brands fa-telegram text-xs sm:text-sm"></i>
-                    </a>
+                    @if($settings->facebook_link)
+                        <a href="{{ $settings->facebook_link }}" class="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center bg-white text-black rounded-full border border-gray-500 hover:bg-gray-100 transition-colors">
+                            <i class="fa-brands fa-facebook-f text-xs sm:text-sm"></i>
+                        </a>
+                    @endif
+                    @if($settings->tiktok_link)
+                        <a href="{{ $settings->tiktok_link }}" class="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center bg-white text-black rounded-full border border-gray-300 hover:bg-gray-100 transition-colors">
+                            <i class="fa-brands fa-tiktok text-xs sm:text-sm"></i>
+                        </a>
+                    @endif
+                    @if($settings->instagram_link)
+                        <a href="{{ $settings->instagram_link }}" class="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center bg-white text-black rounded-full border border-gray-500 hover:bg-gray-100 transition-colors">
+                            <i class="fa-brands fa-instagram text-xs sm:text-sm"></i>
+                        </a>
+                    @endif
+                    @if($settings->telegram_link)
+                        <a href="{{ $settings->telegram_link }}" class="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center bg-white text-black rounded-full border border-gray-500 hover:bg-gray-100 transition-colors">
+                            <i class="fa-brands fa-telegram text-xs sm:text-sm"></i>
+                        </a>
+                    @endif
                 </div>
 
-
-                {{-- Language Switcher: always visible --}}
+                {{-- Language Switcher --}}
                 <div class="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm">
                     <a href="?lang=km"
-                    class="hover:text-primary-350 transition-colors {{ app()->getLocale() === 'km' ? 'text-primary-400 font-semibold' : '' }}">
+                       class="hover:text-primary-350 transition-colors {{ app()->getLocale() === 'km' ? 'text-primary-400 font-semibold' : '' }}">
                         Khmer
                     </a>
                     <span class="text-gray-600">\</span>
                     <a href="?lang=en"
-                    class="transition-colors {{ app()->getLocale() === 'en' ? 'text-primary-350 font-semibold' : 'text-gray-600 hover:text-primary-400' }}">
+                       class="transition-colors {{ app()->getLocale() === 'en' ? 'text-primary-350 font-semibold' : 'text-gray-600 hover:text-primary-400' }}">
                         English
                     </a>
                 </div>
+
             </div>
         </div>
     </div>

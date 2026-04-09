@@ -1,3 +1,9 @@
+
+@php
+    $settings = \App\Models\Setting::getSettings();
+    $logoPath = $settings->company_logo; // assuming stored as 'settings/filename.jpg'
+@endphp
+
 {{-- resources/views/components/navbar.blade.php --}}
 <nav class="nav mt-2">
     <div class="max-w-7xl mx-auto px-10 sm:px-12 lg:px-12">
@@ -6,7 +12,11 @@
             {{-- Logo --}}
             <a href="{{ url('/') }}" class="flex items-center gap-4">
                 <div class="rounded-lg flex items-center justify-center ">
-                    <img src="{{ asset('images/logo.png') }}" alt="CPK Logo"  >
+                @if($logoPath)
+                        <img src="{{ asset('storage/' . $logoPath) }}" alt="{{ $settings->company_name }}" class="h-10">
+                    @else
+                        <span class="text-lg font-bold">{{ $settings->company_name ?? 'CPK' }}</span>
+                    @endif                
                 </div> 
             </a>
 

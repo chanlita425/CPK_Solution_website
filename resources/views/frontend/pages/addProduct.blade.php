@@ -119,7 +119,7 @@
 
     $currentPage = $currentPage ?? 1;
     $totalPages  = $totalPages  ?? 10;
-    $nextPage    = $currentPage + 1;
+
 @endphp
 
 {{-- Order card --}}

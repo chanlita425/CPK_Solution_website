@@ -1,27 +1,6 @@
 @php
-$brands = $brands ?? [
-    ['logo' => 'icold.png',    'slug' => 'icold'],
-    ['logo' => 'lg.png',       'slug' => 'lg'],
-    ['logo' => 'sanden.png',   'slug' => 'sanden',  'active' => true],
-    ['logo' => 'samsung.png',  'slug' => 'samsung'],
-    ['logo' => 'panasonic.png','slug' => 'panasonic'],
-    ['logo' => 'sharp.png',    'slug' => 'sharp'],
-    ['logo' => 'toshiba.png',  'slug' => 'toshiba'],
-    ['logo' => 'midea.png',    'slug' => 'midea'],
-    ['logo' => 'lsr.png',      'slug' => 'lsr'],
-    ['logo' => 'alaska.png',   'slug' => 'alaska'],
-    ['logo' => 'khind.png',    'slug' => 'khind'],
-    ['logo' => 'icold.png',    'slug' => 'icold'],
-    ['logo' => 'lg.png',       'slug' => 'lg'], 
-    ['logo' => 'samsung.png',  'slug' => 'samsung'],
-    ['logo' => 'panasonic.png','slug' => 'panasonic'],
-    ['logo' => 'sharp.png',    'slug' => 'sharp'],
-    ['logo' => 'toshiba.png',  'slug' => 'toshiba'],
-    ['logo' => 'midea.png',    'slug' => 'midea'],
-    ['logo' => 'lsr.png',      'slug' => 'lsr'],
-    ['logo' => 'alaska.png',   'slug' => 'alaska'],
-    ['logo' => 'khind.png',    'slug' => 'khind'],
-];
+use App\Models\Brand;
+$brands = Brand::where('is_active', true)->get();
 @endphp
 
 <section class="px-8 mt-2">
@@ -33,20 +12,20 @@ $brands = $brands ?? [
         {{-- Swiper --}}
         <div class="swiper brands-swiper overflow-hidden">
             <div class="swiper-wrapper flex items-center">
-                @foreach($brands as $brand)
+                @foreach($brands as $index => $brand)
                 <div class="swiper-slide !w-auto">
-                    <a href="{{ url('/brand/' . $brand['slug']) }}"
-                       class="flex items-center justify-center px-4 py-2 rounded-full transition-all duration-200
-                              {{ !empty($brand['active']) ? 'bg-[#F5C842] shadow-md' : 'hover:bg-[#FFE3A1]' }}">
-                        @if(!empty($brand['logo']))
+                    <a href="{{ url('/brand/' . $brand->id) }}"
+                       class="flex items-center justify-center px-4 py-3 rounded-full transition-all duration-200
+                              {{ $index === 0 ? 'bg-[#FFE3A1] ' : 'hover:bg-[#FFE3A1]' }}">
+                        @if($brand->logo_image)
                             <img
-                                src="{{ asset('images/' . $brand['logo']) }}"
-                                alt="{{ $brand['slug'] }}"
+                                src="{{ asset('storage/' . $brand->logo_image) }}"
+                                alt="{{ $brand->name }}"
                                 class="h-8 w-auto object-contain max-w-[90px]"
                             >
                         @else
                             <span class="font-bold text-sm text-gray-500 uppercase tracking-wide">
-                                {{ $brand['slug'] }}
+                                {{ $brand->name }}
                             </span>
                         @endif
                     </a>
@@ -56,16 +35,17 @@ $brands = $brands ?? [
         </div>
 
         {{-- Prev button --}}
-        <button class="brand-prev absolute left-3 top-1/2 -translate-y-1/2 z-10
+        <button class="brand-prev absolute left-3 top-1/2 -translate-y-1/2 z-20
             w-8 h-8 flex items-center justify-center
-            text-gray-400 hover:text-yellow-500 transition-all">
-          
+            bg-white rounded-full shadow hover:shadow-lg transition-all">
+           
         </button>
 
         {{-- Next button --}}
-        <button class="brand-next absolute right-3 top-1/2 -translate-y-1/2 z-10
+        <button class="brand-next absolute right-3 top-1/2 -translate-y-1/2 z-20
             w-8 h-8 flex items-center justify-center
-            text-gray-400 hover:text-yellow-500 transition-all">
+            bg-white rounded-full shadow hover:shadow-lg transition-all">
+           
         </button>
     </div>
 </section>
