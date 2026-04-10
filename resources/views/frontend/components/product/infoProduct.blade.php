@@ -89,11 +89,16 @@
 
     {{-- Add to Cart --}}
     <div class="pt-2">
-        <button onclick="addToCart({{ $product->id }})"
-            class="w-full sm:w-auto px-4 py-2 rounded-full text-sm sm:text-base font-semibold text-white hover:brightness-95 transition-all shadow-md active:scale-95"
-            style="background:#C9A84C;">
-            Add to Cart
-        </button>
+        <form action="{{ route('cart.add', $product->id) }}" method="POST" onsubmit="event.stopPropagation();">
+            @csrf
+
+            <button type="submit"
+                class="w-full sm:w-auto px-4 py-2 rounded-full text-sm sm:text-base font-semibold text-black hover:brightness-95 transition-all shadow-md active:scale-95"
+                style="background:#C9A84C;">
+                Add to Cart
+            </button>
+        </form>
     </div>
+
 
 </div>

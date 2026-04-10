@@ -39,7 +39,7 @@
             {{-- Right Actions --}}
             <div class="flex items-center gap-4">
                 {{-- Cart --}}
-                <a href="" class="relative flex items-center gap-1.5 text-gray-600 hover:text-primary-600 transition-colors group">
+                <a href="{{ route('cart.index') }}" class="relative flex items-center gap-1.5 text-gray-600 hover:text-primary-600 transition-colors group">
                     <div class="relative">
                         <i class="fa-solid fa-bag-shopping text-[#28282A] text-[15px] text-xl group-hover:scale-110 transition-transform"></i>
                     </div>

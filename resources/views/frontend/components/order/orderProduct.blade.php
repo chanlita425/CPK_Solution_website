@@ -9,10 +9,16 @@
 
                     {{-- Product image --}}
                     <a href="{{ url('/product/' . $item['slug']) }}"
-                    class="flex items-center justify-center shrink-0
+                        class="flex items-center justify-center shrink-0
                             w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 lg:w-36 lg:h-36">
-                        @if($item['image'])
-                            <img src="{{ asset($item['image']) }}" alt="{{ $item['name'] }}"
+
+                        @php
+                            $product = \App\Models\Product::find($item['id']);
+                        @endphp
+
+                        @if($product && $product->main_image_url)
+                            <img src="{{ asset($product->main_image_url) }}"
+                                alt="{{ $item['name'] }}"
                                 class="w-full h-full object-contain rounded-lg">
                         @else
                             <div class="w-full h-full bg-gray-100 rounded-lg flex items-center justify-center">
@@ -53,6 +59,11 @@
                                 +
                             </button>
                         </div>
+
+                        <button onclick="removeItem({{ $item['id'] }})"
+                                class="text-red-500 text-sm mt-2 hover:underline flex items-center px-3">
+                            Remove
+                        </button>
                     </div>
                 
                 </div>
@@ -128,29 +139,76 @@
 
         </div>
     </div>
-
-
-@push('scripts')
-<script>
-    const cartQtys = {
-        @foreach($cartItems as $item)
-            {{ $item['id'] }}: {{ $item['qty'] }},
-        @endforeach
-    };
-
-    function changeCartQty(id, delta) {
-        cartQtys[id] = Math.max(1, (cartQtys[id] || 1) + delta);
-        const el = document.getElementById('qty-' + id);
-        if (el) el.textContent = cartQtys[id];
         
-    }
+    @push('scripts')
+    <script>
 
-    function clearCart() {
-        console.log('Clear cart');
-    }
+        function changeCartQty(id, delta) {
+            const el = document.getElementById('qty-' + id);
 
-    function addToCart(productId) {
-        console.log('Add to cart:', productId);
-    }
-</script>
-@endpush
+            let qty = parseInt(el.innerText);
+            qty = Math.max(1, qty + delta);
+
+            el.innerText = qty;
+
+            fetch("{{ url('/cart/update') }}/" + id, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                },
+                body: JSON.stringify({ quantity: qty })
+            })
+            .then(r => r.json())
+            .then(res => {
+                if (res.success) location.reload();
+            });
+        }
+
+        function removeItem(id) {
+            fetch("{{ url('/cart/remove') }}/" + id, {
+                method: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                }
+            })
+            .then(r => r.json())
+            .then(res => {
+                if (res.success) location.reload();
+            });
+        }
+
+        function clearCart() {
+            if (!confirm('Clear cart?')) return;
+
+            fetch("{{ route('cart.clear') }}", {
+                method: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                }
+            })
+            .then(r => r.json())
+            .then(res => {
+                if (res.success) location.reload();
+            });
+        }
+
+        function addToCart(id) {
+            fetch("{{ url('/cart/add') }}/" + id, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                },
+                body: JSON.stringify({ quantity: 1 })
+            })
+            .then(r => r.json())
+            .then(res => {
+                if (res.success) {
+                    alert("Added to cart!");
+                }
+            });
+        }
+
+    </script>
+    @endpush

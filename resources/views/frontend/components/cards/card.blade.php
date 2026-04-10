@@ -26,10 +26,15 @@
         </span>
 
         {{-- Add to Cart --}}
-        <button type="button" onclick="event.stopPropagation(); addToCart({{ $product->id }})"
-            class="w-full py-2.5 rounded-[18px] font-bold bg-[#D7B259] hover:brightness-95 transition">
-            Add to Cart
-        </button>
+       <form action="{{ route('cart.add', $product->id) }}" method="POST" onsubmit="event.stopPropagation();">
+            @csrf
+
+            <button type="submit"
+                class="w-full sm:w-auto px-4 py-2 rounded-full text-sm sm:text-base font-semibold text-black hover:brightness-95 transition-all shadow-md active:scale-95"
+                style="background:#C9A84C;">
+                Add to Cart
+            </button>
+        </form>
 
     </div>
 </a>

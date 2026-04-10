@@ -41,11 +41,17 @@ Route::post('/locale/switch', [LocaleController::class, 'switch'])->name('locale
 
 // Cart Routes
 Route::prefix('cart')->name('cart.')->group(function () {
+
     Route::get('/', [CartController::class, 'index'])->name('index');
+
     Route::post('/add/{id}', [CartController::class, 'add'])->name('add');
-    Route::put('/update/{id}', [CartController::class, 'update'])->name('update');
-    Route::delete('/remove/{id}', [CartController::class, 'remove'])->name('remove');
-    Route::delete('/clear', [CartController::class, 'clear'])->name('clear');
+
+    Route::post('/update/{id}', [CartController::class, 'update'])->name('update');
+
+    Route::post('/remove/{id}', [CartController::class, 'remove'])->name('remove');
+
+    Route::post('/clear', [CartController::class, 'clear'])->name('clear');
+
     Route::get('/count', [CartController::class, 'count'])->name('count');
 });
 

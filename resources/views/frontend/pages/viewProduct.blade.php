@@ -75,5 +75,7 @@
     function addToCart(productId) {
         console.log('Add to cart:', productId, 'qty:', qty);
     }
+
+    
 </script>
 @endpush
