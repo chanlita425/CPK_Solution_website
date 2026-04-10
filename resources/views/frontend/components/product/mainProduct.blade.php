@@ -6,33 +6,38 @@
         <div class="w-full rounded-2xl bg-gray-50 border border-gray-400 flex items-center justify-center
             aspect-square sm:aspect-[4/3] lg:aspect-square overflow-hidden">
 
-            @if($product['image'])
-                <img src="{{ asset($product['image']) }}"
-                    alt="{{ $product['name'] }}"
-                    class="w-full h-full object-contain p-6 sm:p-10">
-            @else
-                <div class="flex flex-col items-center gap-2 text-gray-300">
-                    <i class="fas fa-image text-5xl sm:text-6xl"></i>
-                    <span class="text-xs">No image</span>
-                </div>
-            @endif
+           @php
+            $mainImage = $product->images->first();
+        @endphp
+
+        @if($mainImage && $mainImage->image)
+            <img id="mainImage"
+                src="{{ asset('storage/' . $mainImage->image) }}"
+                alt="{{ $product->name_en }}"
+                class="w-full h-full object-contain p-6 sm:p-10">
+        @else
+            <div class="flex flex-col items-center gap-2 text-gray-300">
+                <i class="fas fa-image text-5xl sm:text-6xl"></i>
+                <span class="text-xs">No image</span>
+            </div>
+        @endif
         </div>
 
         {{---- Thumbnail ----}}
-        <div class="grid grid-cols-4 gap-2 sm:gap-3">
-            @foreach($product['gallery'] as $i => $thumb)
-                <button onclick="selectThumb({{ $i }})"
-                        class="thumb-btn aspect-square rounded-xl border-2 transition-all duration-200 overflow-hidden flex items-center justify-center bg-gray-50
-                            {{ $i === 0 ? 'border-yellow-400' : 'border-gray-200 hover:border-yellow-300' }}">
-                    @if($thumb)
-                        <img src="{{ asset($thumb) }}" alt="Gallery {{ $i+1 }}"
-                            class="w-full h-full object-contain p-2">
-                    @else
-                        <div class="w-full h-full bg-gray-100"></div>
-                    @endif
-                </button>
-            @endforeach
+        <div class="grid grid-cols-3 gap-2 sm:gap-3">
+             @foreach($product->images->skip(1) as $thumb)
+            <button
+                onclick="selectThumb('{{ asset('storage/' . $thumb->image) }}')"
+                class="aspect-square rounded-xl border-2 overflow-hidden flex items-center justify-center bg-gray-50
+                border-gray-200 hover:border-yellow-300">
+
+                <img src="{{ asset('storage/' . $thumb->image) }}"
+                    class="w-full h-full object-contain ">
+            </button>
+        @endforeach
         </div>
 
     </div>
     
+
+

@@ -43,9 +43,10 @@
     <div class="hidden lg:block px-14 pb-2">
         <div class="grid grid-cols-4 gap-4">
             @foreach($productsLg as $index => $product)
-                @if($index === 4)   
+                @if(!empty($isHome) && $isHome && $index === 4)
                     @include('frontend.components.promotion.promoCard')
                 @endif
+
                 @include('frontend.components.cards.card', ['product' => $product])
             @endforeach
         </div>

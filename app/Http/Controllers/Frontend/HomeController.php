@@ -8,6 +8,7 @@ use App\Models\Category;
 use App\Models\Brand;
 use App\Models\Setting;
 use Illuminate\Http\Request;
+use App\Services\ProductService;
 
 class HomeController extends Controller
 {
@@ -146,7 +147,7 @@ public function index(Request $request)
         'promoPosition',
         'totalItems',
         'searchQuery'
-    ));
+    ))->with('isHome', true);
 }
 
 

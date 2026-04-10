@@ -1,6 +1,5 @@
 @php
     use App\Models\Category;
-    $categories = Category::where('is_active', true)->get();
 @endphp
 
 <section class="category px-8">
@@ -19,7 +18,7 @@
                             
                             <div class="w-14 h-14 bg-white group-hover:bg-primary-100 rounded-xl flex items-center justify-center transition-colors shadow-sm">
                                 @if($cat->icon_url)
-                                    <img src="{{ asset($cat->icon_url) }}" alt="{{ $cat->name }}" class="w-6 h-6 object-contain">
+                                    <img src="{{ asset($cat->icon_url) }}" alt="{{ $cat->name }}" class="w-8 h-8 object-contain">
                                 @else
                                     <i class="fa fa-folder text-primary-600 text-base"></i>
                                 @endif

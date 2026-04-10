@@ -3,10 +3,10 @@
 
         {{-- Product Image --}}
         <div class="w-full flex items-center justify-center h-36 sm:h-40">
-            @if($product->mainImage)
-                <img src="{{ asset('images/' . $product->mainImage->image) }}" 
-                     alt="{{ $product->name_en }}" 
-                     class="max-h-full object-contain">
+            @if($product->mainImage && $product->mainImage->image)
+                <img src="{{ asset('storage/' . $product->mainImage->image) }}" 
+                    alt="{{ $product->name_en }}" 
+                    class="max-h-full object-contain">
             @else
                 <div class="w-20 h-20 rounded-2xl bg-gray-200 flex items-center justify-center">
                     <i class="fas fa-lock text-gray-400 text-3xl"></i>

@@ -30,7 +30,7 @@ use App\Http\Controllers\Frontend\LocaleController;
  
 // Home & Product
 Route::get('/', [HomeController::class, 'index'])->name('home');
-
+Route::get('/products', [HomeController::class, 'index'])->name('products');
 Route::get('/products/{id}', [ProductController::class, 'show'])->name('pages.viewProduct');
 
 // Real-time search
@@ -116,17 +116,3 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
 
 
-    // // FRONTEND 
-    // Route::get('/', function () {
-    //     return view('frontend.pages.home');
-    // })->name('home');
-
-    
-
-    Route::get('/viewProduct', function () {
-        return view('frontend.pages/viewProduct');
-    });
-
-    Route::get('/addProduct', function () {
-        return view('frontend.pages/addProduct');
-    });

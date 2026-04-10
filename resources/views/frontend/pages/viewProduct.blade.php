@@ -37,7 +37,6 @@
 
 
 @endsection
-
 @push('scripts')
 <script>
     let qty = 1;
@@ -47,10 +46,29 @@
         document.getElementById('qty-display').textContent = qty;
     }
 
-    function selectThumb(index) {
-        document.querySelectorAll('.thumb-btn').forEach((btn, i) => {
-            btn.classList.toggle('border-yellow-400', i === index);
-            btn.classList.toggle('border-gray-200',   i !== index);
+    function selectThumb(imageUrl, index) {
+        const mainImage = document.getElementById('mainImage');
+        const thumbs = document.querySelectorAll('.thumb-btn');
+
+        // change main image
+        if (mainImage) {
+            mainImage.style.opacity = 0;
+
+            setTimeout(() => {
+                mainImage.src = imageUrl;
+                mainImage.style.opacity = 1;
+            }, 120);
+        }
+
+        // update active border
+        thumbs.forEach((btn, i) => {
+            if (i === index) {
+                btn.classList.add('border-yellow-400');
+                btn.classList.remove('border-gray-200');
+            } else {
+                btn.classList.remove('border-yellow-400');
+                btn.classList.add('border-gray-200');
+            }
         });
     }
 

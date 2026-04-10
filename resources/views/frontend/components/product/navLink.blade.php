@@ -1,19 +1,45 @@
-<nav class="px-[5rem] sm:px-[8rem] lg:px-[7rem] mt-[5rem] text-sm text-gray-500 flex flex-wrap items-center gap-1" x-data="{ open: false }">
-    
-    {{-- Breadcrumbs safely --}}
-    @if(!empty($product->breadcrumbs) && is_array($product->breadcrumbs))
-        @foreach($product->breadcrumbs as $crumb)
-            <a href="{{ url($crumb['url']) }}" class="hover:text-yellow-600 transition-colors">
-                {{ $crumb['label'] }}
-            </a>
-            <span class="text-gray-300">/</span>
-        @endforeach
+
+<nav class="px-[5rem] sm:px-[8rem] lg:px-[7rem] mt-[5rem] text-sm text-gray-500 flex flex-wrap items-center gap-1">
+
+    {{-- Home --}}
+    <a href="{{ route('home') }}"
+       class="hover:text-yellow-600 transition-colors">
+        Home
+    </a>
+
+    <span class="text-gray-300">/</span>
+
+    {{-- Products --}}
+    <a href="{{ route('products') }}"
+       class="hover:text-yellow-600 transition-colors">
+        Products
+    </a>
+
+    <span class="text-gray-300">/</span>
+
+    {{-- Category --}}
+    @if($product->category)
+        <a href="{{ route('products', ['category_id' => $product->category->id]) }}"
+           class="hover:text-yellow-600 transition-colors">
+            {{ $product->category->name_en }}
+        </a>
+
+        <span class="text-gray-300">/</span>
     @endif
 
-    {{-- Product name --}}
-    <span class="text-gray-400 truncate max-w-[160px] md:max-w-none cursor-pointer"
-          @click="open = !open"
-          :class="{'truncate max-w-[160px]': !open, 'truncate-none': open}">
-        {{ $product->name_en ?? $product->name ?? 'Product' }}
+    {{-- Brand --}}
+    @if($product->brand)
+        <a href="{{ route('products', ['brand_id' => $product->brand->id]) }}"
+           class="hover:text-yellow-600 transition-colors">
+            {{ $product->brand->name_en }}
+        </a>
+
+        <span class="text-gray-300">/</span>
+    @endif
+
+    {{-- Product --}}
+    <span class="text-black font-semibold max-w-[200px] truncate cursor-default">
+        {{ $product->name_en }}
     </span>
+
 </nav>
