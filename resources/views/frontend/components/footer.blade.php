@@ -132,7 +132,7 @@
                         <i class="fa fa-globe text-primary-500 text-xs"></i>
                         <a href="{{ $settings->company_url ?? '#' }}" 
                             class="hover:text-primary-400 transition">
-                            {{ $settings->company_url ?? 'www.cpksolution.com' }}
+                            {{ $settings->company_url ? (parse_url($settings->company_url, PHP_URL_HOST) ?? $settings->company_url) : 'www.cpksolution.com' }}
                         </a>
                     </p>
 

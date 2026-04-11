@@ -118,7 +118,7 @@ class CartController extends Controller
 
                 $cartItems[] = [ // ✅ FIXED
                     'id' => $product->id,
-                    'name' => $product->name_en,
+                    'name' => $product->name,
                     'name_en' => $product->name_en,
                     'name_kh' => $product->name_kh,
                     'price' => $product->price,

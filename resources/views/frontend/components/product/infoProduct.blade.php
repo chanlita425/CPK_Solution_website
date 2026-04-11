@@ -2,7 +2,7 @@
 
         {{-- Name --}}
         <h1 class="text-base sm:text-lg lg:text-xl font-bold text-gray-800 leading-snug">
-            {{ $product->name_en }}
+            {{ $product->name }}
         </h1>
 
         {{-- Meta --}}
@@ -18,7 +18,7 @@
             <p>
                 SKU:
                 <span class="text-gray-700 font-medium">
-                    {{ $product->sku ?? 'N/A' }}
+                    {{ $product->SKU ?? 'N/A' }}
                 </span>
             </p>
 
@@ -37,7 +37,7 @@
 
             @php
                 // STEP 1: take raw text
-                $raw = $product->specification_en ?? '';
+                $raw = $product->specification ?? '';
 
                 // STEP 2: split by NEW LINE (Enter)
                 $specs = preg_split("/\r\n|\n|\r/", trim($raw));
@@ -68,7 +68,7 @@
 
             <div class="flex items-center gap-1 sm:gap-2">
                 <button onclick="changeQty(-1)"
-                    class="w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition">
+                    class="w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 flex items-center justify-center hover:bg-gray-100 transition">
                     -
                 </button>
 
@@ -78,7 +78,7 @@
                 </span>
 
                 <button onclick="changeQty(1)"
-                    class="w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition">
+                    class="w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 flex items-center justify-center hover:bg-gray-100 transition">
                     +
                 </button>
             </div>

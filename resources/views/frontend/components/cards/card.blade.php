@@ -5,7 +5,7 @@
         <div class="w-full flex items-center justify-center h-36 sm:h-40">
             @if($product->mainImage && $product->mainImage->image)
                 <img src="{{ asset('storage/' . $product->mainImage->image) }}" 
-                    alt="{{ $product->name_en }}" 
+                    alt="{{ $product->name }}"
                     class="max-h-full object-contain">
             @else
                 <div class="w-20 h-20 rounded-2xl bg-gray-200 flex items-center justify-center">
@@ -16,7 +16,7 @@
 
         {{-- Product Name & SKU --}}
         <div class="text-center text-xs font-bold text-black hover:text-yellow-600 transition leading-snug uppercase">
-            {{ $product->name_en }} <br>
+            {{ $product->name }} <br>
             <span class="normal-case">{{ $product->SKU }}</span>
         </div>
 

@@ -21,7 +21,7 @@
     @if($product->category)
         <a href="{{ route('products', ['category_id' => $product->category->id]) }}"
            class="hover:text-yellow-600 transition-colors">
-            {{ $product->category->name_en }}
+            {{ $product->category->name }}
         </a>
 
         <span class="text-gray-300">/</span>
@@ -31,7 +31,7 @@
     @if($product->brand)
         <a href="{{ route('products', ['brand_id' => $product->brand->id]) }}"
            class="hover:text-yellow-600 transition-colors">
-            {{ $product->brand->name_en }}
+            {{ $product->brand->name }}
         </a>
 
         <span class="text-gray-300">/</span>
@@ -39,7 +39,7 @@
 
     {{-- Product --}}
     <span class="text-black font-semibold max-w-[200px] truncate cursor-default">
-        {{ $product->name_en }}
+        {{ $product->name }}
     </span>
 
 </nav>
