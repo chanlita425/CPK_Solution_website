@@ -28,16 +28,16 @@ class LocaleController extends Controller
     // }
 
     public function switch(Request $request)
-{
-    $locale = $request->query('locale');
+    {
+        $locale = $request->query('locale');
 
-    if (!in_array($locale, ['en', 'km'])) {
-        abort(400, 'Invalid locale');
+        if (!in_array($locale, ['en', 'km'])) {
+            abort(400, 'Invalid locale');
+        }
+
+        session()->put('locale', $locale);
+        app()->setLocale($locale);
+
+        return redirect()->back();
     }
-
-    session()->put('locale', $locale);
-    app()->setLocale($locale);
-
-    return redirect()->back();
-}
 }

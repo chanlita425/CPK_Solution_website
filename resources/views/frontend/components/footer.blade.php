@@ -9,6 +9,7 @@
 @endphp
 
 <footer class="bg-[#28282A] text-white mt-12">
+    <div class="bg-[#D7B259] text-gray-300 text-xs p-4"></div>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-12">

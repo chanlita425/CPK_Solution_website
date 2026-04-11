@@ -30,7 +30,7 @@
             @csrf
 
             <button type="submit"
-                class="w-full sm:w-auto px-4 py-2 rounded-full text-sm sm:text-base font-semibold text-black hover:brightness-95 transition-all shadow-md active:scale-95"
+                class="w-full sm:w-auto px-4 sm:px-14 py-2 rounded-full text-sm sm:text-base font-semibold text-black hover:brightness-95 transition-all shadow-md active:scale-95"
                 style="background:#C9A84C;">
                 Add to Cart
             </button>
