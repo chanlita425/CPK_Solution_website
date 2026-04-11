@@ -13,7 +13,7 @@
         @if($mainImage && $mainImage->image)
             <img id="mainImage"
                 src="{{ asset('storage/' . $mainImage->image) }}"
-                alt="{{ $product->name_en }}"
+                alt="{{ $product->name }}"
                 class="w-full h-full object-contain p-6 sm:p-10">
         @else
             <div class="flex flex-col items-center gap-2 text-gray-300">

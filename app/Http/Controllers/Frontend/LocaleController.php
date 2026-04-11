@@ -31,7 +31,7 @@ class LocaleController extends Controller
     {
         $locale = $request->query('locale');
 
-        if (!in_array($locale, ['en', 'km'])) {
+        if (!in_array($locale, ['en', 'kh'])) {
             abort(400, 'Invalid locale');
         }
 

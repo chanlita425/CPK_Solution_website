@@ -2,7 +2,7 @@
 
         {{-- Name --}}
         <h1 class="text-base sm:text-lg lg:text-xl font-bold text-gray-800 leading-snug">
-            {{ $product->name_en }}
+            {{ $product->name }}
         </h1>
 
         {{-- Meta --}}
@@ -37,7 +37,7 @@
 
             @php
                 // STEP 1: take raw text
-                $raw = $product->specification_en ?? '';
+                $raw = $product->specification ?? '';
 
                 // STEP 2: split by NEW LINE (Enter)
                 $specs = preg_split("/\r\n|\n|\r/", trim($raw));
