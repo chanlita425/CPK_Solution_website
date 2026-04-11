@@ -1,16 +1,29 @@
 {{-- resources/views/admin/components/sidebar.blade.php --}}
+@php
+    $settings = App\Models\Setting::getSettings();
+    $companyLogo = $settings->company_logo ?? null;
+@endphp
+
 <aside id="sidebar"
     class="fixed left-0 top-0 h-full bg-gradient-to-b from-gray-900 to-gray-800 w-64 z-40 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 flex flex-col">
 
-    <!-- Logo Area - Sticky top -->
+    <!-- Logo Area - Sticky top - Logo Only -->
     <div class="flex-shrink-0 flex items-center justify-between px-6 py-5 border-b border-gray-700 bg-gray-900">
-        <div class="flex items-center gap-3">
-            <div class="w-8 h-8 bg-[#D7B259] rounded-lg flex items-center justify-center">
-                <i class="fas fa-store text-gray-900 text-sm"></i>
-            </div>
-            <h1 class="text-xl font-bold text-[#D7B259]">CPK Admin</h1>
+        {{-- Dynamic Company Logo from Database --}}
+        <div class="w-30">
+            @if ($companyLogo && Storage::disk('public')->exists($companyLogo))
+                <img src="{{ asset('storage/' . $companyLogo) }}" alt="{{ $settings->company_name ?? 'Company Logo' }}"
+                    class="w-100 object-contain">
+            @else
+                {{-- Fallback to public/images/logo.png if exists --}}
+                @if (file_exists(public_path('images/logo.png')))
+                    <img src="{{ asset('images/logo.png') }}" alt="Company Logo" class="w-full h-full object-contain">
+                @else
+                    <i class="fas fa-store text-[#D7B259] text-2xl"></i>
+                @endif
+            @endif
         </div>
-        <button id="closeSidebar" class="lg:hidden text-gray-400 hover:text-white">
+        <button id="closeSidebar" class="lg:hidden text-gray-400 hover:text-white absolute right-4">
             <i class="fas fa-times"></i>
         </button>
     </div>

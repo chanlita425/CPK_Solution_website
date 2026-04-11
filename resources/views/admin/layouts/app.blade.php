@@ -6,15 +6,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{{ asset('cpk_favicon.png') }}">
+    <link rel="shortcut icon" type="image/png" href="{{ asset('cpk_favicon.png') }}">
+
     <title>@yield('title', 'Admin Dashboard') - CPK Solution</title>
 
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Vite Assets (Local CSS/JS) -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-    <!-- Font Awesome 6 -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Local Font Awesome (installed via npm) -->
+    <link rel="stylesheet" href="{{ asset('vendor/fontawesome/css/all.min.css') }}">
 
-    <!-- Google Fonts -->
+    <!-- Google Fonts (optional - can be kept as CDN or downloaded locally) -->
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap"
         rel="stylesheet">
@@ -22,16 +27,14 @@
     <!-- Alpine.js for interactive components -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
-    <!-- Flatpickr CSS & JS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-
+    <!-- Local Flatpickr CSS & JS (installed via npm) -->
+    <link rel="stylesheet" href="{{ asset('vendor/flatpickr/dist/flatpickr.min.css') }}">
+    <script src="{{ asset('vendor/flatpickr/dist/flatpickr.js') }}"></script>
 
     <!-- Toast Container -->
     <div id="toastContainer" class="fixed top-20 right-4 z-50 space-y-3"></div>
 
     <style>
-        
         /* Ensure pagination doesn't have default ul/li styles */
         nav ul {
             list-style: none;
@@ -435,7 +438,6 @@
             @endif
         });
     </script>
-
 
     <!-- Include Toast Component -->
     @include('admin.components.toast')
