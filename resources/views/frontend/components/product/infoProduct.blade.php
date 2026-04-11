@@ -18,7 +18,7 @@
             <p>
                 SKU:
                 <span class="text-gray-700 font-medium">
-                    {{ $product->sku ?? 'N/A' }}
+                    {{ $product->SKU ?? 'N/A' }}
                 </span>
             </p>
 
@@ -68,7 +68,7 @@
 
             <div class="flex items-center gap-1 sm:gap-2">
                 <button onclick="changeQty(-1)"
-                    class="w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition">
+                    class="w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 flex items-center justify-center hover:bg-gray-100 transition">
                     -
                 </button>
 
@@ -78,7 +78,7 @@
                 </span>
 
                 <button onclick="changeQty(1)"
-                    class="w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition">
+                    class="w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 flex items-center justify-center hover:bg-gray-100 transition">
                     +
                 </button>
             </div>
