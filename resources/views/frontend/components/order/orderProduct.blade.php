@@ -71,7 +71,7 @@
         </div>
     </div>
 
-    {{-- RIGHT: Payment checkout  --}}
+    {{-- RIGHT: Payment checkout --}}
     <div class="w-full md:w-[45%]">
         <div class="bg-gray-100 rounded-[30px] border border-gray-100 shadow-sm 
                     p-5 sm:p-8 lg:p-10
@@ -81,15 +81,20 @@
             {{-- Coupon --}}
             <div class="flex flex-col sm:flex-row gap-2 w-full">
                 <input type="text"
+                    id="coupon-input"
                     placeholder="Coupon Code"
                     class="flex-1 bg-[#FAF6EE] rounded-full px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-yellow-300 w-full sm:w-auto"
                 >
-
-                <button class="px-5 py-2.5 rounded-full text-sm font-semibold w-full sm:w-auto"
+                <button onclick="applyCoupon()"
+                        id="coupon-btn"
+                        class="px-5 py-2.5 rounded-full text-sm font-semibold w-full sm:w-auto"
                         style="background:#F5E6C8;">
                     Apply
                 </button>
             </div>
+
+            {{-- Coupon message --}}
+            <div id="coupon-message" class="text-sm hidden px-1"></div>
 
             <hr>
 
@@ -97,28 +102,34 @@
             <div class="flex flex-col gap-2 text-sm sm:text-base text-gray-600">
                 <div class="flex justify-between">
                     <span>Subtotal</span>
-                    <span class="font-medium text-gray-800">${{ number_format($subtotal, 2) }}</span>
+                    <span id="display-subtotal" class="font-medium text-gray-800">${{ number_format($subtotal, 2) }}</span>
+                </div>
+
+                {{-- Discount row (hidden until coupon applied) --}}
+                <div id="discount-row" class="flex justify-between text-green-600 hidden">
+                    <span id="discount-label">Discount</span>
+                    <span id="display-discount" class="font-medium">-$0.00</span>
                 </div>
 
                 <div class="flex justify-between">
                     <span>Shipping</span>
-                    <span class="font-medium text-gray-800">${{ number_format($shipping, 2) }}</span>
+                    <span id="display-shipping" class="font-medium text-gray-800">${{ number_format($shipping, 2) }}</span>
                 </div>
 
                 <div class="flex justify-between">
                     <span>Tax</span>
-                    <span class="font-medium text-gray-800">${{ number_format($tax, 2) }}</span>
+                    <span id="display-tax" class="font-medium text-gray-800">${{ number_format($tax, 2) }}</span>
                 </div>
             </div>
 
             {{-- Total --}}
             <div class="flex sm:flex-row justify-between items-start sm:items-center pt-7 w-full">
                 <span class="text-xl sm:text-3xl font-black">Total</span>
-                <span class="text-xl sm:text-3xl font-black text-yellow-600  sm:mt-0  ">
+                <span id="display-total" class="text-xl sm:text-3xl font-black text-yellow-600 sm:mt-0">
                     ${{ number_format($total, 2) }}
                 </span>
             </div>
-            
+
             <div class="flex flex-wrap gap-2 pt-3 mt-2 w-full items-center">
                 <button onclick="clearCart()"
                         class="px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border border-[#D7B259] text-sm hover:bg-gray-50 transition-colors">
@@ -126,89 +137,157 @@
                 </button>
 
                 <a href="{{ url('/products') }}"
-                class="px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border border-[#D7B259] text-sm hover:bg-gray-50 transition-colors">
+                    class="px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border border-[#D7B259] text-sm hover:bg-gray-50 transition-colors">
                     Shopping
                 </a>
 
-                <a href="{{ url('/checkout') }}"
-                class="px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border border-[#D7B259] text-sm sm:text-base font-bold text-white shadow-md order-last sm:order-last"
-                style="background:#C9A84C;">
-                    Check Out
-                </a>
+                <form action="{{ route('checkout.process') }}" method="POST" class="order-last sm:order-last">
+                    @csrf
+                    <button type="submit"
+                            class="px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-sm sm:text-base font-bold text-white shadow-md"
+                            style="background:#C9A84C;">
+                        Check Out
+                    </button>
+                </form>
             </div>
 
         </div>
     </div>
-        
-    @push('scripts')
-    <script>
 
-        function changeCartQty(id, delta) {
-            const el = document.getElementById('qty-' + id);
+@push('scripts')
+<script>
 
-            let qty = parseInt(el.innerText);
-            qty = Math.max(1, qty + delta);
+    function changeCartQty(id, delta) {
+        const el = document.getElementById('qty-' + id);
+        let qty = parseInt(el.innerText);
+        qty = Math.max(1, qty + delta);
+        el.innerText = qty;
 
-            el.innerText = qty;
+        fetch("{{ url('/cart/update') }}/" + id, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": "{{ csrf_token() }}"
+            },
+            body: JSON.stringify({ quantity: qty })
+        })
+        .then(r => r.json())
+        .then(res => { if (res.success) location.reload(); });
+    }
 
-            fetch("{{ url('/cart/update') }}/" + id, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                },
-                body: JSON.stringify({ quantity: qty })
-            })
-            .then(r => r.json())
-            .then(res => {
-                if (res.success) location.reload();
-            });
+    function removeItem(id) {
+        fetch("{{ url('/cart/remove') }}/" + id, {
+            method: "POST",
+            headers: { "X-CSRF-TOKEN": "{{ csrf_token() }}" }
+        })
+        .then(r => r.json())
+        .then(res => { if (res.success) location.reload(); });
+    }
+
+    function clearCart() {
+        if (!confirm('Clear cart?')) return;
+        fetch("{{ route('cart.clear') }}", {
+            method: "POST",
+            headers: { "X-CSRF-TOKEN": "{{ csrf_token() }}" }
+        })
+        .then(r => r.json())
+        .then(res => { if (res.success) location.reload(); });
+    }
+
+    // ── Coupon ──────────────────────────────────────────────
+
+    function applyCoupon() {
+        const code  = document.getElementById('coupon-input').value.trim();
+        const btn   = document.getElementById('coupon-btn');
+
+        if (!code) {
+            showCouponMsg('Please enter a coupon code.', false);
+            return;
         }
 
-        function removeItem(id) {
-            fetch("{{ url('/cart/remove') }}/" + id, {
-                method: "POST",
-                headers: {
-                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                }
-            })
-            .then(r => r.json())
-            .then(res => {
-                if (res.success) location.reload();
-            });
-        }
+        btn.disabled    = true;
+        btn.textContent = 'Applying…';
 
-        function clearCart() {
-            if (!confirm('Clear cart?')) return;
+        fetch("{{ route('coupon.apply') }}", {
+            method: 'POST',
+            headers: {
+                'Content-Type':  'application/json',
+                'Accept':        'application/json',
+                'X-CSRF-TOKEN':  '{{ csrf_token() }}',
+            },
+            body: JSON.stringify({ code: code })
+        })
+        .then(r => r.json())
+        .then(res => {
+            if (res.success) {
+                updatePrices(res);
 
-            fetch("{{ route('cart.clear') }}", {
-                method: "POST",
-                headers: {
-                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                }
-            })
-            .then(r => r.json())
-            .then(res => {
-                if (res.success) location.reload();
-            });
-        }
+                document.getElementById('discount-label').innerHTML =
+                    'Discount (' + res.coupon_code + ')&nbsp;' +
+                    '<button onclick="removeCoupon()" class="ml-1 text-red-400 hover:text-red-600 text-xs underline">Remove</button>';
+                document.getElementById('display-discount').textContent = '-$' + res.discount;
+                document.getElementById('discount-row').classList.remove('hidden');
 
-        function addToCart(id) {
-            fetch("{{ url('/cart/add') }}/" + id, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                },
-                body: JSON.stringify({ quantity: 1 })
-            })
-            .then(r => r.json())
-            .then(res => {
-                if (res.success) {
-                    alert("Added to cart!");
-                }
-            });
-        }
+                document.getElementById('coupon-input').disabled = true;
+                btn.style.display = 'none';
 
-    </script>
-    @endpush
+                showCouponMsg(res.message, true);
+            } else {
+                showCouponMsg(res.message, false);
+                btn.disabled    = false;
+                btn.textContent = 'Apply';
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            showCouponMsg('Something went wrong. Please try again.', false);
+            btn.disabled    = false;
+            btn.textContent = 'Apply';
+        });
+    }
+
+    function removeCoupon() {
+        fetch("{{ route('coupon.remove') }}", {
+            method: 'DELETE',
+            headers: {
+                'Content-Type':  'application/json',
+                'Accept':        'application/json',
+                'X-CSRF-TOKEN':  '{{ csrf_token() }}',
+            }
+        })
+        .then(r => r.json())
+        .then(res => {
+            if (res.success) {
+                updatePrices(res);
+
+                document.getElementById('discount-row').classList.add('hidden');
+                document.getElementById('coupon-input').value    = '';
+                document.getElementById('coupon-input').disabled = false;
+
+                const btn = document.getElementById('coupon-btn');
+                btn.style.display = '';
+                btn.disabled      = false;
+                btn.textContent   = 'Apply';
+
+                showCouponMsg('Coupon removed.', true);
+            }
+        })
+        .catch(() => showCouponMsg('Failed to remove coupon.', false));
+    }
+
+    function updatePrices(res) {
+        document.getElementById('display-subtotal').textContent = '$' + res.subtotal;
+        document.getElementById('display-shipping').textContent = '$' + res.shipping;
+        document.getElementById('display-tax').textContent      = '$' + res.tax;
+        document.getElementById('display-total').textContent    = '$' + res.total;
+    }
+
+    function showCouponMsg(msg, success) {
+        const el = document.getElementById('coupon-message');
+        el.textContent = msg;
+        el.className   = 'text-sm px-1 ' + (success ? 'text-green-600' : 'text-red-500');
+        el.classList.remove('hidden');
+    }
+
+</script>
+@endpush

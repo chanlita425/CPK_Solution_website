@@ -64,14 +64,14 @@
 
                 {{-- Language Switcher --}}
                 <div class="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm">
-                    <a href="?lang=km"
-                       class="hover:text-primary-350 transition-colors {{ app()->getLocale() === 'km' ? 'text-primary-400 font-semibold' : '' }}">
-                        Khmer
+                    <a href="{{ route('locale.switch', ['locale' => 'km']) }}"
+                    class="transition-colors {{ app()->getLocale() === 'km' ? 'text-primary-400 font-semibold' : 'text-gray-600 hover:text-primary-400' }}">
+                        {{ __('messages.khmer') }}
                     </a>
                     <span class="text-gray-600">\</span>
-                    <a href="?lang=en"
-                       class="transition-colors {{ app()->getLocale() === 'en' ? 'text-primary-350 font-semibold' : 'text-gray-600 hover:text-primary-400' }}">
-                        English
+                    <a href="{{ route('locale.switch', ['locale' => 'en']) }}"
+                    class="transition-colors {{ app()->getLocale() === 'en' ? 'text-primary-400 font-semibold' : 'text-gray-600 hover:text-primary-400' }}">
+                        {{ __('messages.english') }}
                     </a>
                 </div>
 

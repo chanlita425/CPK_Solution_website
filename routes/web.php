@@ -37,7 +37,9 @@ Route::get('/products/{id}', [ProductController::class, 'show'])->name('pages.vi
 Route::get('/search', [SearchController::class, 'search'])->name('search');
 
 // Locale switching
-Route::post('/locale/switch', [LocaleController::class, 'switch'])->name('locale.switch');
+// Route::post('/locale/switch', [LocaleController::class, 'switch'])->name('locale.switch');
+
+Route::get('/locale/switch', [LocaleController::class, 'switch'])->name('locale.switch');
 
 // Cart Routes
 Route::prefix('cart')->name('cart.')->group(function () {
