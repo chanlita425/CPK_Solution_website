@@ -10,7 +10,7 @@
     <!-- Logo Area - Sticky top - Logo Only -->
     <div class="flex-shrink-0 flex items-center justify-between px-6 py-5 border-b border-gray-700 bg-gray-900">
         {{-- Dynamic Company Logo from Database --}}
-        <div class="w-30">
+        <div class="w-20">
             @if ($companyLogo && Storage::disk('public')->exists($companyLogo))
                 <img src="{{ asset('storage/' . $companyLogo) }}" alt="{{ $settings->company_name ?? 'Company Logo' }}"
                     class="w-100 object-contain">

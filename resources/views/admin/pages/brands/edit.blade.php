@@ -21,11 +21,9 @@
                 <div class="p-4 sm:p-6 space-y-5 sm:space-y-6">
                     <!-- Name English -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Name (English) <span
-                                class="text-red-500">*</span></label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Name (English) <span class="text-red-500">*</span></label>
                         <div class="relative">
-                            <i
-                                class="fas fa-language absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm sm:text-base"></i>
+                            <i class="fas fa-language absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm sm:text-base"></i>
                             <input type="text" name="name_en" value="{{ old('name_en', $brand->name_en) }}" required
                                 class="w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D7B259] focus:border-transparent @error('name_en') border-red-500 @enderror text-sm sm:text-base min-h-[42px]">
                         </div>
@@ -36,11 +34,9 @@
 
                     <!-- Name Khmer -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Name (Khmer) <span
-                                class="text-red-500">*</span></label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Name (Khmer) <span class="text-red-500">*</span></label>
                         <div class="relative">
-                            <i
-                                class="fas fa-language absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm sm:text-base"></i>
+                            <i class="fas fa-language absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm sm:text-base"></i>
                             <input type="text" name="name_kh" value="{{ old('name_kh', $brand->name_kh) }}" required
                                 class="w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D7B259] focus:border-transparent @error('name_kh') border-red-500 @enderror text-sm sm:text-base min-h-[42px]">
                         </div>
@@ -53,7 +49,8 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Brand Logo</label>
 
-                        @if ($brand->logo_image)
+                        {{-- Display existing image - SIMPLE like Product --}}
+                        @if($brand->logo_image)
                             <div id="existingImage" class="mb-4">
                                 <div class="relative inline-block">
                                     <img src="{{ asset('storage/' . $brand->logo_image) }}"
@@ -63,16 +60,18 @@
                                         <i class="fas fa-times text-xs"></i>
                                     </button>
                                 </div>
+                                <p class="text-xs text-gray-500 mt-2">Current logo. Click X to remove.</p>
                             </div>
                         @endif
 
-                        <div id="dropzone"
-                            class="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center cursor-pointer hover:border-[#D7B259] transition {{ $brand->logo_image ? 'hidden' : '' }}">
+                        {{-- Upload area - ALWAYS visible --}}
+                        <div id="dropzone" class="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center cursor-pointer hover:border-[#D7B259] transition">
                             <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-2 block"></i>
-                            <p class="text-gray-600">Click or drag new image here</p>
-                            <p class="text-xs text-gray-500 mt-1">PNG, JPG, GIF up to 2MB</p>
+                            <p class="text-gray-600">Click or drag new image here to upload</p>
+                            <p class="text-xs text-gray-500 mt-1">PNG, JPG, GIF, WEBP up to 2MB</p>
                         </div>
 
+                        {{-- Preview for new image --}}
                         <div id="previewContainer" class="mt-4 hidden">
                             <div class="relative inline-block">
                                 <img id="imagePreview" class="w-24 h-24 object-cover rounded-lg border">
@@ -81,13 +80,17 @@
                                     <i class="fas fa-times text-xs"></i>
                                 </button>
                             </div>
+                            <p class="text-xs text-gray-500 mt-2">New logo to upload</p>
                         </div>
 
                         <input type="file" name="logo_image" id="imageInput" accept="image/*" class="hidden">
                         <input type="hidden" name="remove_logo" id="removeLogo" value="">
+
                         @error('logo_image')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
+
+                        <p class="text-xs text-gray-400 mt-2">Upload a new logo to replace the current one. Leave empty to keep current logo.</p>
                     </div>
 
                     <!-- Status - Toggle Switch -->
@@ -96,14 +99,12 @@
                             'name' => 'is_active',
                             'checked' => old('is_active', $brand->is_active),
                             'label' => 'Brand Status',
-                            'helper' =>
-                                'Enable this to show the brand on your website. Disable to hide it temporarily.',
+                            'helper' => 'Enable this to show the brand on your website. Disable to hide it temporarily.',
                         ])
                     </div>
                 </div>
 
-                <div
-                    class="px-4 sm:px-6 py-4 bg-gray-50 border-t border-gray-200 flex flex-col sm:flex-row justify-end gap-3">
+                <div class="px-4 sm:px-6 py-4 bg-gray-50 border-t border-gray-200 flex flex-col sm:flex-row justify-end gap-3">
                     <a href="{{ route('admin.brands.index') }}"
                         class="w-full sm:w-auto px-6 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition font-medium text-center">
                         Cancel
@@ -158,25 +159,23 @@
             reader.onload = (e) => {
                 previewImg.src = e.target.result;
                 previewContainer.classList.remove('hidden');
-                if (dropzone) dropzone.classList.add('hidden');
-                if (existingImage) existingImage.classList.add('hidden');
+                dropzone.classList.add('opacity-50', 'pointer-events-none');
             };
             reader.readAsDataURL(file);
         }
 
         function removeExistingImage() {
-            if (existingImage) existingImage.classList.add('hidden');
-            if (dropzone) dropzone.classList.remove('hidden');
+            if (existingImage) {
+                existingImage.remove();
+            }
             if (removeLogo) removeLogo.value = '1';
+            dropzone.classList.remove('opacity-50', 'pointer-events-none');
         }
 
         function removeNewImage() {
             imageInput.value = '';
             previewContainer.classList.add('hidden');
-            if (dropzone) dropzone.classList.remove('hidden');
-            if (existingImage && existingImage.classList.contains('hidden')) {
-                existingImage.classList.remove('hidden');
-            }
+            dropzone.classList.remove('opacity-50', 'pointer-events-none');
         }
     </script>
 @endsection

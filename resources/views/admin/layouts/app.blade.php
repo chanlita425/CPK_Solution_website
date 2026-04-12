@@ -7,9 +7,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="{{ asset('cpk_favicon.png') }}">
-    <link rel="shortcut icon" type="image/png" href="{{ asset('cpk_favicon.png') }}">
+    @php
+        $settings = \App\Models\Setting::getSettings();
+    @endphp
+
+    <!-- Favicon from Settings -->
+    @if($settings && $settings->favicon)
+        <link rel="icon" type="image/x-icon" href="{{ asset('storage/' . $settings->favicon) }}">
+        <link rel="shortcut icon" type="image/x-icon" href="{{ asset('storage/' . $settings->favicon) }}">
+        <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('storage/' . $settings->favicon) }}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('storage/' . $settings->favicon) }}">
+    @else
+        <!-- Fallback favicon -->
+        <link rel="icon" type="image/png" href="{{ asset('cpk_favicon.png') }}">
+        <link rel="shortcut icon" type="image/png" href="{{ asset('cpk_favicon.png') }}">
+    @endif
 
     <title>@yield('title', 'Admin Dashboard') - CPK Solution</title>
 
@@ -19,7 +31,7 @@
     <!-- Local Font Awesome (installed via npm) -->
     <link rel="stylesheet" href="{{ asset('vendor/fontawesome/css/all.min.css') }}">
 
-    <!-- Google Fonts (optional - can be kept as CDN or downloaded locally) -->
+    <!-- Google Fonts -->
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap"
         rel="stylesheet">
@@ -27,12 +39,9 @@
     <!-- Alpine.js for interactive components -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
-    <!-- Local Flatpickr CSS & JS (installed via npm) -->
+    <!-- Local Flatpickr CSS & JS -->
     <link rel="stylesheet" href="{{ asset('vendor/flatpickr/dist/flatpickr.min.css') }}">
     <script src="{{ asset('vendor/flatpickr/dist/flatpickr.js') }}"></script>
-
-    <!-- Toast Container -->
-    <div id="toastContainer" class="fixed top-20 right-4 z-50 space-y-3"></div>
 
     <style>
         /* Ensure pagination doesn't have default ul/li styles */

@@ -20,11 +20,9 @@
                 <div class="p-4 sm:p-6 space-y-5 sm:space-y-6">
                     <!-- Name English -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Name (English) <span
-                                class="text-red-500">*</span></label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Name (English) <span class="text-red-500">*</span></label>
                         <div class="relative">
-                            <i
-                                class="fas fa-language absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm sm:text-base"></i>
+                            <i class="fas fa-language absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm sm:text-base"></i>
                             <input type="text" name="name_en" value="{{ old('name_en') }}" required
                                 class="w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D7B259] focus:border-transparent @error('name_en') border-red-500 @enderror text-sm sm:text-base min-h-[42px]"
                                 placeholder="Enter brand name in English">
@@ -36,11 +34,9 @@
 
                     <!-- Name Khmer -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Name (Khmer) <span
-                                class="text-red-500">*</span></label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Name (Khmer) <span class="text-red-500">*</span></label>
                         <div class="relative">
-                            <i
-                                class="fas fa-language absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm sm:text-base"></i>
+                            <i class="fas fa-language absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm sm:text-base"></i>
                             <input type="text" name="name_kh" value="{{ old('name_kh') }}" required
                                 class="w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D7B259] focus:border-transparent @error('name_kh') border-red-500 @enderror text-sm sm:text-base min-h-[42px]"
                                 placeholder="បញ្ចូលឈ្មោះម៉ាកជាភាសាខ្មែរ">
@@ -80,14 +76,12 @@
                             'name' => 'is_active',
                             'checked' => old('is_active', true),
                             'label' => 'Brand Status',
-                            'helper' =>
-                                'Enable this to show the brand on your website. Disable to hide it temporarily.',
+                            'helper' => 'Enable this to show the brand on your website. Disable to hide it temporarily.',
                         ])
                     </div>
                 </div>
 
-                <div
-                    class="px-4 sm:px-6 py-4 bg-gray-50 border-t border-gray-200 flex flex-col sm:flex-row justify-end gap-3">
+                <div class="px-4 sm:px-6 py-4 bg-gray-50 border-t border-gray-200 flex flex-col sm:flex-row justify-end gap-3">
                     <a href="{{ route('admin.brands.index') }}"
                         class="w-full sm:w-auto px-6 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition font-medium text-center">
                         Cancel

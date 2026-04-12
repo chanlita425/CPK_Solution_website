@@ -39,7 +39,8 @@
                     <div>
                         <label class="form-label">Category Icon</label>
 
-                        @if ($category->icon_image)
+                        {{-- Display existing image - SIMPLE like Product --}}
+                        @if($category->icon_image)
                             <div id="existingImage" class="mb-4">
                                 <div class="relative inline-block">
                                     <img src="{{ asset('storage/' . $category->icon_image) }}"
@@ -49,16 +50,18 @@
                                         <i class="fas fa-times text-xs"></i>
                                     </button>
                                 </div>
+                                <p class="text-xs text-gray-500 mt-2">Current icon. Click X to remove.</p>
                             </div>
                         @endif
 
-                        <div id="dropzone"
-                            class="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center cursor-pointer hover:border-[#D7B259] transition {{ $category->icon_image ? 'hidden' : '' }}">
+                        {{-- Upload area - ALWAYS visible --}}
+                        <div id="dropzone" class="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center cursor-pointer hover:border-[#D7B259] transition">
                             <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-2 block"></i>
-                            <p class="text-gray-600">Click or drag new image here</p>
-                            <p class="text-xs text-gray-500 mt-1">PNG, JPG, GIF up to 2MB</p>
+                            <p class="text-gray-600">Click or drag new image here to upload</p>
+                            <p class="text-xs text-gray-500 mt-1">PNG, JPG, GIF, WEBP up to 2MB</p>
                         </div>
 
+                        {{-- Preview for new image --}}
                         <div id="previewContainer" class="mt-4 hidden">
                             <div class="relative inline-block">
                                 <img id="imagePreview" class="w-24 h-24 object-cover rounded-lg border">
@@ -67,13 +70,17 @@
                                     <i class="fas fa-times text-xs"></i>
                                 </button>
                             </div>
+                            <p class="text-xs text-gray-500 mt-2">New icon to upload</p>
                         </div>
 
                         <input type="file" name="icon_image" id="imageInput" accept="image/*" class="hidden">
                         <input type="hidden" name="remove_icon" id="removeIcon" value="">
+
                         @error('icon_image')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
+
+                        <p class="text-xs text-gray-400 mt-2">Upload a new icon to replace the current one. Leave empty to keep current icon.</p>
                     </div>
 
                     <!-- Status - Toggle Switch -->
@@ -82,8 +89,7 @@
                             'name' => 'is_active',
                             'checked' => old('is_active', $category->is_active),
                             'label' => 'Category Status',
-                            'helper' =>
-                                'Enable this to show the category on your website. Disable to hide it temporarily.',
+                            'helper' => 'Enable this to show the category on your website. Disable to hide it temporarily.',
                         ])
                     </div>
                 </div>
@@ -92,8 +98,7 @@
                     <a href="{{ route('admin.categories.index') }}"
                         class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition">Cancel</a>
                     <button type="submit"
-                        class="px-4 py-2 bg-[#D7B259] hover:bg-[#c4a145] text-gray-900 rounded-lg transition">Update
-                        Category</button>
+                        class="px-4 py-2 bg-[#D7B259] hover:bg-[#c4a145] text-gray-900 rounded-lg transition">Update Category</button>
                 </div>
             </form>
         </div>
@@ -140,25 +145,23 @@
             reader.onload = (e) => {
                 previewImg.src = e.target.result;
                 previewContainer.classList.remove('hidden');
-                if (dropzone) dropzone.classList.add('hidden');
-                if (existingImage) existingImage.classList.add('hidden');
+                dropzone.classList.add('opacity-50', 'pointer-events-none');
             };
             reader.readAsDataURL(file);
         }
 
         function removeExistingImage() {
-            if (existingImage) existingImage.classList.add('hidden');
-            if (dropzone) dropzone.classList.remove('hidden');
+            if (existingImage) {
+                existingImage.remove();
+            }
             if (removeIcon) removeIcon.value = '1';
+            dropzone.classList.remove('opacity-50', 'pointer-events-none');
         }
 
         function removeNewImage() {
             imageInput.value = '';
             previewContainer.classList.add('hidden');
-            if (dropzone) dropzone.classList.remove('hidden');
-            if (existingImage && existingImage.classList.contains('hidden')) {
-                existingImage.classList.remove('hidden');
-            }
+            dropzone.classList.remove('opacity-50', 'pointer-events-none');
         }
     </script>
 @endsection

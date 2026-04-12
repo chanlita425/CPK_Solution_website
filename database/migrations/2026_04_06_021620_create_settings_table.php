@@ -1,4 +1,5 @@
 <?php
+// database/migrations/2026_04_06_021620_create_settings_table.php (MODIFIED)
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -18,6 +19,8 @@ return new class extends Migration
             $table->text('about_company')->nullable();
             $table->string('hero_banner_image')->nullable();
             $table->string('promotion_banner_image')->nullable();
+            $table->string('popup_banner_image')->nullable();
+            $table->string('favicon')->nullable();
             $table->string('facebook_link')->nullable();
             $table->string('telegram_link')->nullable();
             $table->string('tiktok_link')->nullable();

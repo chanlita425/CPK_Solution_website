@@ -1,5 +1,4 @@
 <?php
-// app/Models/Category.php
 
 namespace App\Models;
 
@@ -22,7 +21,6 @@ class Category extends Model
         'is_active' => 'boolean',
     ];
 
-    // Helper method to get name based on current locale
     public function getNameAttribute()
     {
         $locale = app()->getLocale();
@@ -32,20 +30,18 @@ class Category extends Model
         return $this->name_en;
     }
 
-    // Helper to get localized name for admin
     public function getLocalizedName($locale = null)
     {
         $locale = $locale ?: app()->getLocale();
         return $locale === 'kh' ? ($this->name_kh ?: $this->name_en) : $this->name_en;
     }
 
-    // Relationships
     public function products()
     {
         return $this->hasMany(Product::class);
     }
 
-    // Accessor for icon URL
+    // FIXED: Same pattern as Product's getMainImageUrlAttribute
     public function getIconUrlAttribute()
     {
         if ($this->icon_image && Storage::disk('public')->exists($this->icon_image)) {
@@ -54,7 +50,15 @@ class Category extends Model
         return null;
     }
 
-    // Check if name exists (for validation)
+    // ADD THIS - Direct URL accessor (same as Product)
+    public function getIconImageUrlAttribute()
+    {
+        if ($this->icon_image && Storage::disk('public')->exists($this->icon_image)) {
+            return asset('storage/' . $this->icon_image);
+        }
+        return null;
+    }
+
     public static function isNameUnique($nameEn, $nameKh, $excludeId = null)
     {
         $query = self::query();

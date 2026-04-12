@@ -86,6 +86,54 @@
                 </div>
             </div>
 
+            <!-- NEW: Popup Banner & Favicon Section -->
+            <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-[#D7B259]/10 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-image text-[#D7B259] text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-800">Popup Banner & Favicon</h3>
+                            <p class="text-sm text-gray-500">Configure popup banner and website favicon</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Popup Banner Image -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Popup Banner Image</label>
+                            @if ($settings->popup_banner_image)
+                                <div class="mb-3">
+                                    <img src="{{ asset('storage/' . $settings->popup_banner_image) }}"
+                                        class="w-full max-w-md h-32 object-cover rounded-lg border">
+                                    <p class="text-xs text-gray-500 mt-1">Current popup banner</p>
+                                </div>
+                            @endif
+                            <input type="file" name="popup_banner_image" accept="image/*"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D7B259] focus:border-transparent">
+                            <p class="text-xs text-gray-500 mt-1">Recommended size: 600x400px. Formats: JPEG, PNG, JPG, WEBP (Max 2MB)</p>
+                        </div>
+
+                        <!-- Favicon -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Favicon</label>
+                            @if ($settings->favicon)
+                                <div class="mb-3">
+                                    <img src="{{ asset('storage/' . $settings->favicon) }}"
+                                        class="w-16 h-16 object-cover rounded-lg border">
+                                    <p class="text-xs text-gray-500 mt-1">Current favicon</p>
+                                </div>
+                            @endif
+                            <input type="file" name="favicon" accept="image/*"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D7B259] focus:border-transparent">
+                            <p class="text-xs text-gray-500 mt-1">Recommended size: 32x32px or 16x16px. Formats: ICO, PNG, JPG, SVG, WEBP (Max 1MB)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Store Settings Section -->
             <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
@@ -120,8 +168,7 @@
                             </div>
                         </div>
                         <div class="md:col-span-2">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Seller Telegram (for order
-                                notifications)</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Seller Telegram (for order notifications)</label>
                             <div class="relative">
                                 <i class="fab fa-telegram absolute left-3 top-1/2 -translate-y-1/2 text-[#0088cc]"></i>
                                 <input type="text" name="seller_telegram"
