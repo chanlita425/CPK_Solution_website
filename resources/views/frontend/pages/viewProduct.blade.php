@@ -39,26 +39,30 @@
 @endsection
 @push('scripts')
 <script>
+    const originalMainSrc = document.getElementById('mainImage')?.src;
+    let activeThumbIndex = null;
+
     function selectThumb(imageUrl, index) {
         const mainImage = document.getElementById('mainImage');
         const thumbs = document.querySelectorAll('.thumb-btn');
 
-        if (mainImage) {
-            mainImage.style.opacity = 0;
-            setTimeout(() => {
-                mainImage.src = imageUrl;
-                mainImage.style.opacity = 1;
-            }, 120);
-        }
+        if (!mainImage) return;
+
+        // Second click on same thumbnail → revert to original main image
+        const targetSrc = (activeThumbIndex === index) ? originalMainSrc : imageUrl;
+        const isReverting = activeThumbIndex === index;
+
+        mainImage.style.opacity = 0;
+        setTimeout(() => {
+            mainImage.src = targetSrc;
+            mainImage.style.opacity = 1;
+        }, 120);
+
+        activeThumbIndex = isReverting ? null : index;
 
         thumbs.forEach((btn, i) => {
-            if (i === index) {
-                btn.classList.add('border-yellow-400');
-                btn.classList.remove('border-gray-200');
-            } else {
-                btn.classList.remove('border-yellow-400');
-                btn.classList.add('border-gray-200');
-            }
+            btn.classList.toggle('border-yellow-400', i === activeThumbIndex);
+            btn.classList.toggle('border-gray-200', i !== activeThumbIndex);
         });
     }
 </script>
