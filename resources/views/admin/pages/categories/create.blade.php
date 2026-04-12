@@ -65,8 +65,7 @@
                         'name' => 'is_active',
                         'checked' => old('is_active', true),
                         'label' => 'Category Status',
-                        'helper' =>
-                            'Enable this to show the category on your website. Disable to hide it temporarily.',
+                        'helper' => 'Enable this to show the category on your website. Disable to hide it temporarily.',
                     ])
                 </div>
 
@@ -74,8 +73,7 @@
                     <a href="{{ route('admin.categories.index') }}"
                         class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition">Cancel</a>
                     <button type="submit"
-                        class="px-4 py-2 bg-[#D7B259] hover:bg-[#c4a145] text-gray-900 rounded-lg transition">Create
-                        Category</button>
+                        class="px-4 py-2 bg-[#D7B259] hover:bg-[#c4a145] text-gray-900 rounded-lg transition">Create Category</button>
                 </div>
             </form>
         </div>

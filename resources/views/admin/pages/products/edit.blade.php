@@ -121,22 +121,6 @@
                             @enderror
                         </div>
 
-                        <!-- Quantity -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Quantity <span
-                                    class="text-red-500">*</span></label>
-                            <div class="relative">
-                                <i class="fas fa-boxes absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                                <input type="number" name="quantity" value="{{ old('quantity', $product->quantity) }}"
-                                    required
-                                    class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D7B259] focus:border-transparent @error('quantity') border-red-500 @enderror"
-                                    placeholder="Stock quantity">
-                            </div>
-                            @error('quantity')
-                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-
                         <!-- Specification English -->
                         <div class="md:col-span-2">
                             <label class="block text-sm font-medium text-gray-700 mb-2">Specification (English)</label>
@@ -213,8 +197,7 @@
                                 'name' => 'is_active',
                                 'checked' => old('is_active', $product->is_active),
                                 'label' => 'Product Status',
-                                'helper' =>
-                                    'Enable this to show the product on your website. Disable to hide it temporarily.',
+                                'helper' => 'Enable this to show the product on your website. Disable to hide it temporarily.',
                             ])
                         </div>
                     </div>

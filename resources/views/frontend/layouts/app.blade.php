@@ -4,7 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'CPK Solution')</title>
+    {{-- <title>@yield('title', 'CPK Solution')</title> --}}
+
+      <!-- Favicon from Settings -->
+    @if($settings && $settings->favicon)
+        <link rel="icon" type="image/x-icon" href="{{ asset('storage/' . $settings->favicon) }}">
+        <link rel="shortcut icon" type="image/x-icon" href="{{ asset('storage/' . $settings->favicon) }}">
+        <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('storage/' . $settings->favicon) }}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('storage/' . $settings->favicon) }}">
+    @else
+        <!-- Fallback favicon -->
+        <link rel="icon" type="image/png" href="{{ asset('cpk_favicon.png') }}">
+        <link rel="shortcut icon" type="image/png" href="{{ asset('cpk_favicon.png') }}">
+    @endif
+
+    <title>@yield('title', 'Admin Dashboard') - CPK Solution</title>
 
     {{-- Tailwind CSS CDN --}}
     <script src="https://cdn.tailwindcss.com"></script>
@@ -62,6 +76,14 @@
         }
     </script>
 
+    <style>
+        /* Khmer Font Support */
+        @import url('https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Nunito', 'Kantumruy Pro', sans-serif;
+    </style>
+
     {{-- Google Fonts --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -74,7 +96,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
     <style>
         #product-detail {
-            scroll-margin-top: 100px;
+            scroll-margin-top: 50px;
         }
     </style>
 </head>
@@ -102,6 +124,13 @@
 
     {{-- Footer --}}
     @include('frontend.components.footer')
+
+    {{-- POP UP --}}
+    @include('frontend.pages.popUp')
+
+    {{-- @if (Route::currentRouteName() === 'home')
+        @include('frontend.pages.popUp')
+    @endif --}}
 
     {{-- Swiper JS --}}
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>

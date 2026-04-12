@@ -34,19 +34,11 @@ class Order extends Model
         return $this->hasMany(OrderItem::class);
     }
 
-    // Confirm order - reduces stock
+    // Confirm order - NO stock changes
     public function confirm()
     {
         DB::transaction(function () {
-            foreach ($this->items as $item) {
-                $product = Product::find($item->product_id);
-                if ($product) {
-                    if (!$product->hasStock($item->quantity)) {
-                        throw new \Exception("Insufficient stock for product: {$product->name_en}");
-                    }
-                    $product->decreaseStock($item->quantity);
-                }
-            }
+            // NO stock checks or reductions
             $this->status = 'confirmed';
             $this->save();
         });
@@ -54,7 +46,7 @@ class Order extends Model
         return true;
     }
 
-    // Cancel order - no stock change
+    // Cancel order
     public function cancel()
     {
         $this->status = 'cancelled';

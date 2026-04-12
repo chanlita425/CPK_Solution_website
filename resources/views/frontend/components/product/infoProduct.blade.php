@@ -47,11 +47,10 @@
             @endphp
 
             @if(count($specs))
-                <ul class="space-y-1">
+                <ul class="list-disc pl-4 space-y-1">
                     @foreach($specs as $spec)
-                        <li class="text-xs sm:text-sm text-black flex gap-1">
-                            <span class="text-gray-600">.</span>
-                            <span>{{ trim($spec) }}</span>
+                        <li class="text-xs sm:text-sm text-black">
+                            {{ trim($spec) }}
                         </li>
                     @endforeach
                 </ul>

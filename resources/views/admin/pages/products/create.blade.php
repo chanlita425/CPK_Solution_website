@@ -116,21 +116,6 @@
                             @enderror
                         </div>
 
-                        <!-- Quantity -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Quantity <span
-                                    class="text-red-500">*</span></label>
-                            <div class="relative">
-                                <i class="fas fa-boxes absolute left-3 top-3 text-gray-400"></i>
-                                <input type="number" name="quantity" value="{{ old('quantity', 0) }}" required
-                                    class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D7B259] focus:border-transparent @error('quantity') border-red-500 @enderror"
-                                    placeholder="Stock quantity">
-                            </div>
-                            @error('quantity')
-                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-
                         <!-- Specification English -->
                         <div class="md:col-span-2">
                             <label class="block text-sm font-medium text-gray-700 mb-2">Specification (English)</label>
@@ -177,8 +162,7 @@
                                 'name' => 'is_active',
                                 'checked' => old('is_active', true),
                                 'label' => 'Product Status',
-                                'helper' =>
-                                    'Enable this to show the product on your website. Disable to hide it temporarily.',
+                                'helper' => 'Enable this to show the product on your website. Disable to hide it temporarily.',
                             ])
                         </div>
                     </div>
@@ -249,12 +233,12 @@
                 const container = document.createElement('div');
                 container.className = 'relative group';
                 container.innerHTML = `
-            <img src="${e.target.result}" class="w-full h-32 object-cover rounded-lg">
-            <button type="button" onclick="removeImage('${file.name}')"
-                    class="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 transition">
-                <i class="fas fa-times text-xs"></i>
-            </button>
-        `;
+                    <img src="${e.target.result}" class="w-full h-32 object-cover rounded-lg">
+                    <button type="button" onclick="removeImage('${file.name}')"
+                            class="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 transition">
+                        <i class="fas fa-times text-xs"></i>
+                    </button>
+                `;
                 previewContainer.appendChild(container);
             };
             reader.readAsDataURL(file);

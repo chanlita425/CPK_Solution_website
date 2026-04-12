@@ -46,13 +46,21 @@ class ProductController extends Controller
         $categories = Category::where('is_active', true)->get();
         $brands = Brand::where('is_active', true)->get();
 
-        $categoryId = null;
-        $brandId = null;
+        $categoryId = $request->input('category_id');
+        $brandId    = $request->input('brand_id');
 
-        $mainImage = $product->images->first();
+        $mainImage  = $product->images->first();
         $thumbnails = $product->images->skip(1);
 
         $query = Product::active();
+
+        if ($categoryId) {
+            $query->where('category_id', $categoryId);
+        }
+
+        if ($brandId) {
+            $query->where('brand_id', $brandId);
+        }
 
         $allProducts = $query->latest()->get();
         $totalItems = $allProducts->count();

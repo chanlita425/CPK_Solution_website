@@ -1,9 +1,11 @@
 <?php
+// app/Models/Setting.php
 
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Setting extends Model
 {
@@ -18,6 +20,8 @@ class Setting extends Model
         'about_company',
         'hero_banner_image',
         'promotion_banner_image',
+        'popup_banner_image',
+        'favicon',
         'facebook_link',
         'telegram_link',
         'tiktok_link',
@@ -32,7 +36,9 @@ class Setting extends Model
         'tax_percent' => 'decimal:2',
     ];
 
-    // Remove caching to avoid serialization issues
+    /**
+     * Get settings (always returns a record)
+     */
     public static function getSettings()
     {
         $settings = self::first();
@@ -60,5 +66,23 @@ class Setting extends Model
     public static function getSellerTelegram()
     {
         return self::getSettings()->seller_telegram;
+    }
+
+    // NEW: Get popup banner URL
+    public function getPopupBannerUrlAttribute()
+    {
+        if ($this->popup_banner_image && Storage::disk('public')->exists($this->popup_banner_image)) {
+            return Storage::url($this->popup_banner_image);
+        }
+        return null;
+    }
+
+    // NEW: Get favicon URL
+    public function getFaviconUrlAttribute()
+    {
+        if ($this->favicon && Storage::disk('public')->exists($this->favicon)) {
+            return Storage::url($this->favicon);
+        }
+        return null;
     }
 }

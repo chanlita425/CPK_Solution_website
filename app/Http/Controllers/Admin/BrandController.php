@@ -25,7 +25,6 @@ class BrandController extends Controller
             $query->where('is_active', $request->status == 'active');
         }
 
-        // Add withCount to get accurate product counts
         $brands = $query->withCount('products')->orderBy('id', 'desc')->paginate(10);
 
         return view('admin.pages.brands.index', compact('brands'));
@@ -41,7 +40,7 @@ class BrandController extends Controller
         $validated = $request->validate([
             'name_en' => 'required|string|max:255|unique:brands,name_en',
             'name_kh' => 'required|string|max:255|unique:brands,name_kh',
-            'logo_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'logo_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'is_active' => 'boolean',
         ], [
             'name_en.required' => 'Brand name in English is required.',
@@ -83,32 +82,29 @@ class BrandController extends Controller
         $validated = $request->validate([
             'name_en' => 'required|string|max:255|unique:brands,name_en,' . $id,
             'name_kh' => 'required|string|max:255|unique:brands,name_kh,' . $id,
-            'logo_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'logo_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'is_active' => 'boolean',
             'remove_logo' => 'nullable|string',
-        ], [
-            'name_en.required' => 'Brand name in English is required.',
-            'name_en.unique' => 'A brand with this English name already exists.',
-            'name_kh.required' => 'Brand name in Khmer is required.',
-            'name_kh.unique' => 'A brand with this Khmer name already exists.',
-            'logo_image.image' => 'Please upload a valid image file.',
-            'logo_image.max' => 'Image size must not exceed 2MB.',
         ]);
 
         $brand->name_en = $request->name_en;
         $brand->name_kh = $request->name_kh;
         $brand->is_active = $request->has('is_active');
 
+        // Handle image upload
         if ($request->hasFile('logo_image')) {
+            // Delete old image if exists
             if ($brand->logo_image && Storage::disk('public')->exists($brand->logo_image)) {
                 Storage::disk('public')->delete($brand->logo_image);
             }
+
             $image = $request->file('logo_image');
             $filename = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
             $path = $image->storeAs('brands', $filename, 'public');
             $brand->logo_image = $path;
         }
 
+        // Handle remove logo
         if ($request->has('remove_logo') && $request->remove_logo == '1') {
             if ($brand->logo_image && Storage::disk('public')->exists($brand->logo_image)) {
                 Storage::disk('public')->delete($brand->logo_image);
@@ -126,7 +122,6 @@ class BrandController extends Controller
     {
         $brand = Brand::findOrFail($id);
 
-        // Check if brand has products
         if ($brand->products()->count() > 0) {
             return response()->json([
                 'success' => false,

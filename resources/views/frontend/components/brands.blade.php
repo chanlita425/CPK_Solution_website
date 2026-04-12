@@ -14,7 +14,10 @@ $brands = Brand::where('is_active', true)->get();
             <div class="swiper-wrapper flex items-center">
                 @foreach($brands as $index => $brand)
                     <div class="swiper-slide !w-auto">
-                        <a href="{{ url()->current() }}?brand_id={{ $brand->id }}{{ $categoryId ? '&category_id=' . $categoryId : '' }}{{ request('search') ? '&search=' . request('search') : '' }}#product-grid"
+                        <a href="{{ $brandId == $brand->id
+                                ? url()->current() . ($categoryId ? '?category_id=' . $categoryId : '') . (request('search') ? ($categoryId ? '&' : '?') . 'search=' . request('search') : '') . '#product-grid'
+                                : url()->current() . '?brand_id=' . $brand->id . ($categoryId ? '&category_id=' . $categoryId : '') . (request('search') ? '&search=' . request('search') : '') . '#product-grid'
+                            }}"
                         class="flex items-center justify-center px-4 py-3 rounded-full transition-all duration-200
                         {{ $brandId == $brand->id ? 'bg-[#FFE3A1]' : 'hover:bg-[#FFE3A1]' }}">
                             
@@ -36,13 +39,13 @@ $brands = Brand::where('is_active', true)->get();
         {{-- Prev button --}}
         <button class="brand-prev absolute left-3 top-1/2 -translate-y-1/2 z-20
             w-8 h-8 flex items-center justify-center
-            bg-white   hover:shadow-lg transition-all">
+              hover:shadow-lg transition-all">
         </button>
 
         {{-- Next button --}}
         <button class="brand-next absolute right-3 top-1/2 -translate-y-1/2 z-20
             w-8 h-8 flex items-center justify-center
-            bg-white   hover:shadow-lg transition-all">  
+              hover:shadow-lg transition-all">  
         </button>
     </div>
 </section>

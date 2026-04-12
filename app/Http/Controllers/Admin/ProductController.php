@@ -56,7 +56,6 @@ class ProductController extends Controller
     {
         $categories = Category::where('is_active', true)->get();
         $brands = Brand::where('is_active', true)->get();
-        // FIXED: Changed from 'admin.products.create' to 'admin.pages.products.create'
         return view('admin.pages.products.create', compact('categories', 'brands'));
     }
 
@@ -71,7 +70,6 @@ class ProductController extends Controller
             'price' => 'required|numeric|min:0',
             'specification_en' => 'nullable|string',
             'specification_kh' => 'nullable|string',
-            'quantity' => 'required|integer|min:0',
             'images' => 'nullable|array|max:4',
             'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
@@ -85,7 +83,6 @@ class ProductController extends Controller
             'price' => $request->price,
             'specification_en' => $request->specification_en,
             'specification_kh' => $request->specification_kh,
-            'quantity' => $request->quantity,
             'is_active' => $request->has('is_active'),
         ]);
 
@@ -110,7 +107,6 @@ class ProductController extends Controller
         $product = Product::with('images')->findOrFail($id);
         $categories = Category::where('is_active', true)->get();
         $brands = Brand::where('is_active', true)->get();
-        // FIXED: Changed from 'admin.products.edit' to 'admin.pages.products.edit'
         return view('admin.pages.products.edit', compact('product', 'categories', 'brands'));
     }
 
@@ -127,7 +123,6 @@ class ProductController extends Controller
             'price' => 'required|numeric|min:0',
             'specification_en' => 'nullable|string',
             'specification_kh' => 'nullable|string',
-            'quantity' => 'required|integer|min:0',
             'images' => 'nullable|array|max:4',
             'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
             'deleted_images' => 'nullable|string',
@@ -142,7 +137,6 @@ class ProductController extends Controller
             'price' => $request->price,
             'specification_en' => $request->specification_en,
             'specification_kh' => $request->specification_kh,
-            'quantity' => $request->quantity,
             'is_active' => $request->has('is_active'),
         ]);
 

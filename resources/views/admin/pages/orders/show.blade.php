@@ -41,8 +41,7 @@
                                 <tr>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Product</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Price</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Quantity
-                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Quantity</th>
                                     <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Total</th>
                                 </tr>
                             </thead>
@@ -55,8 +54,7 @@
                                         </td>
                                         <td class="px-6 py-4 text-gray-600">${{ number_format($item->price, 2) }}</td>
                                         <td class="px-6 py-4">
-                                            <span
-                                                class="inline-flex items-center justify-center w-8 h-8 bg-gray-100 rounded-lg">
+                                            <span class="inline-flex items-center justify-center w-8 h-8 bg-gray-100 rounded-lg">
                                                 {{ $item->quantity }}
                                             </span>
                                         </td>
@@ -78,11 +76,10 @@
                         <i class="fas fa-chart-line text-[#D7B259] mr-2"></i> Order Status
                     </h3>
                     <div class="flex items-center justify-between">
-                        <span
-                            class="px-3 py-1 rounded-full text-sm font-medium
-                        @if ($order->status == 'pending') bg-yellow-100 text-yellow-800
-                        @elseif($order->status == 'confirmed') bg-emerald-100 text-emerald-800
-                        @else bg-red-100 text-red-800 @endif">
+                        <span class="px-3 py-1 rounded-full text-sm font-medium
+                            @if ($order->status == 'pending') bg-yellow-100 text-yellow-800
+                            @elseif($order->status == 'confirmed') bg-emerald-100 text-emerald-800
+                            @else bg-red-100 text-red-800 @endif">
                             {{ ucfirst($order->status) }}
                         </span>
                         <span class="text-sm text-gray-500">
@@ -161,10 +158,11 @@
                     </div>
                 </div>
                 <div class="mb-6">
+                    <!-- Keep the box but remove stock-related text -->
                     <div class="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">
                         <p class="text-sm text-amber-800">
                             <i class="fas fa-exclamation-triangle mr-2"></i>
-                            <strong>Stock will be reduced</strong> for all items in this order.
+                            Please verify order details before confirming.
                         </p>
                     </div>
                     <div class="space-y-2">

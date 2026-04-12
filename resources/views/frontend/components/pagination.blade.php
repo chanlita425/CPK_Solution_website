@@ -2,9 +2,13 @@
     'page' => 1,
     'total' => 1,
     'size' => 'sm',
-    'pgUrl' => null, // optional: base URL
-    'pageParam' => 'page', // allows xs/sm/lg to have different query params
+    'pgUrl' => null,
+    'pageParam' => 'page',
 ])
+
+@if((int)$total <= 1)
+    {{-- Hide pagination when only 1 page or no data --}}
+@else
 
 @php
     // Pagination dot/button sizes
@@ -94,3 +98,5 @@
         </span>
     @endif
 </div>
+
+@endif

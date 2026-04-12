@@ -1,10 +1,10 @@
 <?php
-// app/Models/Brand.php
 
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Brand extends Model
 {
@@ -35,7 +35,24 @@ class Brand extends Model
         return $this->hasMany(Product::class);
     }
 
-    // Check if name exists (for validation)
+    // FIXED: Same pattern as Product's getMainImageUrlAttribute
+    public function getLogoUrlAttribute()
+    {
+        if ($this->logo_image && Storage::disk('public')->exists($this->logo_image)) {
+            return Storage::url($this->logo_image);
+        }
+        return null;
+    }
+
+    // ADD THIS - Direct URL accessor (same as Product)
+    public function getLogoImageUrlAttribute()
+    {
+        if ($this->logo_image && Storage::disk('public')->exists($this->logo_image)) {
+            return asset('storage/' . $this->logo_image);
+        }
+        return null;
+    }
+
     public static function isNameUnique($nameEn, $nameKh, $excludeId = null)
     {
         $query = self::query();

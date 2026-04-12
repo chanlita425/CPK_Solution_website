@@ -47,16 +47,12 @@ class CheckoutController extends Controller
                     throw new \Exception("Product not available: ID {$id}");
                 }
 
-                if (!$product->hasStock($details['quantity'])) {
-                    throw new \Exception("Insufficient stock for {$product->name_en}. Available: {$product->quantity}");
-                }
-
                 $lineTotal = $product->price * $details['quantity'];
                 $subtotal += $lineTotal;
 
                 $itemsData[] = [
                     'product_id' => $product->id,
-                    'product_name' => $product->name_en, // Store English name as reference
+                    'product_name' => $product->name_en,
                     'price' => $product->price,
                     'quantity' => $details['quantity'],
                     'line_total' => $lineTotal,
@@ -79,7 +75,6 @@ class CheckoutController extends Controller
                     $discount = min($discount, $subtotal);
                     $couponCode = $coupon->code;
                 } else {
-                    // Invalid coupon, remove from session but continue checkout
                     session()->forget('coupon');
                 }
             }

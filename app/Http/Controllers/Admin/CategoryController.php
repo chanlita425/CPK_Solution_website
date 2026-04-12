@@ -26,7 +26,6 @@ class CategoryController extends Controller
             $query->where('is_active', $request->status == 'active');
         }
 
-        // Add withCount to get accurate product counts
         $categories = $query->withCount('products')->orderBy('id', 'desc')->paginate(10);
 
         return view('admin.pages.categories.index', compact('categories'));
@@ -42,7 +41,7 @@ class CategoryController extends Controller
         $validated = $request->validate([
             'name_en' => 'required|string|max:255|unique:categories,name_en',
             'name_kh' => 'required|string|max:255|unique:categories,name_kh',
-            'icon_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'icon_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'is_active' => 'boolean',
         ], [
             'name_en.required' => 'Category name in English is required.',
@@ -84,32 +83,29 @@ class CategoryController extends Controller
         $validated = $request->validate([
             'name_en' => 'required|string|max:255|unique:categories,name_en,' . $id,
             'name_kh' => 'required|string|max:255|unique:categories,name_kh,' . $id,
-            'icon_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'icon_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'is_active' => 'boolean',
             'remove_icon' => 'nullable|string',
-        ], [
-            'name_en.required' => 'Category name in English is required.',
-            'name_en.unique' => 'A category with this English name already exists.',
-            'name_kh.required' => 'Category name in Khmer is required.',
-            'name_kh.unique' => 'A category with this Khmer name already exists.',
-            'icon_image.image' => 'Please upload a valid image file.',
-            'icon_image.max' => 'Image size must not exceed 2MB.',
         ]);
 
         $category->name_en = $request->name_en;
         $category->name_kh = $request->name_kh;
         $category->is_active = $request->has('is_active');
 
+        // Handle image upload
         if ($request->hasFile('icon_image')) {
+            // Delete old image if exists
             if ($category->icon_image && Storage::disk('public')->exists($category->icon_image)) {
                 Storage::disk('public')->delete($category->icon_image);
             }
+
             $image = $request->file('icon_image');
             $filename = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
             $path = $image->storeAs('categories', $filename, 'public');
             $category->icon_image = $path;
         }
 
+        // Handle remove icon
         if ($request->has('remove_icon') && $request->remove_icon == '1') {
             if ($category->icon_image && Storage::disk('public')->exists($category->icon_image)) {
                 Storage::disk('public')->delete($category->icon_image);
@@ -127,7 +123,6 @@ class CategoryController extends Controller
     {
         $category = Category::findOrFail($id);
 
-        // Check if category has products
         if ($category->products()->count() > 0) {
             return response()->json([
                 'success' => false,
