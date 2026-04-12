@@ -116,6 +116,47 @@
         document.getElementById('qty-display').textContent = qty;
     }
 
+    // function addToCart(productId) {
+    //     const btn = document.getElementById('add-to-cart-btn');
+    //     btn.disabled    = true;
+    //     btn.textContent = 'Adding…';
+
+    //     fetch("{{ url('/cart/add') }}/" + productId, {
+    //         method: 'POST',
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //             'X-CSRF-TOKEN': '{{ csrf_token() }}',
+    //             'Accept':       'application/json',
+    //         },
+    //         body: JSON.stringify({ quantity: qty })
+    //     })
+    //     .then(r => r.json())
+    //     .then(res => {
+    //         if (res.success) {
+    //             showToast('Added to cart!', true);
+
+    //             // update navbar badge if exists
+    //             const badge = document.getElementById('cart-count');
+    //             if (badge) badge.textContent = res.cart_count;
+    //         } else {
+    //             showToast(res.message || 'Failed to add to cart.', false);
+    //         }
+    //     })
+    //     .catch(() => showToast('Something went wrong.', false))
+    //     .finally(() => {
+    //         btn.disabled    = false;
+    //         btn.textContent = 'Add to Cart';
+    //     });
+    // }
+
+    function showToast(msg, success) {
+        const toast = document.getElementById('cart-toast');
+        document.getElementById('cart-toast-msg').textContent = msg;
+        toast.style.background = success ? '#C9A84C' : '#ef4444';
+        toast.classList.remove('hidden');
+        setTimeout(() => toast.classList.add('hidden'), 3000);
+    }
+
     function addToCart(productId) {
         const btn = document.getElementById('add-to-cart-btn');
         btn.disabled    = true;
@@ -133,58 +174,17 @@
         .then(r => r.json())
         .then(res => {
             if (res.success) {
-                showToast('Added to cart!', true);
-
-                // update navbar badge if exists
-                const badge = document.getElementById('cart-count');
-                if (badge) badge.textContent = res.cart_count;
+                window.location.href = "{{ route('cart.index') }}#product-detail"; // ← redirect to cart page
             } else {
                 showToast(res.message || 'Failed to add to cart.', false);
+                btn.disabled    = false;
+                btn.textContent = 'Add to Cart';
             }
         })
-        .catch(() => showToast('Something went wrong.', false))
-        .finally(() => {
+        .catch(() => {
+            showToast('Something went wrong.', false);
             btn.disabled    = false;
             btn.textContent = 'Add to Cart';
         });
     }
-
-    function showToast(msg, success) {
-        const toast = document.getElementById('cart-toast');
-        document.getElementById('cart-toast-msg').textContent = msg;
-        toast.style.background = success ? '#C9A84C' : '#ef4444';
-        toast.classList.remove('hidden');
-        setTimeout(() => toast.classList.add('hidden'), 3000);
-    }
-
-    function addToCart(productId) {
-    const btn = document.getElementById('add-to-cart-btn');
-    btn.disabled    = true;
-    btn.textContent = 'Adding…';
-
-    fetch("{{ url('/cart/add') }}/" + productId, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-            'Accept':       'application/json',
-        },
-        body: JSON.stringify({ quantity: qty })
-    })
-    .then(r => r.json())
-    .then(res => {
-        if (res.success) {
-            window.location.href = "{{ route('cart.index') }}"; // ← redirect to cart page
-        } else {
-            showToast(res.message || 'Failed to add to cart.', false);
-            btn.disabled    = false;
-            btn.textContent = 'Add to Cart';
-        }
-    })
-    .catch(() => {
-        showToast('Something went wrong.', false);
-        btn.disabled    = false;
-        btn.textContent = 'Add to Cart';
-    });
-}
 </script>

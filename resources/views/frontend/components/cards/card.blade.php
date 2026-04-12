@@ -1,4 +1,4 @@
-<a href="{{ route('pages.viewProduct', $product->id) }}" class="block">
+<a href="{{ route('pages.viewProduct', $product->id) }}#product-detail" class="block">
     <div class="rounded-[20px] bg-[#FAF6EE] flex flex-col items-center p-4 gap-2 hover:shadow-md transition-shadow">
 
         {{-- Product Image --}}
@@ -10,9 +10,9 @@
             @else
                 <div class="w-20 h-20 rounded-2xl bg-gray-200 flex items-center justify-center">
                     <i class="fas fa-lock text-gray-400 text-3xl"></i>
-                </div>
-            @endif
-        </div>
+                </div> 
+            @endif 
+        </div> 
 
         {{-- Product Name & SKU --}}
         <div class="text-center text-xs font-bold text-black hover:text-yellow-600 transition leading-snug uppercase">
@@ -26,7 +26,7 @@
         </span>
 
         {{-- Add to Cart --}}
-       <form action="{{ route('cart.add', $product->id) }}" method="POST" onsubmit="event.stopPropagation();">
+        <form id="add_card" action="{{ route('cart.add', $product->id) }}#product-detail" method="POST" onsubmit="event.stopPropagation();">
             @csrf
 
             <button type="submit"

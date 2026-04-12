@@ -9,6 +9,7 @@
     {{-- Tailwind CSS CDN --}}
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
+       
         tailwind.config = {
             theme: {
                 extend: {
@@ -71,7 +72,11 @@
 
     {{-- Swiper CSS --}}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
-    
+    <style>
+        #product-detail {
+            scroll-margin-top: 100px;
+        }
+    </style>
 </head>
 <body class="bg-gray-50 text-gray-800 antialiased">
 

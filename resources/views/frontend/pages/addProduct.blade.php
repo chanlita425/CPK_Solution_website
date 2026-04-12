@@ -18,7 +18,6 @@
         Similar Items
     </h2>
 
-  
     @include('frontend.components.cards.cardResponsive')
 
 </section>
