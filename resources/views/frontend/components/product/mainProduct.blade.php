@@ -25,7 +25,7 @@
 
         {{---- Thumbnail ----}}
         <div class="grid grid-cols-3 gap-2 sm:gap-3">
-            @foreach($product->images as $thumb)
+            @foreach($product->images->skip(1) as $thumb)
             <button
                 onclick="selectThumb('{{ asset('storage/' . $thumb->image) }}', {{ $loop->index }})"
                 class="thumb-btn aspect-square rounded-xl border-2 overflow-hidden flex items-center justify-center bg-gray-50
