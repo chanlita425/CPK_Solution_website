@@ -4,7 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'CPK Solution')</title>
+    {{-- <title>@yield('title', 'CPK Solution')</title> --}}
+
+      <!-- Favicon from Settings -->
+    @if($settings && $settings->favicon)
+        <link rel="icon" type="image/x-icon" href="{{ asset('storage/' . $settings->favicon) }}">
+        <link rel="shortcut icon" type="image/x-icon" href="{{ asset('storage/' . $settings->favicon) }}">
+        <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('storage/' . $settings->favicon) }}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('storage/' . $settings->favicon) }}">
+    @else
+        <!-- Fallback favicon -->
+        <link rel="icon" type="image/png" href="{{ asset('cpk_favicon.png') }}">
+        <link rel="shortcut icon" type="image/png" href="{{ asset('cpk_favicon.png') }}">
+    @endif
+
+    <title>@yield('title', 'Admin Dashboard') - CPK Solution</title>
 
     {{-- Tailwind CSS CDN --}}
     <script src="https://cdn.tailwindcss.com"></script>
