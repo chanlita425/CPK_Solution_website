@@ -38,15 +38,19 @@
 
             {{-- Right Actions --}}
             <div class="flex items-center gap-4">
-                {{-- Cart --}}
+               {{-- Cart --}}
                 <a href="{{ route('cart.index') }}" class="relative flex items-center gap-1.5 text-gray-600 hover:text-primary-600 transition-colors group">
                     <div class="relative">
-                        <i class="fa-solid fa-bag-shopping text-[#28282A] text-[15px] text-xl group-hover:scale-110 transition-transform"></i>
+                        <i class="fa-solid fa-bag-shopping text-[#28282A] text-xl group-hover:scale-110 transition-transform"></i>
                     </div>
-                    <span class="hidden md:inline text-sm font-medium text-[#28282A] text-[15px] ml-1">Cart</span>
-                   <span class="absolute -top-1 -right-1 bg-accent text-white text-[10px] font-bold w-2 h-2 rounded-full flex items-center justify-center animate-pulse-badge">
-                        {{-- {{ session('cart_count', 0) }} --}}
+                    <span class="hidden md:inline text-sm font-medium text-[#28282A] ml-1">Cart</span>
+
+                    @php $cartCount = session('cart') ? count(session('cart')) : 0; @endphp
+                    @if($cartCount > 0)
+                    <span class="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold min-w-[18px] h-[18px] px-1 rounded-full flex items-center justify-center animate-pulse-badge">
+                        {{ $cartCount }}
                     </span>
+                    @endif
                 </a>
 
                 {{-- Mobile search toggle --}}

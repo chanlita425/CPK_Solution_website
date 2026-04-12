@@ -76,6 +76,14 @@
         }
     </script>
 
+    <style>
+        /* Khmer Font Support */
+        @import url('https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Nunito', 'Kantumruy Pro', sans-serif;
+    </style>
+
     {{-- Google Fonts --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -88,7 +96,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
     <style>
         #product-detail {
-            scroll-margin-top: 100px;
+            scroll-margin-top: 50px;
         }
     </style>
 </head>

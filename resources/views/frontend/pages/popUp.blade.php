@@ -15,7 +15,7 @@
             src="{{ asset('storage/' . ($settings->popup_banner_image ?? 'images/popup-banner.jpg')) }}"
             alt="Special offer"
             onload="adjustPopup(this)"
-            class="w-full h-auto block">
+            class="w-full h-auto block object-contain ">
     </div>
 </div>
 

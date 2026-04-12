@@ -60,10 +60,10 @@
                             </button>
                         </div>
 
-                        <button onclick="removeItem({{ $item['id'] }})"
+                        {{-- <button onclick="removeItem({{ $item['id'] }})"
                                 class="text-red-500 text-sm mt-2 hover:underline flex items-center px-3">
                             Remove
-                        </button>
+                        </button> --}}
                     </div>
                 
                 </div>
@@ -131,7 +131,7 @@
             </div>
 
             <div class="flex flex-wrap gap-2 pt-3 mt-2 w-full items-center">
-                <button onclick="clearCart()"
+                <button   onclick="confirmClearCart()"
                         class="px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border border-[#D7B259] text-sm hover:bg-gray-50 transition-colors">
                     Clear Cart
                 </button>
@@ -150,6 +150,8 @@
                     </button>
                 </form>
             </div>
+
+           
 
         </div>
     </div>
@@ -187,8 +189,8 @@
         .then(res => { if (res.success) location.reload(); });
     }
 
-    function clearCart() {
-        if (!confirm('Clear cart?')) return;
+  
+    function confirmClearCart() {
         fetch("{{ route('cart.clear') }}", {
             method: "POST",
             headers: { "X-CSRF-TOKEN": "{{ csrf_token() }}" }
@@ -196,6 +198,7 @@
         .then(r => r.json())
         .then(res => { if (res.success) location.reload(); });
     }
+
 
     // ── Coupon ──────────────────────────────────────────────
 

@@ -18,13 +18,13 @@ class CartController extends Controller
         $settings = Setting::getSettings();
         $promoImage = $settings->promotion_banner_image;
 
-        $categoryId = null;
-        $brandId = null;
+        $categoryId = $request->input('category_id');
+        $brandId    = $request->input('brand_id');
 
         $categories = Category::where('is_active', true)->get();
-        $brands = Brand::where('is_active', true)->get();
-        $subtotal = 0;
-        $cartItems = [];
+        $brands     = Brand::where('is_active', true)->get();
+        $subtotal   = 0;
+        $cartItems  = [];
 
         foreach ($cart as $id => $details) {
             $product = Product::find($id);
@@ -51,6 +51,14 @@ class CartController extends Controller
         }
 
         $query = Product::active();
+
+        if ($categoryId) {
+            $query->where('category_id', $categoryId);
+        }
+
+        if ($brandId) {
+            $query->where('brand_id', $brandId);
+        }
 
         $allProducts = $query->latest()->get();
         $totalItems = $allProducts->count();

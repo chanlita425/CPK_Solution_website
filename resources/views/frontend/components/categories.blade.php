@@ -12,7 +12,10 @@
 
                  @foreach($categories as $index => $cat)
                     <div class="swiper-slide !w-auto">
-                        <a href="{{ url()->current() }}?category_id={{ $cat->id }}{{ $brandId ? '&brand_id=' . $brandId : '' }}{{ request('search') ? '&search=' . request('search') : '' }}#product-grid"
+                        <a href="{{ $categoryId == $cat->id
+                                ? url()->current() . ($brandId ? '?brand_id=' . $brandId : '') . (request('search') ? ($brandId ? '&' : '?') . 'search=' . request('search') : '') . '#product-grid'
+                                : url()->current() . '?category_id=' . $cat->id . ($brandId ? '&brand_id=' . $brandId : '') . (request('search') ? '&search=' . request('search') : '') . '#product-grid'
+                            }}"
                         class="flex flex-col items-center gap-3 px-3 py-3 hover:bg-primary-50 rounded-xl transition-colors group w-30 text-center
                         {{ $categoryId == $cat->id ? 'bg-[#FFE3A1] shadow-sm' : '' }}">
                             

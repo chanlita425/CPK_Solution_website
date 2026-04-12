@@ -106,7 +106,7 @@
                 </div>
 
                 {{-- Contact Info --}}
-                <div class="text-[16px] space-y-2 text-gray-300">
+                {{-- <div class="text-[16px] space-y-2 text-gray-300">
                     
                     @if($settings->company_phone_number_first)
                         <p class="flex items-center gap-2">
@@ -136,7 +136,7 @@
                         </a>
                     </p>
 
-                </div>
+                </div> --}}
             </div>
 
         </div>
