@@ -175,7 +175,7 @@
         .then(r => r.json())
         .then(res => {
             if (res.success) {
-                // Optional: update subtotal or total price here without reload
+                updatePrices(res);
             }
         });
     }

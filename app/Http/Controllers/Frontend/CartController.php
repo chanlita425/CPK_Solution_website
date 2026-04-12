@@ -193,12 +193,41 @@ class CartController extends Controller
         }
 
         $qty = max(1, (int) $request->quantity);
-
         $cart[$id]['quantity'] = $qty;
         session()->put('cart', $cart);
 
+        // Recalculate totals
+        $settings = \App\Models\Setting::getSettings();
+        $subtotal = 0;
+        foreach ($cart as $pid => $details) {
+            $p = Product::find($pid);
+            if ($p && $p->is_active) {
+                $subtotal += $p->price * $details['quantity'];
+            }
+        }
+
+        $coupon = session()->get('coupon', null);
+        $discount = 0;
+        if ($coupon) {
+            $couponModel = \App\Models\Coupon::where('code', $coupon['code'])->first();
+            if ($couponModel && $couponModel->isValid() && $subtotal >= $couponModel->min_order_amount) {
+                $discount = $couponModel->type === 'percent'
+                    ? $subtotal * ($couponModel->value / 100)
+                    : $couponModel->value;
+                $discount = min($discount, $subtotal);
+            }
+        }
+
+        $shipping = $subtotal > 0 ? $settings->shipping_fee : 0;
+        $tax      = ($subtotal - $discount) * ($settings->tax_percent / 100);
+        $total    = $subtotal - $discount + $shipping + $tax;
+
         return response()->json([
-            'success' => true
+            'success'  => true,
+            'subtotal' => number_format($subtotal, 2),
+            'shipping' => number_format($shipping, 2),
+            'tax'      => number_format($tax, 2),
+            'total'    => number_format($total, 2),
         ]);
     }
 

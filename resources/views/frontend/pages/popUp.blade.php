@@ -52,12 +52,12 @@
 
         if (isLandscape) {
             img.classList.remove('h-auto');
-            img.classList.add('h-[350px]', 'object-cover');
+            img.classList.add('h-auto', 'object-contain');
             container.classList.remove('max-w-sm');
             container.classList.add('max-w-2xl');
         } else {
             img.classList.add('h-auto');
-            img.classList.remove('h-[350px]', 'object-cover');
+            img.classList.remove('h-auto', 'object-contain');
             container.classList.remove('max-w-2xl');
             container.classList.add('max-w-sm');
         }
