@@ -36,13 +36,13 @@ $brands = Brand::where('is_active', true)->get();
         {{-- Prev button --}}
         <button class="brand-prev absolute left-3 top-1/2 -translate-y-1/2 z-20
             w-8 h-8 flex items-center justify-center
-            bg-white   hover:shadow-lg transition-all">
+              hover:shadow-lg transition-all">
         </button>
 
         {{-- Next button --}}
         <button class="brand-next absolute right-3 top-1/2 -translate-y-1/2 z-20
             w-8 h-8 flex items-center justify-center
-            bg-white   hover:shadow-lg transition-all">  
+              hover:shadow-lg transition-all">  
         </button>
     </div>
 </section>

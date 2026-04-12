@@ -156,7 +156,6 @@
 
 @push('scripts')
 <script>
-
     function changeCartQty(id, delta) {
         const el = document.getElementById('qty-' + id);
         let qty = parseInt(el.innerText);
@@ -172,7 +171,11 @@
             body: JSON.stringify({ quantity: qty })
         })
         .then(r => r.json())
-        .then(res => { if (res.success) location.reload(); });
+        .then(res => {
+            if (res.success) {
+                // Optional: update subtotal or total price here without reload
+            }
+        });
     }
 
     function removeItem(id) {

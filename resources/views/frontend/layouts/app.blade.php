@@ -103,6 +103,13 @@
     {{-- Footer --}}
     @include('frontend.components.footer')
 
+    {{-- POP UP --}}
+    @include('frontend.pages.popUp')
+
+    {{-- @if (Route::currentRouteName() === 'home')
+        @include('frontend.pages.popUp')
+    @endif --}}
+
     {{-- Swiper JS --}}
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
