@@ -49,10 +49,15 @@ class OrderController extends Controller
             $order->confirm();
 
             if (request()->ajax()) {
-                return response()->json(['success' => true, 'message' => 'Order confirmed successfully! Stock has been updated.']);
+                // COMMENTED: Removed stock message
+                // return response()->json(['success' => true, 'message' => 'Order confirmed successfully! Stock has been updated.']);
+                return response()->json(['success' => true, 'message' => 'Order confirmed successfully!']);
             }
+            // COMMENTED: Removed stock message
+            // return redirect()->route('admin.orders.show', $order->id)
+            //     ->with('toast', ['message' => 'Order confirmed successfully! Stock has been updated.', 'type' => 'success']);
             return redirect()->route('admin.orders.show', $order->id)
-                ->with('toast', ['message' => 'Order confirmed successfully! Stock has been updated.', 'type' => 'success']);
+                ->with('toast', ['message' => 'Order confirmed successfully!', 'type' => 'success']);
         } catch (\Exception $e) {
             if (request()->ajax()) {
                 return response()->json(['success' => false, 'message' => 'Failed to confirm order: ' . $e->getMessage()], 500);

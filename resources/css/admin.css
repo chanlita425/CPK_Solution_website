@@ -1,9 +1,8 @@
 /* resources/css/admin.css */
 /* Admin Panel Custom Styles */
-
 /* Admin Sidebar Styles */
 .admin-sidebar {
-    background-color: #28282A;
+    background-color: #28282a;
     transition: all 0.3s ease;
 }
 
@@ -17,7 +16,7 @@
 
 .admin-sidebar .nav-link.active {
     background-color: rgba(215, 178, 89, 0.2);
-    border-right: 3px solid #D7B259;
+    border-right: 3px solid #d7b259;
 }
 
 /* Admin Cards */
@@ -25,7 +24,9 @@
     background: white;
     border-radius: 12px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
 .admin-card:hover {
@@ -35,8 +36,8 @@
 
 /* Admin Buttons */
 .btn-admin-primary {
-    background-color: #D7B259;
-    color: #28282A;
+    background-color: #d7b259;
+    color: #28282a;
     padding: 8px 16px;
     border-radius: 8px;
     transition: all 0.2s ease;
@@ -80,7 +81,7 @@
 }
 
 .admin-table thead {
-    background-color: #28282A;
+    background-color: #28282a;
     color: white;
 }
 
@@ -122,7 +123,7 @@
 
 .admin-form-input:focus {
     outline: none;
-    border-color: #D7B259;
+    border-color: #d7b259;
     ring: 2px solid rgba(215, 178, 89, 0.2);
 }
 
@@ -137,7 +138,7 @@
 
 .admin-form-textarea:focus {
     outline: none;
-    border-color: #D7B259;
+    border-color: #d7b259;
 }
 
 /* Admin Image Preview */
@@ -226,15 +227,15 @@
 }
 
 .admin-pagination .page-link:hover {
-    background-color: #D7B259;
-    color: #28282A;
-    border-color: #D7B259;
+    background-color: #d7b259;
+    color: #28282a;
+    border-color: #d7b259;
 }
 
 .admin-pagination .active .page-link {
-    background-color: #D7B259;
-    color: #28282A;
-    border-color: #D7B259;
+    background-color: #d7b259;
+    color: #28282a;
+    border-color: #d7b259;
 }
 
 /* Admin Alerts */
@@ -291,7 +292,7 @@
 }
 
 .admin-sidebar::-webkit-scrollbar-thumb {
-    background: #D7B259;
+    background: #d7b259;
     border-radius: 2px;
 }
 
@@ -326,13 +327,13 @@
 
 .admin-dropdown-item:hover {
     background-color: #f3f4f6;
-    color: #D7B259;
+    color: #d7b259;
 }
 
 /* Admin Stats Cards */
 .admin-stat-card {
     background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
-    border-left: 4px solid #D7B259;
+    border-left: 4px solid #d7b259;
 }
 
 .admin-stat-icon {
@@ -380,7 +381,7 @@
 }
 
 input:checked + .admin-toggle-slider {
-    background-color: #D7B259;
+    background-color: #d7b259;
 }
 
 input:checked + .admin-toggle-slider:before {

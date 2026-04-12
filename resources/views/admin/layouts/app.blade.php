@@ -36,6 +36,9 @@
         href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap"
         rel="stylesheet">
 
+    <!-- Khmer Font - Kantumruy Pro -->
+    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
     <!-- Alpine.js for interactive components -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
@@ -56,8 +59,17 @@
             margin: 0;
         }
 
+        /* Apply fonts to all elements */
         * {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Inter', 'Kantumruy Pro', sans-serif;
+        }
+
+        /* For Khmer text fields - ensure proper rendering */
+        input[name*="_kh"],
+        textarea[name*="_kh"],
+        td:lang(kh),
+        .khmer-text {
+            font-family: 'Kantumruy Pro', 'Inter', sans-serif;
         }
 
         /* Make the wrapper take full height */

@@ -19,7 +19,7 @@ class Product extends Model
         'price',
         'specification_en',
         'specification_kh',
-        'quantity',
+        // 'quantity', // REMOVED - no stock management
         'is_active',
     ];
 
@@ -102,23 +102,7 @@ class Product extends Model
         })->filter()->values();
     }
 
-    // Stock management
-    public function hasStock($quantity = 1)
-    {
-        return $this->quantity >= $quantity;
-    }
-
-    public function decreaseStock($quantity)
-    {
-        $this->quantity -= $quantity;
-        return $this->save();
-    }
-
-    public function increaseStock($quantity)
-    {
-        $this->quantity += $quantity;
-        return $this->save();
-    }
+    // REMOVED: hasStock(), decreaseStock(), increaseStock() methods
 
     // Scope for active products
     public function scopeActive($query)
