@@ -1,5 +1,5 @@
 <a href="{{ route('pages.viewProduct', $product->id) }}#product-detail" class="block">
-    <div class="rounded-[20px] bg-[#FAF6EE] flex flex-col items-center p-4 gap-2 hover:shadow-md transition-shadow">
+    <div class="rounded-[20px] bg-[#FAF6EE] flex flex-col items-center h-full p-4 gap-2 hover:shadow-md transition-shadow">
 
         {{-- Product Image --}}
         <div class="w-full flex items-center justify-center h-36 sm:h-40">
