@@ -14,9 +14,10 @@ $brands = Brand::where('is_active', true)->get();
             <div class="swiper-wrapper flex items-center">
                 @foreach($brands as $index => $brand)
                     <div class="swiper-slide !w-auto">
+                        @php $baseUrl = $filterBaseUrl ?? url()->current(); @endphp
                         <a href="{{ $brandId == $brand->id
-                                ? url()->current() . ($categoryId ? '?category_id=' . $categoryId : '') . (request('search') ? ($categoryId ? '&' : '?') . 'search=' . request('search') : '') . '#product-grid'
-                                : url()->current() . '?brand_id=' . $brand->id . ($categoryId ? '&category_id=' . $categoryId : '') . (request('search') ? '&search=' . request('search') : '') . '#product-grid'
+                                ? $baseUrl . ($categoryId ? '?category_id=' . $categoryId : '') . (request('search') ? ($categoryId ? '&' : '?') . 'search=' . request('search') : '') . '#product-grid'
+                                : $baseUrl . '?brand_id=' . $brand->id . ($categoryId ? '&category_id=' . $categoryId : '') . (request('search') ? '&search=' . request('search') : '') . '#product-grid'
                             }}"
                         class="flex items-center justify-center px-4 py-3 rounded-full transition-all duration-200
                         {{ $brandId == $brand->id ? 'bg-[#FFE3A1]' : 'hover:bg-[#FFE3A1]' }}">

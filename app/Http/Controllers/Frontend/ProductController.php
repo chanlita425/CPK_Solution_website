@@ -80,6 +80,7 @@ class ProductController extends Controller
         $totalPagesLg = ceil($totalItems / $perPage['lg']);
 
         $pgUrl = url()->current();
+        $filterBaseUrl = route('home');
         $promoPosition = 3;
 
         return view('frontend.pages.viewProduct', compact(
@@ -101,7 +102,8 @@ class ProductController extends Controller
             'totalPagesXs',
             'totalPagesSm',
             'totalPagesLg',
-            'pgUrl', 
+            'pgUrl',
+            'filterBaseUrl',
             'promoPosition',
             'totalItems'
         ))->with('isHome', false);
