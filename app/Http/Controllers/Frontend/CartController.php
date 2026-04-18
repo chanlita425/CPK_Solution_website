@@ -170,7 +170,8 @@ class CartController extends Controller
             ]);
         }
 
-        return redirect()->route('cart.index')->with('success', 'Product added to cart!');
+        return redirect()->route('cart.index')->with('success', 'Product added to cart!')
+                        ->withFragment('order_card');;
     }
 
     /**
@@ -182,6 +183,7 @@ class CartController extends Controller
 
         return response()->json(['success' => true]);
     }
+    
 
     public function update(Request $request, $id)
     {
@@ -197,7 +199,7 @@ class CartController extends Controller
         session()->put('cart', $cart);
 
         // Recalculate totals
-        $settings = \App\Models\Setting::getSettings();
+        $settings = Setting::getSettings();
         $subtotal = 0;
         foreach ($cart as $pid => $details) {
             $p = Product::find($pid);

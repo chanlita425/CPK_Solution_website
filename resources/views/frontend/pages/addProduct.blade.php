@@ -5,7 +5,7 @@
 @section('content') 
 
 {{-- Order card --}}
-<section id="product-detail" class="px-6 sm:px-8 lg:px-12 mt-6 sm:mt-8 py-5">
+<section id="order_card" class="px-6 sm:px-8 lg:px-12 mt-6 sm:mt-8 py-5">
     <div class="flex flex-col md:flex-row gap-10 lg:gap-8 items-start">
         @include('frontend.components.order.orderProduct')
     </div>

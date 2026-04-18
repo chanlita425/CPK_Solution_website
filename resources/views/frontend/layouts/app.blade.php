@@ -82,6 +82,14 @@
 
         body {
             font-family: 'Nunito', 'Kantumruy Pro', sans-serif;
+        }
+        #product-detail {
+            scroll-margin-top: 250px;
+        }
+
+         #order_card {
+            scroll-margin-top: 200px;
+        }
     </style>
 
     {{-- Google Fonts --}}
@@ -94,12 +102,8 @@
 
     {{-- Swiper CSS --}}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
-    <style>
-        #product-detail {
-            scroll-margin-top: 50px;
-        }
-    </style>
 </head>
+
 <body class="bg-gray-50 text-gray-800 antialiased">
 
     {{-- Top Header --}}

@@ -173,7 +173,7 @@
         .then(r => r.json())
         .then(res => {
             if (res.success) {
-                window.location.href = "{{ route('cart.index') }}#product-detail"; // ← redirect to cart page
+                window.location.href = "{{ route('cart.index') }}#order_card"; // ← redirect to cart page
             } else {
                 showToast(res.message || 'Failed to add to cart.', false);
                 btn.disabled    = false;
