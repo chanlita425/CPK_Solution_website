@@ -77,6 +77,23 @@ public function index(Request $request)
         $brandName = 'All Brands';
     }
 
+    // Detect if search matches a brand or SKU
+    $searchBrandName = null;
+    $searchSku = null;
+    if ($searchQuery) {
+        $matchedBrand = Brand::where('name_en', 'like', "%{$searchQuery}%")
+            ->orWhere('name_kh', 'like', "%{$searchQuery}%")
+            ->first();
+        if ($matchedBrand) {
+            $searchBrandName = $matchedBrand->name_en ?? $matchedBrand->name_kh;
+        }
+
+        $matchedSku = Product::where('SKU', 'like', "%{$searchQuery}%")->first();
+        if ($matchedSku) {
+            $searchSku = $matchedSku->SKU;
+        }
+    }
+
     // Apply search filter
     if ($searchQuery) {
         $query->where(function ($q) use ($searchQuery) {
@@ -84,13 +101,13 @@ public function index(Request $request)
             $q->where('name_en', 'like', "%{$searchQuery}%")
             ->orWhere('name_kh', 'like', "%{$searchQuery}%")
             ->orWhere('SKU', 'like', "%{$searchQuery}%")
-            
+
             // Search category names
             ->orWhereHas('category', function ($q2) use ($searchQuery) {
                 $q2->where('name_en', 'like', "%{$searchQuery}%")
                     ->orWhere('name_kh', 'like', "%{$searchQuery}%");
             })
-            
+
             // Search brand names
             ->orWhereHas('brand', function ($q3) use ($searchQuery) {
                 $q3->where('name_en', 'like', "%{$searchQuery}%")
@@ -124,6 +141,35 @@ public function index(Request $request)
     $categories = Category::where('is_active', true)->get();
     $brands = Brand::where('is_active', true)->get();
 
+    // AJAX filter request — return only the product grid HTML
+    if ($request->ajax()) {
+        $isHome = true;
+        return response()->json([
+            'html' => view('frontend.components.cards.cardResponsive', [
+                'productsXs'    => $productsXs,
+                'productsSm'    => $productsSm,
+                'productsLg'    => $productsLg,
+                'pageXs'        => $pageXs,
+                'pageSm'        => $pageSm,
+                'pageLg'        => $pageLg,
+                'totalPagesXs'  => $totalPagesXs,
+                'totalPagesSm'  => $totalPagesSm,
+                'totalPagesLg'  => $totalPagesLg,
+                'categoryId'    => $categoryId,
+                'brandId'       => $brandId,
+                'isHome'        => $isHome,
+                'promoImage'    => $promoImage,
+                'promoPosition' => $promoPosition,
+            ])->render(),
+            'category_name'     => $categoryName,
+            'total_items'       => $totalItems,
+            'category_id'       => $categoryId,
+            'brand_id'          => $brandId,
+            'search_brand_name' => $searchBrandName,
+            'search_sku'        => $searchSku,
+        ]);
+    }
+
     return view('frontend.pages.home', compact(
         'settings',
         'promoImage',
@@ -146,7 +192,9 @@ public function index(Request $request)
         'pgUrl',
         'promoPosition',
         'totalItems',
-        'searchQuery'
+        'searchQuery',
+        'searchBrandName',
+        'searchSku'
     ))->with('isHome', true);
 }
 

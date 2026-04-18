@@ -72,18 +72,16 @@
             freeMode: true,
             on: {
                 init: function () {
-                    // Show buttons only if swiper overflows
-                    const wrapperWidth  = this.wrapperEl.scrollWidth;
+                    const wrapperWidth   = this.wrapperEl.scrollWidth;
                     const containerWidth = this.el.clientWidth;
-                    const showButtons = wrapperWidth > containerWidth;
+                    const showButtons    = wrapperWidth > containerWidth;
                     prevBtn.style.display = showButtons ? 'flex' : 'none';
                     nextBtn.style.display = showButtons ? 'flex' : 'none';
                 },
                 resize: function () {
-                    // Recheck on window resize
-                    const wrapperWidth  = this.wrapperEl.scrollWidth;
+                    const wrapperWidth   = this.wrapperEl.scrollWidth;
                     const containerWidth = this.el.clientWidth;
-                    const showButtons = wrapperWidth > containerWidth;
+                    const showButtons    = wrapperWidth > containerWidth;
                     prevBtn.style.display = showButtons ? 'flex' : 'none';
                     nextBtn.style.display = showButtons ? 'flex' : 'none';
                 }

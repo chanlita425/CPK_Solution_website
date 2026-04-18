@@ -35,6 +35,7 @@ Route::get('/products/{id}', [ProductController::class, 'show'])->name('pages.vi
 
 // Real-time search
 Route::get('/search', [SearchController::class, 'search'])->name('search');
+Route::get('/search/suggestions', [SearchController::class, 'suggestions'])->name('search.suggestions');
 
 // Locale switching
 // Route::post('/locale/switch', [LocaleController::class, 'switch'])->name('locale.switch');

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
+use App\Models\Brand;
 use Illuminate\Http\Request;
 
 class SearchController extends Controller
@@ -68,6 +69,37 @@ class SearchController extends Controller
             'current_page' => $products->currentPage(),
             'has_pages' => $products->hasMorePages(),
         ]);
+    }
+
+    /**
+     * Live suggestions: brands + SKUs matching the query
+     */
+    public function suggestions(Request $request)
+    {
+        $q = trim($request->get('q', ''));
+
+        if (strlen($q) < 1) {
+            return response()->json(['brands' => [], 'skus' => []]);
+        }
+
+        $brands = Brand::where('is_active', true)
+            ->where(function ($query) use ($q) {
+                $query->where('name_en', 'like', "%{$q}%")
+                      ->orWhere('name_kh', 'like', "%{$q}%");
+            })
+            ->select('id', 'name_en', 'name_kh')
+            ->limit(5)
+            ->get()
+            ->map(fn($b) => ['id' => $b->id, 'name' => $b->name_en ?? $b->name_kh]);
+
+        $skus = Product::active()
+            ->where('SKU', 'like', "%{$q}%")
+            ->select('id', 'SKU', 'name_en')
+            ->limit(5)
+            ->get()
+            ->map(fn($p) => ['id' => $p->id, 'sku' => $p->SKU, 'name' => $p->name_en]);
+
+        return response()->json(['brands' => $brands, 'skus' => $skus]);
     }
 
     /**

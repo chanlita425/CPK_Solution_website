@@ -173,15 +173,15 @@
         .then(r => r.json())
         .then(res => {
             if (res.success) {
-                window.location.href = "{{ route('cart.index') }}#order_card"; // ← redirect to cart page
+                window.navigateToCart
+                    ? window.navigateToCart()
+                    : (window.location.href = "{{ route('cart.index') }}#order_card");
             } else {
                 showToast(res.message || 'Failed to add to cart.', false);
-                btn.disabled    = false;
-                btn.textContent = 'Add to Cart';
             }
         })
-        .catch(() => {
-            showToast('Something went wrong.', false);
+        .catch(() => showToast('Something went wrong.', false))
+        .finally(() => {
             btn.disabled    = false;
             btn.textContent = 'Add to Cart';
         });

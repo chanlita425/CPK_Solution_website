@@ -19,14 +19,12 @@
                 <a href="{{ url('/') }}" class="flex items-center gap-4 mb-4">
                     
                     {{-- Logo --}}
-                    @if(!empty($settings->logo))
-                        <img src="{{ asset('storage/' . $settings->logo) }}" 
-                            alt="Logo"
-                            class="h-12 w-auto object-contain">
+                    @if($settings->company_logo)
+                        <img src="{{ asset('storage/' . $settings->company_logo) }}"
+                            alt="{{ $settings->company_name }}"
+                            class="h-10">
                     @else
-                        <img src="{{ asset('images/logo.png') }}" 
-                            alt="Default Logo"
-                            class="h-12 w-auto object-contain">
+                        <span class="text-lg font-bold">{{ $settings->company_name ?? 'CPK' }}</span>
                     @endif
 
                 </a>

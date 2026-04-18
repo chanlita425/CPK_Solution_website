@@ -80,6 +80,30 @@ class CartController extends Controller
         $pgUrl = url()->current();
         $promoPosition = 3;
 
+        // AJAX filter request — return only the product grid HTML
+        if ($request->ajax()) {
+            return response()->json([
+                'html' => view('frontend.components.cards.cardResponsive', [
+                    'productsXs'    => $productsXs,
+                    'productsSm'    => $productsSm,
+                    'productsLg'    => $productsLg,
+                    'pageXs'        => $pageXs,
+                    'pageSm'        => $pageSm,
+                    'pageLg'        => $pageLg,
+                    'totalPagesXs'  => $totalPagesXs,
+                    'totalPagesSm'  => $totalPagesSm,
+                    'totalPagesLg'  => $totalPagesLg,
+                    'categoryId'    => $categoryId,
+                    'brandId'       => $brandId,
+                    'isHome'        => false,
+                    'promoImage'    => $promoImage,
+                    'promoPosition' => $promoPosition,
+                ])->render(),
+                'category_id' => $categoryId,
+                'brand_id'    => $brandId,
+            ]);
+        }
+
         // COUPON
         $coupon = session()->get('coupon', null);
         $discount = 0;
@@ -108,6 +132,35 @@ class CartController extends Controller
             ->inRandomOrder()
             ->limit(4)
             ->get();
+
+        // Partial request — SPA navigation (no layout, just content)
+        if ($request->header('X-Partial') === '1') {
+            $html = view('frontend.pages.addProduct_partial', [
+                'cartItems'     => $cartItems,
+                'subtotal'      => $subtotal,
+                'discount'      => $discount,
+                'shipping'      => $shipping,
+                'tax'           => $tax,
+                'total'         => $total,
+                'coupon'        => $coupon,
+                'productsXs'    => $productsXs,
+                'productsSm'    => $productsSm,
+                'productsLg'    => $productsLg,
+                'pageXs'        => $pageXs,
+                'pageSm'        => $pageSm,
+                'pageLg'        => $pageLg,
+                'totalPagesXs'  => $totalPagesXs,
+                'totalPagesSm'  => $totalPagesSm,
+                'totalPagesLg'  => $totalPagesLg,
+                'categoryId'    => $categoryId,
+                'brandId'       => $brandId,
+                'isHome'        => false,
+                'promoImage'    => $promoImage,
+                'promoPosition' => $promoPosition,
+            ])->render();
+
+            return response()->json(['html' => $html, 'title' => 'Cart']);
+        }
 
         return view('frontend.pages.addProduct', compact(
             'cartItems',

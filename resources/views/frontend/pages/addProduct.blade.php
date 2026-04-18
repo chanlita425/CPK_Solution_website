@@ -18,7 +18,9 @@
         Similar Items
     </h2>
 
-    @include('frontend.components.cards.cardResponsive')
+    <div id="add-cards-container">
+        @include('frontend.components.cards.cardResponsive')
+    </div>
 
 </section>
 @endsection

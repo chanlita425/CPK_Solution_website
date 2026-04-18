@@ -35,15 +35,13 @@
                 Details
             </a>
 
-            {{-- Add to Cart Form --}}
-            <form action="{{ route('cart.add', $product->id) }}" method="POST" class="flex-1">
-                @csrf
-                <button type="submit"
-                    class="w-full flex items-center justify-center py-2 px-2 rounded-full text-xs md:text-sm font-semibold text-black hover:brightness-95 transition-all shadow-md active:scale-95 whitespace-nowrap"
-                    style="background:#C9A84C;">
-                    Add to Cart
-                </button>
-            </form>
+            {{-- Add to Cart (AJAX) --}}
+            <button type="button"
+                onclick="addToCartAjax('{{ route('cart.add', $product->id) }}', this)"
+                class="flex-1 flex items-center justify-center py-2 px-2 rounded-full text-xs md:text-sm font-semibold text-black hover:brightness-95 transition-all shadow-md active:scale-95 whitespace-nowrap"
+                style="background:#C9A84C;">
+                Add to Cart
+            </button>
 
         </div>
 

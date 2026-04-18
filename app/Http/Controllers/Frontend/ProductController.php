@@ -80,8 +80,57 @@ class ProductController extends Controller
         $totalPagesLg = ceil($totalItems / $perPage['lg']);
 
         $pgUrl = url()->current();
-        $filterBaseUrl = route('home');
         $promoPosition = 3;
+
+        // Partial request — SPA navigation (no layout, just content)
+        if ($request->header('X-Partial') === '1') {
+            $html = view('frontend.pages.viewProduct_partial', [
+                'product'       => $product,
+                'productsXs'    => $productsXs,
+                'productsSm'    => $productsSm,
+                'productsLg'    => $productsLg,
+                'pageXs'        => $pageXs,
+                'pageSm'        => $pageSm,
+                'pageLg'        => $pageLg,
+                'totalPagesXs'  => $totalPagesXs,
+                'totalPagesSm'  => $totalPagesSm,
+                'totalPagesLg'  => $totalPagesLg,
+                'categoryId'    => $categoryId,
+                'brandId'       => $brandId,
+                'isHome'        => false,
+                'promoImage'    => $promoImage,
+                'promoPosition' => $promoPosition,
+            ])->render();
+
+            return response()->json([
+                'html'  => $html,
+                'title' => $product->name,
+            ]);
+        }
+
+        // AJAX filter request — return only the product grid HTML
+        if ($request->ajax()) {
+            return response()->json([
+                'html' => view('frontend.components.cards.cardResponsive', [
+                    'productsXs'    => $productsXs,
+                    'productsSm'    => $productsSm,
+                    'productsLg'    => $productsLg,
+                    'pageXs'        => $pageXs,
+                    'pageSm'        => $pageSm,
+                    'pageLg'        => $pageLg,
+                    'totalPagesXs'  => $totalPagesXs,
+                    'totalPagesSm'  => $totalPagesSm,
+                    'totalPagesLg'  => $totalPagesLg,
+                    'categoryId'    => $categoryId,
+                    'brandId'       => $brandId,
+                    'isHome'        => false,
+                    'promoImage'    => $promoImage,
+                    'promoPosition' => $promoPosition,
+                ])->render(),
+                'category_id' => $categoryId,
+                'brand_id'    => $brandId,
+            ]);
+        }
 
         return view('frontend.pages.viewProduct', compact(
             'product',
@@ -93,9 +142,9 @@ class ProductController extends Controller
             'brands',
             'categoryId',
             'brandId',
-            'productsXs',    
-            'productsSm',    
-            'productsLg',    
+            'productsXs',
+            'productsSm',
+            'productsLg',
             'pageXs',
             'pageSm',
             'pageLg',
@@ -103,7 +152,6 @@ class ProductController extends Controller
             'totalPagesSm',
             'totalPagesLg',
             'pgUrl',
-            'filterBaseUrl',
             'promoPosition',
             'totalItems'
         ))->with('isHome', false);
