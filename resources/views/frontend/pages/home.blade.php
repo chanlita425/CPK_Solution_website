@@ -70,12 +70,12 @@
         let html = '';
         if (searchBrandName) {
             html += `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
-                <i class="fa fa-tag text-blue-400"></i> Brand: ${searchBrandName}
+                <i class="fa fa-tag text-blue-400"></i> {{ __('messages.brand') }}: ${searchBrandName}
             </span>`;
         }
         if (searchSku) {
             html += `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-green-50 text-green-700 border border-green-200">
-                <i class="fa fa-barcode text-green-400"></i> SKU: ${searchSku}
+                <i class="fa fa-barcode text-green-400"></i> {{ __('messages.sku') }}: ${searchSku}
             </span>`;
         }
 

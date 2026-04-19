@@ -154,7 +154,7 @@
     <div id="cart-toast"
         class="fixed bottom-6 right-6 z-50 px-5 py-3 rounded-xl text-white text-sm font-semibold shadow-lg opacity-0 pointer-events-none transition-opacity duration-300"
         style="background:#C9A84C;">
-        Added to cart!
+        {{ __('messages.added_to_cart') }}
     </div>
 
     <script>
@@ -179,7 +179,7 @@
                 const nameEl  = document.getElementById('category-name');
                 const countEl = document.getElementById('item-count');
                 if (nameEl)  nameEl.textContent  = data.category_name || '';
-                if (countEl) countEl.textContent = Number(data.total_items || 0).toLocaleString() + ' Items';
+                if (countEl) countEl.textContent = Number(data.total_items || 0).toLocaleString() + ' {{ __('messages.items') }}';
 
                 // Update search badges (brand / SKU indicators)
                 const params = new URLSearchParams(url.split('?')[1] || '');

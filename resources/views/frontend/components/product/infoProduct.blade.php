@@ -9,14 +9,14 @@
         <div class="flex flex-col gap-1 text-xs sm:text-sm text-gray-500">
 
             <p>
-                Brand:
+                {{ __('messages.brand') }}:
                 <span class="text-gray-700 font-medium">
                     {{ $product->brand->name ?? 'N/A' }}
                 </span>
             </p>
 
             <p>
-                SKU:
+                {{ __('messages.sku') }}:
                 <span class="text-gray-700 font-medium">
                     {{ $product->SKU ?? 'N/A' }}
                 </span>
@@ -32,7 +32,7 @@
         {{-- Specifications --}}
         <div>
             <p class="text-xs sm:text-sm font-bold text-gray-700 mb-1.5">
-                Specification:
+                {{ __('messages.specification') }}:
             </p>
 
             @php
@@ -55,14 +55,14 @@
                     @endforeach
                 </ul>
             @else
-                <p class="text-xs text-gray-400">No specification available</p>
+                <p class="text-xs text-gray-400">{{ __('messages.no_specification') }}</p>
             @endif
         </div>
         
         {{-- Quantity --}}
         <div class="flex flex-col sm:flex-row items-center sm:items-start gap-2 sm:gap-3 text-md sm:text-[20px] text-gray-700">
             <span class="font-medium text-center sm:text-left">
-                Quantity
+                {{ __('messages.quantity') }}
             </span>
 
             <div class="flex items-center gap-1 sm:gap-2">
@@ -89,7 +89,7 @@
             onclick="addToCart({{ $product->id }})"
             class="w-full sm:w-auto px-4 py-2 rounded-full text-sm sm:text-base font-semibold text-black hover:brightness-95 transition-all shadow-md active:scale-95"
             style="background:#C9A84C;">
-            Add to Cart
+            {{ __('messages.add_to_cart') }}
         </button>
     </div>
 
@@ -105,7 +105,7 @@
     function addToCart(productId) {
         const btn = document.getElementById('add-to-cart-btn');
         btn.disabled    = true;
-        btn.textContent = 'Adding…';
+        btn.textContent = '{{ __('messages.adding') }}…';
 
         fetch("{{ url('/cart/add') }}/" + productId, {
             method: 'POST',
@@ -128,7 +128,7 @@
         })
         .catch(() => {
             btn.disabled    = false;
-            btn.textContent = 'Add to Cart';
+            btn.textContent = '{{ __('messages.add_to_cart') }}';
         });
     }
 </script>

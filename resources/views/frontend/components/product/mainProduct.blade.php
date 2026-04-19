@@ -18,7 +18,7 @@
         @else
             <div class="flex flex-col items-center gap-2 text-gray-300">
                 <i class="fas fa-image text-5xl sm:text-6xl"></i>
-                <span class="text-xs">No image</span>
+                <span class="text-xs">{{ __('messages.no_image') }}</span>
             </div>
         @endif
         </div>

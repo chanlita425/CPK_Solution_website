@@ -76,38 +76,57 @@ class SearchController extends Controller
      */
     public function suggestions(Request $request)
     {
-        $q = trim($request->get('q', ''));
+        $q    = trim($request->get('q', ''));
+        $lang = $request->get('lang', 'en'); // 'en' or 'kh'
 
         if (strlen($q) < 1) {
-            return response()->json(['brands' => [], 'skus' => []]);
+            return response()->json(['brands' => [], 'skus' => [], 'products' => []]);
         }
 
+        $isKhmer    = $lang === 'kh';
+        $nameCol    = $isKhmer ? 'name_kh'   : 'name_en';
+        $fallback   = $isKhmer ? 'name_en'   : 'name_kh';
+
+        // Brands — match only the language column being typed
         $brands = Brand::where('is_active', true)
-            ->where(function ($query) use ($q) {
-                $query->where('name_en', 'like', "%{$q}%")
-                      ->orWhere('name_kh', 'like', "%{$q}%");
-            })
+            ->where($nameCol, 'like', "%{$q}%")
             ->select('id', 'name_en', 'name_kh')
             ->limit(5)
             ->get()
-            ->map(fn($b) => ['id' => $b->id, 'name' => $b->name_en ?? $b->name_kh]);
+            ->map(fn($b) => [
+                'id'   => $b->id,
+                'name' => $b->{$nameCol} ?: $b->{$fallback},
+            ]);
 
-        $skus = Product::active()
+        // SKUs — always Latin/numeric, show with locale-aware product name
+        $skus = $isKhmer ? collect() : Product::active()
             ->where('SKU', 'like', "%{$q}%")
-            ->select('id', 'SKU', 'name_en')
+            ->select('id', 'SKU', 'name_en', 'name_kh')
             ->limit(5)
             ->get()
-            ->map(fn($p) => ['id' => $p->id, 'sku' => $p->SKU, 'name' => $p->name_en]);
+            ->map(fn($p) => ['id' => $p->id, 'sku' => $p->SKU, 'name' => $p->name]);
 
+        // Products — match only the typed-language column
         $products = Product::active()
-            ->where(function ($query) use ($q) {
-                $query->where('name_en', 'like', "%{$q}%")
-                      ->orWhere('name_kh', 'like', "%{$q}%");
+            ->where(function ($query) use ($q, $nameCol, $isKhmer) {
+                $query->where($nameCol, 'like', "%{$q}%");
+                if (!$isKhmer) {
+                    $query->orWhere('SKU', 'like', "%{$q}%");
+                }
             })
-            ->select('id', 'name_en', 'name_kh')
+            ->with(['images' => fn($q) => $q->where('is_main', true)->limit(1)])
+            ->select('id', 'name_en', 'name_kh', 'price')
             ->limit(6)
             ->get()
-            ->map(fn($p) => ['id' => $p->id, 'name' => $p->name_en ?? $p->name_kh]);
+            ->map(fn($p) => [
+                'id'        => $p->id,
+                'name'      => $p->{$nameCol} ?: $p->{$fallback},
+                'price'     => number_format($p->price, 2),
+                'image_url' => $p->images->first()?->image
+                                ? asset('storage/' . $p->images->first()->image)
+                                : null,
+                'url'       => route('pages.viewProduct', $p->id),
+            ]);
 
         return response()->json(['brands' => $brands, 'skus' => $skus, 'products' => $products]);
     }

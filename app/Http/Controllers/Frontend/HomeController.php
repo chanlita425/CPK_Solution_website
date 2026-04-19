@@ -64,55 +64,63 @@ public function index(Request $request)
     // Apply category filter
     if ($categoryId) {
         $query->where('category_id', $categoryId);
-        $categoryName = Category::find($categoryId)?->name_en ?? 'Category';
+        $categoryName = Category::find($categoryId)?->name ?? __('messages.categories');
     } else {
-        $categoryName = 'All Products';
+        $categoryName = __('messages.all_products');
     }
 
     // Apply brand filter
     if ($brandId) {
         $query->where('brand_id', $brandId);
-        $brandName = Brand::find($brandId)?->name_en ?? 'Brand';
+        $brandName = Brand::find($brandId)?->name ?? __('messages.brands');
     } else {
-        $brandName = 'All Brands';
+        $brandName = __('messages.all_products');
     }
 
     // Detect if search matches a brand or SKU
     $searchBrandName = null;
     $searchSku = null;
     if ($searchQuery) {
-        $matchedBrand = Brand::where('name_en', 'like', "%{$searchQuery}%")
-            ->orWhere('name_kh', 'like', "%{$searchQuery}%")
-            ->first();
+        $isKhmerQuery = (bool) preg_match('/[\x{1780}-\x{17FF}]/u', $searchQuery);
+        $nameCol      = $isKhmerQuery ? 'name_kh' : 'name_en';
+
+        $matchedBrand = Brand::where($nameCol, 'like', "%{$searchQuery}%")->first();
         if ($matchedBrand) {
-            $searchBrandName = $matchedBrand->name_en ?? $matchedBrand->name_kh;
+            $searchBrandName = $matchedBrand->name; // locale-aware
         }
 
-        $matchedSku = Product::where('SKU', 'like', "%{$searchQuery}%")->first();
-        if ($matchedSku) {
-            $searchSku = $matchedSku->SKU;
+        if (!$isKhmerQuery) {
+            $matchedSku = Product::where('SKU', 'like', "%{$searchQuery}%")->first();
+            if ($matchedSku) {
+                $searchSku = $matchedSku->SKU;
+            }
         }
     }
 
     // Apply search filter
     if ($searchQuery) {
-        $query->where(function ($q) use ($searchQuery) {
-            // Search product names
-            $q->where('name_en', 'like', "%{$searchQuery}%")
-            ->orWhere('name_kh', 'like', "%{$searchQuery}%")
-            ->orWhere('SKU', 'like', "%{$searchQuery}%")
+        // Detect script: Khmer chars are U+1780–U+17FF
+        $isKhmer = (bool) preg_match('/[\x{1780}-\x{17FF}]/u', $searchQuery);
+        $nameCol = $isKhmer ? 'name_kh' : 'name_en';
 
-            // Search category names
-            ->orWhereHas('category', function ($q2) use ($searchQuery) {
-                $q2->where('name_en', 'like', "%{$searchQuery}%")
-                    ->orWhere('name_kh', 'like', "%{$searchQuery}%");
-            })
+        $query->where(function ($q) use ($searchQuery, $nameCol, $isKhmer) {
+            // Match product name in the detected language
+            $q->where($nameCol, 'like', "%{$searchQuery}%");
 
-            // Search brand names
-            ->orWhereHas('brand', function ($q3) use ($searchQuery) {
-                $q3->where('name_en', 'like', "%{$searchQuery}%")
-                    ->orWhere('name_kh', 'like', "%{$searchQuery}%");
-            });
+            // SKU is always Latin
+            if (!$isKhmer) {
+                $q->orWhere('SKU', 'like', "%{$searchQuery}%");
+            }
+
+            // Category name in detected language
+            $q->orWhereHas('category', fn($q2) =>
+                $q2->where($nameCol, 'like', "%{$searchQuery}%")
+            );
+
+            // Brand name in detected language
+            $q->orWhereHas('brand', fn($q3) =>
+                $q3->where($nameCol, 'like', "%{$searchQuery}%")
+            );
         });
     }
 

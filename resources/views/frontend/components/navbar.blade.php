@@ -29,7 +29,7 @@
                         id="searchInput"
                         name="search"
                         value=""
-                        placeholder="Search products ..."
+                        placeholder="{{ __('messages.search_placeholder') }}"
                         class="w-full border border-gray-400 bg-gray-50 rounded-[18px] py-2 pl-4 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent transition"
                         oninput="handleSearchInput(this.value)"
                         onfocus="handleSearchInput(this.value)"
@@ -41,32 +41,34 @@
 
                 {{-- Search Dropdown --}}
                 <div id="searchDropdown"
-                    class="absolute left-0 right-0 top-full mt-1 bg-white rounded-2xl shadow-lg border border-gray-100 z-50 hidden max-h-80 overflow-y-auto">
+                    class="absolute left-0 right-0 top-full mt-1 bg-white rounded-2xl shadow-lg border border-gray-100 z-50 hidden max-h-96 overflow-y-auto">
 
                     {{-- Product name suggestions (AJAX) --}}
                     <div id="productSection" class="hidden">
-                        <p class="text-[10px] uppercase tracking-widest text-gray-400 font-semibold px-4 pt-3 pb-1">Products</p>
+                        <p class="text-[10px] uppercase tracking-widest text-gray-400 font-semibold px-4 pt-3 pb-1">{{ __('messages.products') }}</p>
                         <ul id="productList"></ul>
                     </div>
 
                     {{-- Brand suggestions (AJAX) --}}
                     <div id="brandSection" class="hidden">
-                        <p class="text-[10px] uppercase tracking-widest text-gray-400 font-semibold px-4 pt-3 pb-1">Brands</p>
+                        <p class="text-[10px] uppercase tracking-widest text-gray-400 font-semibold px-4 pt-3 pb-1">{{ __('messages.brands') }}</p>
                         <ul id="brandList"></ul>
                     </div>
 
                     {{-- SKU suggestions (AJAX) --}}
                     <div id="skuSection" class="hidden">
-                        <p class="text-[10px] uppercase tracking-widest text-gray-400 font-semibold px-4 pt-1 pb-1">SKU</p>
+                        <p class="text-[10px] uppercase tracking-widest text-gray-400 font-semibold px-4 pt-1 pb-1">{{ __('messages.sku') }}</p>
                         <ul id="skuList"></ul>
                     </div>
 
                     {{-- Categories (client-side filter) --}}
                     <div id="categorySection">
-                        <p class="text-[10px] uppercase tracking-widest text-gray-400 font-semibold px-4 pt-3 pb-1">Categories</p>
+                        <p class="text-[10px] uppercase tracking-widest text-gray-400 font-semibold px-4 pt-3 pb-1">{{ __('messages.categories') }}</p>
                         <ul id="categoryList">
                             @foreach($navCategories as $cat)
-                            <li class="category-item" data-name="{{ strtolower($cat->name_en ?? $cat->name) }}">
+                            <li class="category-item"
+                                data-name="{{ strtolower($cat->name_en ?? '') }}"
+                                data-name-kh="{{ $cat->name_kh ?? '' }}">
                                 <a href="{{ route('home') }}?category_id={{ $cat->id }}#product-grid"
                                     data-filter-link="category"
                                     data-cat-id="{{ $cat->id }}"
@@ -81,10 +83,10 @@
                             </li>
                             @endforeach
                         </ul>
-                        <div id="noCategory" class="hidden px-4 py-3 text-sm text-gray-400">No categories found.</div>
+                        <div id="noCategory" class="hidden px-4 py-3 text-sm text-gray-400">{{ __('messages.no_categories_found') }}</div>
                     </div>
 
-                    <div id="noResults" class="hidden px-4 py-3 text-sm text-gray-400 text-center">No results found.</div>
+                    <div id="noResults" class="hidden px-4 py-3 text-sm text-gray-400 text-center">{{ __('messages.no_results_found') }}</div>
                 </div>
             </div>
 
@@ -95,7 +97,7 @@
                     <div class="relative">
                         <i class="fa-solid fa-bag-shopping text-[#28282A] text-xl group-hover:scale-110 transition-transform"></i>
                     </div>
-                    <span class="hidden md:inline text-sm font-medium text-[#28282A] ml-1">Cart</span>
+                    <span class="hidden md:inline text-sm font-medium text-[#28282A] ml-1">{{ __('messages.cart') }}</span>
 
                     @php $cartCount = session('cart') ? count(session('cart')) : 0; @endphp
                     @if($cartCount > 0)
@@ -118,7 +120,7 @@
                 <input
                     type="text"
                     name="search"
-                    placeholder="Search products..."
+                    placeholder="{{ __('messages.search_placeholder') }}"
                     class="w-full border border-gray-200 bg-gray-50 rounded-full py-2 pl-4 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
                 >
                 <button type="submit" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
@@ -136,24 +138,32 @@
 
     let _suggestTimer = null;
 
+    // Detect if text contains Khmer characters (U+1780–U+17FF)
+    function isKhmer(text) {
+        return /[\u1780-\u17FF]/.test(text);
+    }
+
     function handleSearchInput(val) {
-        const dropdown    = document.getElementById('searchDropdown');
-        const query       = val.trim().toLowerCase();
+        const dropdown = document.getElementById('searchDropdown');
+        const raw      = val.trim();
+        const query    = raw.toLowerCase();
+        const khmer    = isKhmer(raw);
 
         dropdown.classList.remove('hidden');
 
-        // --- Categories (client-side) ---
-        const catItems  = document.querySelectorAll('.category-item');
+        // --- Categories (client-side, match both name-en and name-kh) ---
+        const catItems   = document.querySelectorAll('.category-item');
         const noCategory = document.getElementById('noCategory');
         let catVisible = 0;
         catItems.forEach(item => {
-            const match = query === '' || (item.dataset.name || '').includes(query);
+            const nameEn = (item.dataset.name || '').toLowerCase();
+            const nameKh = (item.dataset.nameKh || '').toLowerCase();
+            const match  = query === '' || nameEn.includes(query) || nameKh.includes(query);
             item.style.display = match ? '' : 'none';
             if (match) catVisible++;
         });
         noCategory.classList.toggle('hidden', catVisible > 0);
 
-        // Hide brand/sku sections while typing
         if (query.length < 1) {
             document.getElementById('productSection').classList.add('hidden');
             document.getElementById('brandSection').classList.add('hidden');
@@ -162,13 +172,13 @@
             return;
         }
 
-        // --- Brands + SKU (AJAX with debounce) ---
+        // --- Products + Brands + SKU (AJAX with debounce) ---
         clearTimeout(_suggestTimer);
-        _suggestTimer = setTimeout(() => fetchSuggestions(query), 280);
+        _suggestTimer = setTimeout(() => fetchSuggestions(raw, khmer ? 'kh' : 'en'), 280);
     }
 
-    function fetchSuggestions(q) {
-        fetch(`/search/suggestions?q=${encodeURIComponent(q)}`)
+    function fetchSuggestions(q, lang) {
+        fetch(`/search/suggestions?q=${encodeURIComponent(q)}&lang=${lang}`)
             .then(r => r.json())
             .then(data => {
                 renderProducts(data.products || []);
@@ -187,15 +197,35 @@
         const list    = document.getElementById('productList');
         if (!products.length) { section.classList.add('hidden'); list.innerHTML = ''; return; }
 
+        // Store URLs in a map so onclick can reference them safely
+        window._searchProductUrls = {};
+        products.forEach(p => { window._searchProductUrls[p.id] = p.url; });
+
         list.innerHTML = products.map(p => `
             <li>
-                <a href="{{ route('home') }}?search=${encodeURIComponent(p.name)}#product-grid"
-                   class="flex items-center gap-3 px-4 py-2.5 hover:bg-[#FFF8E7] transition-colors text-sm text-gray-700">
-                    <i class="fa fa-box text-[#C9A84C] text-sm w-5 text-center"></i>
-                    <span>${escHtml(p.name)}</span>
-                </a>
+                <button type="button"
+                   onclick="goToProduct(${p.id})"
+                   class="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-[#FFF8E7] transition-colors text-left cursor-pointer">
+                    <div class="w-10 h-10 rounded-lg bg-gray-100 flex-shrink-0 overflow-hidden flex items-center justify-center">
+                        ${p.image_url
+                            ? `<img src="${escHtml(p.image_url)}" alt="${escHtml(p.name)}" class="w-full h-full object-contain p-1">`
+                            : `<i class="fa fa-box text-[#C9A84C] text-sm"></i>`
+                        }
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm text-gray-800 font-medium truncate">${escHtml(p.name)}</p>
+                    </div>
+                    <span class="text-sm font-bold text-[#C9A84C] flex-shrink-0">$${escHtml(p.price)}</span>
+                </button>
             </li>`).join('');
         section.classList.remove('hidden');
+    }
+
+    function goToProduct(id) {
+        const url = window._searchProductUrls && window._searchProductUrls[id];
+        if (!url) return;
+        document.getElementById('searchDropdown')?.classList.add('hidden');
+        window.location.href = url + '#product-detail';
     }
 
     function renderBrands(brands) {
@@ -203,16 +233,28 @@
         const list    = document.getElementById('brandList');
         if (!brands.length) { section.classList.add('hidden'); list.innerHTML = ''; return; }
 
+        window._searchBrandUrls = {};
+        brands.forEach(b => {
+            window._searchBrandUrls[b.id] = '{{ route('home') }}?brand_id=' + b.id + '#product-grid';
+        });
+
         list.innerHTML = brands.map(b => `
             <li>
-                <a href="{{ route('home') }}?brand_id=${b.id}#product-grid"
-                   data-filter-link="brand" data-brand-id="${b.id}"
-                   class="flex items-center gap-3 px-4 py-2.5 hover:bg-[#FFF8E7] transition-colors text-sm text-gray-700">
-                    <i class="fa fa-tag text-blue-400 text-sm w-5 text-center"></i>
-                    <span>${escHtml(b.name)}</span>
-                </a>
+                <button type="button"
+                   onclick="goToBrand(${b.id})"
+                   class="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-[#FFF8E7] transition-colors text-left cursor-pointer">
+                    <i class="fa fa-tag text-[#C9A84C] text-sm w-5 text-center"></i>
+                    <span class="text-sm text-gray-700">${escHtml(b.name)}</span>
+                </button>
             </li>`).join('');
         section.classList.remove('hidden');
+    }
+
+    function goToBrand(id) {
+        const url = window._searchBrandUrls && window._searchBrandUrls[id];
+        if (!url) return;
+        document.getElementById('searchDropdown')?.classList.add('hidden');
+        window.location.href = url;
     }
 
     function renderSkus(skus) {

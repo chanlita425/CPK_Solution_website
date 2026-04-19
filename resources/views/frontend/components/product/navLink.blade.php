@@ -4,7 +4,7 @@
     {{-- Home --}}
     <a href="{{ route('home') }}"
        class="hover:text-yellow-600 transition-colors">
-        Home
+        {{ __('messages.home') }}
     </a>
 
     <span class="text-gray-300">/</span>
@@ -12,7 +12,7 @@
     {{-- Products --}}
     <a href="{{ route('products') }}"
        class="hover:text-yellow-600 transition-colors">
-        Products
+        {{ __('messages.products') }}
     </a>
 
     <span class="text-gray-300">/</span>

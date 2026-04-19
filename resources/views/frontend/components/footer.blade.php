@@ -38,7 +38,7 @@
             {{-- ================= CATEGORIES ================= --}}
             <div>
                 <h4 class="text-[#D7B259] font-semibold text-[20px] mb-4 uppercase tracking-wide">
-                    Categories
+                    {{ __('messages.categories') }}
                 </h4>
 
                 <ul class="grid grid-cols-1 gap-2 text-[16px]">
@@ -57,7 +57,7 @@
             {{-- ================= SOCIAL + CONTACT ================= --}}
             <div>
                 <h4 class="text-[#D7B259] font-semibold text-[20px] mb-4 uppercase tracking-wide">
-                    Follow Us
+                    {{ __('messages.follow_us') }}
                 </h4>
 
                 {{-- Social Icons --}}

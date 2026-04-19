@@ -15,7 +15,7 @@
 <section id="product-grid" class="mt-6 lg:mt-16 sm:px-12 px-8 lg:px-4 sm:px-4">
     
     <h2 class="text-center text-base sm:text-lg font-semibold mb-6 sm:mb-8" style="color:#C9A84C;">
-        Similar Items
+        {{ __('messages.similar_items') }}
     </h2>
 
     <div id="add-cards-container">

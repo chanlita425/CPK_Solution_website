@@ -5,7 +5,7 @@ $brands = Brand::where('is_active', true)->get();
 
 <section class="category px-8 mt-2">
     <div class="relative bg-[#FCF6ED] rounded-[40px] shadow-sm border border-gray-100 p-14 py-6">
-        <p class="text-center text-xs font-Inter text-[#000000] uppercase tracking-widest mb-3">Brands</p>
+        <p class="text-center text-xs font-Inter text-[#000000] uppercase tracking-widest mb-3">{{ __('messages.brands') }}</p>
 
         {{-- Swiper --}}
         <div class="swiper brands-swiper overflow-hidden">

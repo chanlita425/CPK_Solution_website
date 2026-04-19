@@ -4,7 +4,7 @@
 
 <section class="category px-8">
     <div class="relative bg-[#FFEDD0] rounded-[40px] shadow-sm border border-gray-100 p-14 py-6">
-        <p class="text-center text-xs font-Inter text-[#000000] uppercase tracking-widest mb-3">Categories</p>
+        <p class="text-center text-xs font-Inter text-[#000000] uppercase tracking-widest mb-3">{{ __('messages.categories') }}</p>
 
         {{-- Swiper --}}
         <div class="swiper categories-swiper overflow-hidden">
