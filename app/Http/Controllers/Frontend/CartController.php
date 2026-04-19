@@ -37,6 +37,7 @@ class CartController extends Controller
                 $selectedImagePath = $details['selected_image'] ?? null;
                 $cartItems[] = [
                     'cart_key' => $cartKey,
+                    'added_at' => $details['added_at'] ?? 0,
                     'id'       => $product->id,
                     'name'     => $product->name,
                     'name_en'  => $product->name_en,
@@ -54,6 +55,9 @@ class CartController extends Controller
                 ];
             }
         }
+
+        // Oldest first (top) → newest last (bottom)
+        usort($cartItems, fn($a, $b) => ($a['added_at'] ?? 0) <=> ($b['added_at'] ?? 0));
 
         $query = Product::active();
 
@@ -211,11 +215,13 @@ class CartController extends Controller
 
         if (isset($cart[$cartKey])) {
             $cart[$cartKey]['quantity'] += $quantity;
+            // keep original added_at so position stays stable
         } else {
             $cart[$cartKey] = [
                 'product_id'     => (int) $id,
                 'quantity'       => $quantity,
                 'selected_image' => $selectedImage,
+                'added_at'       => now()->timestamp,
             ];
         }
 
