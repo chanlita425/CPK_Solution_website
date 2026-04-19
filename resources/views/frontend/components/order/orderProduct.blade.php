@@ -8,7 +8,7 @@
                             px-4 py-4 sm:py-6 rounded-[40px] bg-gray-100">
 
                     {{-- Product image --}}
-                    <a href="{{ url('/product/' . $item['slug']) }}"
+                    <a href="/#"
                         class="flex items-center justify-center shrink-0
                             w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 lg:w-36 lg:h-36">
 

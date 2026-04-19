@@ -6,7 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     {{-- <title>@yield('title', 'CPK Solution')</title> --}}
 
-      <!-- Favicon from Settings -->
+    <!-- Favicon from Settings -->
     @if($settings && $settings->favicon)
         <link rel="icon" type="image/x-icon" href="{{ asset('storage/' . $settings->favicon) }}">
         <link rel="shortcut icon" type="image/x-icon" href="{{ asset('storage/' . $settings->favicon) }}">
@@ -217,12 +217,22 @@
             const link = e.target.closest('[data-filter-link]');
             if (!link) return;
 
-            // Only do AJAX filtering when on the home page
             const homePath = new URL('{{ route("home") }}', window.location.origin).pathname.replace(/\/$/, '') || '/';
             const curPath  = window.location.pathname.replace(/\/$/, '') || '/';
-            if (curPath !== homePath) return; // let normal navigation go to home
 
-            // Build toggle URL dynamically from current params
+            // Not on home page — SPA navigate to home with the selected filter
+            if (curPath !== homePath) {
+                const filterType = link.dataset.filterLink;
+                const params = new URLSearchParams();
+                if (filterType === 'brand') params.set('brand_id', link.dataset.brandId);
+                else if (filterType === 'category') params.set('category_id', link.dataset.catId);
+                const qs = params.toString();
+                e.preventDefault();
+                loadPage(homePath + (qs ? '?' + qs : ''), '#product-grid', 'Home');
+                return;
+            }
+
+            // On home page — AJAX filter in place
             const params     = new URLSearchParams(window.location.search);
             const filterType = link.dataset.filterLink;
 
