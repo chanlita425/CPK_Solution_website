@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     {{-- <title>@yield('title', 'CPK Solution')</title> --}}
 
-      <!-- Favicon from Settings -->
-    @if($settings && $settings->favicon)
+    <!-- Favicon from Settings -->
+    @if ($settings && $settings->favicon)
         <link rel="icon" type="image/x-icon" href="{{ asset('storage/' . $settings->favicon) }}">
         <link rel="shortcut icon" type="image/x-icon" href="{{ asset('storage/' . $settings->favicon) }}">
         <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('storage/' . $settings->favicon) }}">
@@ -17,19 +18,19 @@
         <link rel="icon" type="image/png" href="{{ asset('cpk_favicon.png') }}">
         <link rel="shortcut icon" type="image/png" href="{{ asset('cpk_favicon.png') }}">
     @endif
-
+    {{-- Swiper CSS (already in your file, ensure it's present) --}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
     <title>@yield('title', 'Admin Dashboard') - CPK Solution</title>
 
     {{-- Tailwind CSS CDN --}}
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-       
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
                         primary: {
-                            50:  '#fff8e1',
+                            50: '#fff8e1',
                             100: '#ffecb3',
                             200: '#ffe082',
                             300: '#ffd54f',
@@ -59,16 +60,30 @@
                     },
                     keyframes: {
                         fadeIn: {
-                            '0%': { opacity: '0' },
-                            '100%': { opacity: '1' },
+                            '0%': {
+                                opacity: '0'
+                            },
+                            '100%': {
+                                opacity: '1'
+                            },
                         },
                         slideUp: {
-                            '0%': { transform: 'translateY(20px)', opacity: '0' },
-                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                            '0%': {
+                                transform: 'translateY(20px)',
+                                opacity: '0'
+                            },
+                            '100%': {
+                                transform: 'translateY(0)',
+                                opacity: '1'
+                            },
                         },
                         pulseBadge: {
-                            '0%, 100%': { transform: 'scale(1)' },
-                            '50%': { transform: 'scale(1.1)' },
+                            '0%, 100%': {
+                                transform: 'scale(1)'
+                            },
+                            '50%': {
+                                transform: 'scale(1.1)'
+                            },
                         },
                     },
                 }
@@ -82,36 +97,43 @@
 
         body {
             font-family: 'Nunito', 'Kantumruy Pro', sans-serif;
+        }
+
+        #product-detail {
+            scroll-margin-top: 250px;
+        }
+
+        #order_card {
+            scroll-margin-top: 200px;
+        }
     </style>
 
     {{-- Google Fonts --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&family=Poppins:wght@600;700;800;900&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&family=Poppins:wght@600;700;800;900&display=swap"
+        rel="stylesheet">
+
 
     {{-- Font Awesome --}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     {{-- Swiper CSS --}}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
-    <style>
-        #product-detail {
-            scroll-margin-top: 50px;
-        }
-    </style>
 </head>
+
 <body class="bg-gray-50 text-gray-800 antialiased">
 
     {{-- Top Header --}}
     @include('frontend.components.header')
-    
+
     {{-- Main Navbar --}}
     @include('frontend.components.navbar')
 
     {{-- Show ONLY on homepage --}}
     @if (Route::currentRouteName() === 'home')
         @include('frontend.components.banner')
-        
     @endif
 
     @include('frontend.components.categories')
@@ -136,5 +158,8 @@
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
     @stack('scripts')
+    {{-- Swiper JS (already in your file) --}}
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 </body>
+
 </html>

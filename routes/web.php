@@ -12,10 +12,6 @@ use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Frontend\HomeController;
 use App\Http\Controllers\Frontend\ProductController;
-
-// Frontend Controllers
-// use App\Http\Controllers\Frontend\HomeController;
-// use App\Http\Controllers\Frontend\ProductController;
 use App\Http\Controllers\Frontend\CartController;
 use App\Http\Controllers\Frontend\CheckoutController;
 use App\Http\Controllers\Frontend\CouponController;
@@ -27,33 +23,28 @@ use App\Http\Controllers\Frontend\LocaleController;
 | Frontend Routes (Public)
 |--------------------------------------------------------------------------
 */
- 
+
 // Home & Product
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/products', [HomeController::class, 'index'])->name('products');
 Route::get('/products/{id}', [ProductController::class, 'show'])->name('pages.viewProduct');
 
-// Real-time search
+// NEW: Live search endpoint
+Route::get('/live-search', [SearchController::class, 'liveSearch'])->name('live.search');
+
+// Real-time search (full page results)
 Route::get('/search', [SearchController::class, 'search'])->name('search');
 
 // Locale switching
-// Route::post('/locale/switch', [LocaleController::class, 'switch'])->name('locale.switch');
-
 Route::get('/locale/switch', [LocaleController::class, 'switch'])->name('locale.switch');
 
 // Cart Routes
 Route::prefix('cart')->name('cart.')->group(function () {
-
     Route::get('/', [CartController::class, 'index'])->name('index');
-
     Route::post('/add/{id}', [CartController::class, 'add'])->name('add');
-
     Route::post('/update/{id}', [CartController::class, 'update'])->name('update');
-
     Route::post('/remove/{id}', [CartController::class, 'remove'])->name('remove');
-
     Route::post('/clear', [CartController::class, 'clear'])->name('clear');
-
     Route::get('/count', [CartController::class, 'count'])->name('count');
 });
 
@@ -68,7 +59,7 @@ Route::prefix('checkout')->name('checkout.')->group(function () {
     Route::post('/process', [CheckoutController::class, 'process'])->name('process');
 });
 
-// Filter products via AJAX (legacy support)
+// Filter products via AJAX
 Route::get('/filter', [HomeController::class, 'filter'])->name('filter.products');
 
 /*
@@ -119,8 +110,5 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Settings
         Route::get('settings', [SettingController::class, 'index'])->name('settings.index');
         Route::put('settings', [SettingController::class, 'update'])->name('settings.update');
-    }); });
-
-
-
-
+    });
+});

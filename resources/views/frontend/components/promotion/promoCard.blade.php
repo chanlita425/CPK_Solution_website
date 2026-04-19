@@ -32,8 +32,13 @@
 
 </div> --}}
 
-<div class="rounded-[24px] overflow-hidden row-span-2 relative" style="min-height:420px;">
+{{-- <div class="rounded-[24px] overflow-hidden row-span-2 relative" style="min-height:420px;">
     <img src="{{ asset('storage/' . $promoImage) }}" 
          alt="Promo" 
+         class="w-full h-full object-cover">
+</div> --}}
+
+<div class="row-span-2 h-full rounded-[24px] overflow-hidden">
+    <img src="{{ asset('storage/' . $promoImage) }}"
          class="w-full h-full object-cover">
 </div>

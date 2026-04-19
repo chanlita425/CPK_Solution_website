@@ -4,11 +4,18 @@
     'size' => 'sm',
     'pgUrl' => null,
     'pageParam' => 'page',
+    'ajax' => true,
 ])
 
-@if((int)$total <= 1)
-    {{-- Hide pagination when only 1 page or no data --}}
-@else
+@php
+    $page = (int) $page;
+    $total = (int) $total;
+
+    // DON'T show pagination if total pages is 1 or less
+    if ($total <= 1) {
+        return;
+    }
+@endphp
 
 @php
     // Pagination dot/button sizes
@@ -21,34 +28,33 @@
 
     $dotSpacing = in_array($size, ['lg', 'md']) ? 'mx-1' : '';
 
-    $page = (int) $page;
-    $total = (int) $total;
-
-    // Make sure $pgUrl is a proper string
-    $baseUrl = $pgUrl ?? url()->current();
-
-    // Helper function to generate page URLs safely
-    $urlForPage = function($p) use ($baseUrl, $pageParam) {
-        return request()->fullUrlWithQuery([$pageParam => $p]) . '#product-grid';
-    };
-
-    $window = 3;
     $lastPage = $total;
-    $start = max(1, $page);
-    $end = min($page + $window - 1, $lastPage - 1);
+
+    // Calculate start and end for pagination
+    $start = max(1, $page - 2);
+    $end = min($lastPage, $page + 2);
+
+    if ($start <= 3) {
+        $start = 1;
+        $end = min(5, $lastPage);
+    }
+    if ($end >= $lastPage - 2) {
+        $end = $lastPage;
+        $start = max(1, $lastPage - 4);
+    }
 @endphp
 
 <div class="flex items-center justify-center gap-2">
     {{-- Previous --}}
     @if($page > 1)
-        <a href="{{ $urlForPage($page - 1) }}" class="{{ $dotSpacing }} hover:opacity-70 transition-opacity flex items-center">
+        <button type="button" data-page="{{ $page - 1 }}" class="pagination-ajax-btn {{ $dotSpacing }} hover:opacity-70 transition-opacity flex items-center cursor-pointer">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="#C9A84C" xmlns="http://www.w3.org/2000/svg">
                 <polygon points="5,12 14,5 14,19"/>
                 <rect x="14" y="5" width="3" height="14" rx="1"/>
             </svg>
-        </a>
+        </button>
     @else
-        <span class="{{ $dotSpacing }} flex items-center opacity-30">
+        <span class="{{ $dotSpacing }} flex items-center opacity-30 cursor-default">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="#C9A84C" xmlns="http://www.w3.org/2000/svg">
                 <polygon points="5,12 14,5 14,19"/>
                 <rect x="14" y="5" width="3" height="14" rx="1"/>
@@ -56,41 +62,49 @@
         </span>
     @endif
 
-    {{-- Page numbers --}}
-    @for($p = $start; $p <= $end; $p++)
-        <a href="{{ $urlForPage($p) }}"
-            class="{{ $sizeClasses[$size] }} flex items-center justify-center transition-colors
-            {{ $p === $page ? 'font-bold text-white shadow' : 'font-medium text-gray-500 hover:bg-yellow-50' }}"
-            @if($p === $page) style="background:#C9A84C; border-radius:6px;" @endif>
-            {{ $p }}
-        </a>
-    @endfor
-
-    {{-- Ellipsis if needed --}}
-    @if($end < $lastPage - 1)
-        <span class="px-1 text-gray-400">...</span>
+    {{-- First page if not in range --}}
+    @if($start > 1)
+        <button type="button" data-page="1" class="pagination-ajax-btn {{ $sizeClasses[$size] }} flex items-center justify-center transition-colors font-medium text-gray-500 hover:bg-yellow-50 cursor-pointer">
+            1
+        </button>
+        @if($start > 2)
+            <span class="px-1 text-gray-400">...</span>
+        @endif
     @endif
 
-    {{-- Last page --}}
-    @if($lastPage > 1)
-        <a href="{{ $urlForPage($lastPage) }}"
-            class="{{ $sizeClasses[$size] }} flex items-center justify-center transition-colors
-            {{ $page === $lastPage ? 'font-bold text-white shadow' : 'font-medium text-gray-500 hover:bg-yellow-50' }}"
-            @if($page === $lastPage) style="background:#C9A84C; border-radius:6px;" @endif>
+    {{-- Page numbers --}}
+    @for($p = $start; $p <= $end; $p++)
+        @if($p == $page)
+            <span class="{{ $sizeClasses[$size] }} flex items-center justify-center font-bold text-white shadow cursor-default" style="background:#C9A84C; border-radius:6px;">
+                {{ $p }}
+            </span>
+        @else
+            <button type="button" data-page="{{ $p }}" class="pagination-ajax-btn {{ $sizeClasses[$size] }} flex items-center justify-center transition-colors font-medium text-gray-500 hover:bg-yellow-50 cursor-pointer">
+                {{ $p }}
+            </button>
+        @endif
+    @endfor
+
+    {{-- Last page if not in range --}}
+    @if($end < $lastPage)
+        @if($end < $lastPage - 1)
+            <span class="px-1 text-gray-400">...</span>
+        @endif
+        <button type="button" data-page="{{ $lastPage }}" class="pagination-ajax-btn {{ $sizeClasses[$size] }} flex items-center justify-center transition-colors font-medium text-gray-500 hover:bg-yellow-50 cursor-pointer">
             {{ $lastPage }}
-        </a>
+        </button>
     @endif
 
     {{-- Next --}}
     @if($page < $total)
-        <a href="{{ $urlForPage($page + 1) }}" class="{{ $dotSpacing }} hover:opacity-70 transition-opacity flex items-center">
+        <button type="button" data-page="{{ $page + 1 }}" class="pagination-ajax-btn {{ $dotSpacing }} hover:opacity-70 transition-opacity flex items-center cursor-pointer">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="#C9A84C" xmlns="http://www.w3.org/2000/svg">
                 <polygon points="19,12 10,5 10,19"/>
                 <rect x="7" y="5" width="3" height="14" rx="1"/>
             </svg>
-        </a>
+        </button>
     @else
-        <span class="{{ $dotSpacing }} flex items-center opacity-30">
+        <span class="{{ $dotSpacing }} flex items-center opacity-30 cursor-default">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="#C9A84C" xmlns="http://www.w3.org/2000/svg">
                 <polygon points="19,12 10,5 10,19"/>
                 <rect x="7" y="5" width="3" height="14" rx="1"/>
@@ -98,5 +112,3 @@
         </span>
     @endif
 </div>
-
-@endif

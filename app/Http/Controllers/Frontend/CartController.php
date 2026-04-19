@@ -25,6 +25,7 @@ class CartController extends Controller
         $brands     = Brand::where('is_active', true)->get();
         $subtotal   = 0;
         $cartItems  = [];
+        $cartCategoryIds = [];
 
         foreach ($cart as $id => $details) {
             $product = Product::find($id);
@@ -32,6 +33,11 @@ class CartController extends Controller
             if ($product && $product->is_active) {
                 $itemTotal = $product->price * $details['quantity'];
                 $subtotal += $itemTotal;
+
+                // Store category IDs from cart items
+                if ($product->category_id && !in_array($product->category_id, $cartCategoryIds)) {
+                    $cartCategoryIds[] = $product->category_id;
+                }
 
                 $cartItems[] = [
                     'id' => $product->id,
@@ -50,14 +56,26 @@ class CartController extends Controller
             }
         }
 
-        $query = Product::active();
+        // Get products for similar items section
+        $query = Product::active()
+            ->whereNotIn('id', array_keys($cart)) // Exclude products already in cart
+            ->with(['category', 'brand', 'images']);
 
-        if ($categoryId) {
-            $query->where('category_id', $categoryId);
+        // Apply category filter if selected
+        if ($request->filled('category_id')) {
+            $query->where('category_id', $request->category_id);
         }
-
-        if ($brandId) {
-            $query->where('brand_id', $brandId);
+        // Apply brand filter if selected
+        elseif ($request->filled('brand_id')) {
+            $query->where('brand_id', $request->brand_id);
+        }
+        // Default: show products from same categories as cart items
+        elseif (!empty($cartCategoryIds)) {
+            $query->whereIn('category_id', $cartCategoryIds);
+        }
+        // If cart is empty, show random products
+        else {
+            $query->inRandomOrder();
         }
 
         $allProducts = $query->latest()->get();
@@ -73,9 +91,9 @@ class CartController extends Controller
         $productsSm = $allProducts->forPage($pageSm, $perPage['sm'])->values();
         $productsLg = $allProducts->forPage($pageLg, $perPage['lg'])->values();
 
-        $totalPagesXs = ceil($totalItems / $perPage['xs']);
-        $totalPagesSm = ceil($totalItems / $perPage['sm']);
-        $totalPagesLg = ceil($totalItems / $perPage['lg']);
+        $totalPagesXs = $totalItems > 0 ? ceil($totalItems / $perPage['xs']) : 1;
+        $totalPagesSm = $totalItems > 0 ? ceil($totalItems / $perPage['sm']) : 1;
+        $totalPagesLg = $totalItems > 0 ? ceil($totalItems / $perPage['lg']) : 1;
 
         $pgUrl = url()->current();
         $promoPosition = 3;
@@ -108,6 +126,32 @@ class CartController extends Controller
             ->inRandomOrder()
             ->limit(4)
             ->get();
+
+        // Check if AJAX request
+        if ($request->ajax() || $request->wantsJson()) {
+            $productsHtml = view('frontend.components.cards.cardResponsive', compact(
+                'productsXs',
+                'productsSm',
+                'productsLg',
+                'pageXs',
+                'pageSm',
+                'pageLg',
+                'totalPagesXs',
+                'totalPagesSm',
+                'totalPagesLg',
+                'pgUrl',
+                'promoPosition',
+                'totalItems',
+                'categoryId',
+                'brandId'
+            ))->render();
+
+            return response()->json([
+                'success' => true,
+                'products_html' => $productsHtml,
+                'total_items' => $totalItems
+            ]);
+        }
 
         return view('frontend.pages.addProduct', compact(
             'cartItems',
@@ -170,7 +214,8 @@ class CartController extends Controller
             ]);
         }
 
-        return redirect()->route('cart.index')->with('success', 'Product added to cart!');
+        return redirect()->route('cart.index')->with('success', 'Product added to cart!')
+                        ->withFragment('order_card');
     }
 
     /**
@@ -197,7 +242,7 @@ class CartController extends Controller
         session()->put('cart', $cart);
 
         // Recalculate totals
-        $settings = \App\Models\Setting::getSettings();
+        $settings = Setting::getSettings();
         $subtotal = 0;
         foreach ($cart as $pid => $details) {
             $p = Product::find($pid);
@@ -252,17 +297,5 @@ class CartController extends Controller
         $count = array_sum(array_column($cart, 'quantity'));
 
         return response()->json(['count' => $count]);
-    }
-
-    private function calculateSubtotal($cart)
-    {
-        $subtotal = 0;
-        foreach ($cart as $id => $details) {
-            $product = Product::find($id);
-            if ($product && $product->is_active) {
-                $subtotal += $product->price * $details['quantity'];
-            }
-        }
-        return $subtotal;
     }
 }

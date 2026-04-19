@@ -1,4 +1,3 @@
-
 <nav class="px-[5rem] sm:px-[8rem] lg:px-[7rem] mt-[5rem] text-sm text-gray-500 flex flex-wrap items-center gap-1">
 
     {{-- Home --}}

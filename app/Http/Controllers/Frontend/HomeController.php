@@ -8,210 +8,159 @@ use App\Models\Category;
 use App\Models\Brand;
 use App\Models\Setting;
 use Illuminate\Http\Request;
-use App\Services\ProductService;
 
 class HomeController extends Controller
 {
     /**
      * Display homepage with product listing
-     *
-     * Supports filtering via query parameters:
-     * - ?category={id}
-     * - ?brand={id}
      */
-    // public function index(Request $request)
-    // {
-    //     $settings = Setting::getSettings();
+    public function index(Request $request)
+    {
+        $settings = Setting::getSettings();
+        $promoImage = $settings->promotion_banner_image;
 
-    //     $categories = Category::where('is_active', true)->get();
-    //     $brands = Brand::where('is_active', true)->get();
+        $categories = Category::where('is_active', true)->get();
+        $brands = Brand::where('is_active', true)->get();
 
-    //     $products = $this->getFilteredProducts($request);
+        $categoryId = $request->input('category_id');
+        $brandId = $request->input('brand_id');
+        $searchQuery = $request->input('search');
 
-    //     // If AJAX request, return only the products grid
-    //     if ($request->wantsJson()) {
-    //         return response()->json([
-    //             'success' => true,
-    //             'products_html' => view('userUi.components.product-grid', ['products' => $products])->render(),
-    //             'pagination_html' => $products->hasPages()
-    //                 ? view('userUi.components.pagination', ['paginator' => $products])->render()
-    //                 : '',
-    //         ]);
-    //     }
+        // Get filtered products with pagination
+        $products = $this->getFilteredProductsQuery($request)->paginate(14);
 
-    //     return view('userUi.home', compact(
-    //         'settings',
-    //         'categories',
-    //         'brands',
-    //         'products'
-    //     ));
-    // }
+        // For non-AJAX requests, also get category/brand names
+        if (!$request->wantsJson()) {
+            $categoryName = $categoryId ? (Category::find($categoryId)?->name_en ?? 'Category') : __('messages.all_products');
+            $brandName = $brandId ? (Brand::find($brandId)?->name_en ?? 'Brand') : 'All Brands';
+            return view('frontend.pages.home', compact(
+                'settings',
+                'promoImage',
+                'categories',
+                'brands',
+                'categoryId',
+                'brandId',
+                'categoryName',
+                'brandName',
+                'products',
+                'searchQuery'
+            ))->with('isHome', true);
+        }
 
+        // AJAX request - return only products HTML and pagination HTML
+        $productsHtml = '';
+        if ($products->count() > 0) {
+            $productsHtml = view('frontend.components.product-grid', [
+                'products' => $products,
+                'isHome' => true,
+                'promoImage' => $promoImage,
+                'categoryId' => $categoryId,
+                'brandId' => $brandId,
+            ])->render();
+        }
 
-public function index(Request $request)
-{
-    $settings = Setting::getSettings();
-    $promoImage = $settings->promotion_banner_image;
+        // Get pagination HTML - ONLY if there are more than 1 page
+        $paginationHtml = '';
+        if ($products->lastPage() > 1 && $products->count() > 0) {
+            $paginationHtml = view('frontend.components.pagination', [
+                'page' => $products->currentPage(),
+                'total' => $products->lastPage(),
+                'size' => 'lg',
+                'ajax' => true,
+            ])->render();
+        }
 
-    // Filters
-    $categoryId = $request->input('category_id');
-    $brandId = $request->input('brand_id');
-    $searchQuery = $request->input('search');
-
-    // Build query
-    $query = Product::with('mainImage')->active();
-
-    // Apply category filter
-    if ($categoryId) {
-        $query->where('category_id', $categoryId);
-        $categoryName = Category::find($categoryId)?->name_en ?? 'Category';
-    } else {
-        $categoryName = 'All Products';
+        return response()->json([
+            'success' => true,
+            'products_html' => $productsHtml,
+            'pagination_html' => $paginationHtml,
+            'total' => $products->total(),
+            'current_page' => $products->currentPage(),
+            'last_page' => $products->lastPage(),
+        ]);
     }
-
-    // Apply brand filter
-    if ($brandId) {
-        $query->where('brand_id', $brandId);
-        $brandName = Brand::find($brandId)?->name_en ?? 'Brand';
-    } else {
-        $brandName = 'All Brands';
-    }
-
-    // Apply search filter
-    if ($searchQuery) {
-        $query->where(function ($q) use ($searchQuery) {
-            // Search product names
-            $q->where('name_en', 'like', "%{$searchQuery}%")
-            ->orWhere('name_kh', 'like', "%{$searchQuery}%")
-            ->orWhere('SKU', 'like', "%{$searchQuery}%")
-            
-            // Search category names
-            ->orWhereHas('category', function ($q2) use ($searchQuery) {
-                $q2->where('name_en', 'like', "%{$searchQuery}%")
-                    ->orWhere('name_kh', 'like', "%{$searchQuery}%");
-            })
-            
-            // Search brand names
-            ->orWhereHas('brand', function ($q3) use ($searchQuery) {
-                $q3->where('name_en', 'like', "%{$searchQuery}%")
-                    ->orWhere('name_kh', 'like', "%{$searchQuery}%");
-            });
-        });
-    }
-
-    // Fetch products
-    $allProducts = $query->latest()->get();
-    $totalItems = $allProducts->count();
-
-    // Pagination per screen size
-    $perPage = ['xs' => 5, 'sm' => 10, 'lg' => 14];
-    $pageXs = max(1, (int) $request->input('page_xs', 1));
-    $pageSm = max(1, (int) $request->input('page_sm', 1));
-    $pageLg = max(1, (int) $request->input('page_lg', 1));
-
-    $productsXs = $allProducts->forPage($pageXs, $perPage['xs'])->values();
-    $productsSm = $allProducts->forPage($pageSm, $perPage['sm'])->values();
-    $productsLg = $allProducts->forPage($pageLg, $perPage['lg'])->values();
-
-    $totalPagesXs = ceil($totalItems / $perPage['xs']);
-    $totalPagesSm = ceil($totalItems / $perPage['sm']);
-    $totalPagesLg = ceil($totalItems / $perPage['lg']);
-
-    $pgUrl = url()->current();
-    $promoPosition = 3;
-
-    // Load all categories and brands
-    $categories = Category::where('is_active', true)->get();
-    $brands = Brand::where('is_active', true)->get();
-
-    return view('frontend.pages.home', compact(
-        'settings',
-        'promoImage',
-        'categories',
-        'brands',
-        'categoryId',
-        'brandId',
-        'categoryName',
-        'brandName',
-        'allProducts',
-        'productsXs',
-        'productsSm',
-        'productsLg',
-        'pageXs',
-        'pageSm',
-        'pageLg',
-        'totalPagesXs',
-        'totalPagesSm',
-        'totalPagesLg',
-        'pgUrl',
-        'promoPosition',
-        'totalItems',
-        'searchQuery'
-    ))->with('isHome', true);
-}
-
-
-
 
     /**
-     * Legacy filter endpoint - redirects to homepage with query params
-     * Kept for backward compatibility with existing frontend code
+     * AJAX filter endpoint - returns filtered products
      */
     public function filter(Request $request)
     {
-        $params = [];
+        $products = $this->getFilteredProductsQuery($request)->paginate(14);
 
-        if ($request->filled('category')) {
-            $params['category'] = $request->category;
+        $categoryId = $request->input('category_id');
+        $brandId = $request->input('brand_id');
+
+        $settings = Setting::getSettings();
+        $promoImage = $settings->promotion_banner_image;
+
+        $productsHtml = '';
+        if ($products->count() > 0) {
+            $productsHtml = view('frontend.components.product-grid', [
+                'products' => $products,
+                'isHome' => true,
+                'promoImage' => $promoImage,
+                'categoryId' => $categoryId,
+                'brandId' => $brandId,
+            ])->render();
         }
 
-        if ($request->filled('brand')) {
-            $params['brand'] = $request->brand;
+        // Get pagination HTML - ONLY if there are more than 1 page
+        $paginationHtml = '';
+        if ($products->lastPage() > 1 && $products->count() > 0) {
+            $paginationHtml = view('frontend.components.pagination', [
+                'page' => $products->currentPage(),
+                'total' => $products->lastPage(),
+                'size' => 'lg',
+                'ajax' => true,
+            ])->render();
         }
 
-        $redirectUrl = route('home');
-
-        if (!empty($params)) {
-            $redirectUrl .= '?' . http_build_query($params);
-        }
-
-        if ($request->wantsJson()) {
-            $products = $this->getFilteredProducts($request);
-
-            return response()->json([
-                'success' => true,
-                'products_html' => view('userUi.components.product-grid', ['products' => $products])->render(),
-                'pagination_html' => $products->hasPages()
-                    ? view('userUi.components.pagination', ['paginator' => $products])->render()
-                    : '',
-            ]);
-        }
-
-        return redirect($redirectUrl);
+        return response()->json([
+            'success' => true,
+            'products_html' => $productsHtml,
+            'pagination_html' => $paginationHtml,
+            'total' => $products->total(),
+            'current_page' => $products->currentPage(),
+            'last_page' => $products->lastPage(),
+            'category_id' => $categoryId,
+            'brand_id' => $brandId,
+        ]);
     }
 
     /**
-     * Get filtered products based on request parameters
-     *
-     * @param Request $request
-     * @return \Illuminate\Pagination\LengthAwarePaginator
+     * Get filtered products query (reusable)
      */
-    private function getFilteredProducts(Request $request)
+    private function getFilteredProductsQuery(Request $request)
     {
         $query = Product::active()
             ->with(['category', 'brand', 'images'])
             ->orderBy('id', 'desc');
 
-        // Apply category filter
-        if ($request->filled('category')) {
-            $query->where('category_id', $request->category);
+        if ($request->filled('category_id')) {
+            $query->where('category_id', $request->category_id);
         }
 
-        // Apply brand filter
-        if ($request->filled('brand')) {
-            $query->where('brand_id', $request->brand);
+        if ($request->filled('brand_id')) {
+            $query->where('brand_id', $request->brand_id);
         }
 
-        return $query->paginate(14);
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name_en', 'like', "%{$search}%")
+                    ->orWhere('name_kh', 'like', "%{$search}%")
+                    ->orWhere('SKU', 'like', "%{$search}%")
+                    ->orWhereHas('category', function ($q2) use ($search) {
+                        $q2->where('name_en', 'like', "%{$search}%")
+                            ->orWhere('name_kh', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('brand', function ($q3) use ($search) {
+                        $q3->where('name_en', 'like', "%{$search}%")
+                            ->orWhere('name_kh', 'like', "%{$search}%");
+                    });
+            });
+        }
+
+        return $query;
     }
 }

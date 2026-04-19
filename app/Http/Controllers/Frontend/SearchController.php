@@ -53,9 +53,9 @@ class SearchController extends Controller
         }
 
         // Render products HTML
-        $productsHtml = view('userUi.components.product-grid', ['products' => $products])->render();
+        $productsHtml = view('frontend.components.product-grid', ['products' => $products])->render();
         $paginationHtml = $products->hasPages()
-            ? view('userUi.components.pagination', ['paginator' => $products])->render()
+            ? view('frontend.components.pagination', ['paginator' => $products])->render()
             : '';
 
         return response()->json([
@@ -67,6 +67,52 @@ class SearchController extends Controller
             'total' => $products->total(),
             'current_page' => $products->currentPage(),
             'has_pages' => $products->hasMorePages(),
+        ]);
+    }
+
+    /**
+     * Live search dropdown - returns limited results for autocomplete
+     */
+    public function liveSearch(Request $request)
+    {
+        $query = $request->get('q', '');
+
+        if (strlen($query) < 2) {
+            return response()->json([
+                'success' => true,
+                'results' => [],
+                'has_results' => false,
+            ]);
+        }
+
+        // Limit to 8 results for dropdown
+        $products = Product::active()
+            ->with(['category', 'brand', 'images'])
+            ->search($query)
+            ->limit(8)
+            ->get();
+
+        $results = $products->map(function ($product) {
+            return [
+                'id' => $product->id,
+                'name_en' => $product->name_en,
+                'name_kh' => $product->name_kh,
+                'name' => $product->name,
+                'SKU' => $product->SKU,
+                'price' => $product->price,
+                'price_formatted' => number_format($product->price, 2),
+                'category_name' => $product->category?->name,
+                'brand_name' => $product->brand?->name,
+                'image_url' => $product->main_image_url,
+                'url' => route('pages.viewProduct', $product->id),
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'results' => $results,
+            'has_results' => $results->count() > 0,
+            'query' => $query,
         ]);
     }
 

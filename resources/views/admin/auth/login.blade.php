@@ -186,7 +186,7 @@
         }
 
         .logo-image {
-            max-width: 200px;
+            max-width: 120px;
             max-height: 80px;
             width: auto;
             height: auto;
