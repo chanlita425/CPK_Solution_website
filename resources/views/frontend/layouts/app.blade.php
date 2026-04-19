@@ -382,6 +382,18 @@
             loadPage('{{ route("cart.index") }}', '#order_card', 'Cart');
         };
 
+        // ── Update cart badge count ──────────────────────────────────────────
+        window.updateCartBadge = function (count) {
+            const badge = document.getElementById('cart-badge');
+            if (!badge) return;
+            if (count > 0) {
+                badge.textContent = count;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+        };
+
         // ── AJAX Add to Cart ────────────────────────────────────────────────
         window.addToCartAjax = function (url, btn) {
             btn.disabled = true;
@@ -397,6 +409,7 @@
             .then(r => r.json())
             .then(data => {
                 if (data.success) {
+                    window.updateCartBadge(data.cart_count);
                     window.navigateToCart();
                 }
             })

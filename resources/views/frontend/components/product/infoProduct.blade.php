@@ -119,6 +119,7 @@
         .then(r => r.json())
         .then(res => {
             if (res.success) {
+                if (window.updateCartBadge) window.updateCartBadge(res.cart_count);
                 if (window.navigateToCart) {
                     window.navigateToCart();
                 } else {

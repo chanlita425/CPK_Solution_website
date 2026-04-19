@@ -19,7 +19,7 @@ return [
 
     // Footer
     'follow_us'          => 'Follow Us',
-    'footer_description' => 'Your trusted partner for home appliances, electronics, and smart solutions in Cambodia.',
+    'footer_description' => 'CPK Solution is your trusted partner for home appliances, electronics, and smart solutions in Cambodia, delivering quality products and reliable service to improve everyday living.',
 
     // Product detail
     'similar_items'   => 'Similar Items',

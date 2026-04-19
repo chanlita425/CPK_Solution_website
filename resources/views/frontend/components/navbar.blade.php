@@ -93,18 +93,19 @@
             {{-- Right Actions --}}
             <div class="flex items-center gap-4">
                {{-- Cart --}}
+                @php
+                    $cartData  = session('cart', []);
+                    $cartCount = array_sum(array_column($cartData, 'quantity'));
+                @endphp
                 <a href="{{ route('cart.index') }}#order_card" onclick="event.preventDefault(); window.navigateToCart ? window.navigateToCart() : window.location.href=this.href;" class="relative flex items-center gap-1.5 text-gray-600 hover:text-primary-600 transition-colors group">
                     <div class="relative">
                         <i class="fa-solid fa-bag-shopping text-[#28282A] text-xl group-hover:scale-110 transition-transform"></i>
+                        <span id="cart-badge"
+                              class="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold min-w-[18px] h-[18px] px-1 rounded-full flex items-center justify-center animate-pulse-badge {{ $cartCount > 0 ? '' : 'hidden' }}">
+                            {{ $cartCount ?: '' }}
+                        </span>
                     </div>
                     <span class="hidden md:inline text-sm font-medium text-[#28282A] ml-1">{{ __('messages.cart') }}</span>
-
-                    @php $cartCount = session('cart') ? count(session('cart')) : 0; @endphp
-                    @if($cartCount > 0)
-                    <span class="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold min-w-[18px] h-[18px] px-1 rounded-full flex items-center justify-center animate-pulse-badge">
-                        {{ $cartCount }}
-                    </span>
-                    @endif
                 </a>
 
                 {{-- Mobile search toggle --}}

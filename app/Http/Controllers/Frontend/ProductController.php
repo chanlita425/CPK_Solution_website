@@ -52,7 +52,8 @@ class ProductController extends Controller
         $mainImage  = $product->images->first();
         $thumbnails = $product->images->skip(1);
 
-        $query = Product::active();
+        $query = Product::active()
+            ->where('id', '!=', $product->id);
 
         if ($categoryId) {
             $query->where('category_id', $categoryId);
@@ -60,6 +61,11 @@ class ProductController extends Controller
 
         if ($brandId) {
             $query->where('brand_id', $brandId);
+        }
+
+        // No explicit brand filter → same brand first, then others
+        if (!$brandId) {
+            $query->orderByRaw('CASE WHEN brand_id = ? THEN 0 ELSE 1 END', [$product->brand_id]);
         }
 
         $allProducts = $query->latest()->get();

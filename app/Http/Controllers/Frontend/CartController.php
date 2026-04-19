@@ -21,10 +21,12 @@ class CartController extends Controller
         $categoryId = $request->input('category_id');
         $brandId    = $request->input('brand_id');
 
-        $categories = Category::where('is_active', true)->get();
-        $brands     = Brand::where('is_active', true)->get();
-        $subtotal   = 0;
-        $cartItems  = [];
+        $categories     = Category::where('is_active', true)->get();
+        $brands         = Brand::where('is_active', true)->get();
+        $subtotal       = 0;
+        $cartItems      = [];
+        $cartProductIds = [];
+        $cartBrandIds   = [];
 
         foreach ($cart as $cartKey => $details) {
             $productId = $details['product_id'] ?? (int) $cartKey;
@@ -34,32 +36,41 @@ class CartController extends Controller
                 $itemTotal = $product->price * $details['quantity'];
                 $subtotal += $itemTotal;
 
-                $selectedImagePath = $details['selected_image'] ?? null;
+                $cartProductIds[] = $product->id;
+                if ($product->brand_id) {
+                    $cartBrandIds[] = $product->brand_id;
+                }
+
                 $cartItems[] = [
-                    'cart_key' => $cartKey,
-                    'added_at' => $details['added_at'] ?? 0,
-                    'id'       => $product->id,
-                    'name'     => $product->name,
-                    'name_en'  => $product->name_en,
-                    'name_kh'  => $product->name_kh,
-                    'price'    => $product->price,
-                    'price_formatted'       => number_format($product->price, 2),
-                    'qty'                   => $details['quantity'],
-                    'line_total'            => $itemTotal,
-                    'line_total_formatted'  => number_format($itemTotal, 2),
-                    'image' => $selectedImagePath
-                        ? \Illuminate\Support\Facades\Storage::url($selectedImagePath)
-                        : $product->main_image_url,
-                    'slug' => $product->id,
-                    'sku'  => $product->SKU,
+                    'cart_key'             => $cartKey,
+                    'added_at'             => $details['added_at'] ?? 0,
+                    'id'                   => $product->id,
+                    'name'                 => $product->name,
+                    'name_en'              => $product->name_en,
+                    'name_kh'              => $product->name_kh,
+                    'price'                => $product->price,
+                    'price_formatted'      => number_format($product->price, 2),
+                    'qty'                  => $details['quantity'],
+                    'line_total'           => $itemTotal,
+                    'line_total_formatted' => number_format($itemTotal, 2),
+                    'image'                => $product->main_image_url,
+                    'slug'                 => $product->id,
+                    'sku'                  => $product->SKU,
                 ];
             }
         }
+
+        $cartBrandIds = array_unique($cartBrandIds);
 
         // Oldest first (top) → newest last (bottom)
         usort($cartItems, fn($a, $b) => ($a['added_at'] ?? 0) <=> ($b['added_at'] ?? 0));
 
         $query = Product::active();
+
+        // Exclude products already in the cart
+        if (!empty($cartProductIds)) {
+            $query->whereNotIn('id', $cartProductIds);
+        }
 
         if ($categoryId) {
             $query->where('category_id', $categoryId);
@@ -67,6 +78,12 @@ class CartController extends Controller
 
         if ($brandId) {
             $query->where('brand_id', $brandId);
+        }
+
+        // No explicit brand filter → same brands as cart items first, then others
+        if (!$brandId && !empty($cartBrandIds)) {
+            $ph = implode(',', array_fill(0, count($cartBrandIds), '?'));
+            $query->orderByRaw("CASE WHEN brand_id IN ({$ph}) THEN 0 ELSE 1 END", $cartBrandIds);
         }
 
         $allProducts = $query->latest()->get();
