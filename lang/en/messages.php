@@ -18,7 +18,8 @@ return [
     'no_results_found'    => 'No results found.',
 
     // Footer
-    'follow_us' => 'Follow Us',
+    'follow_us'          => 'Follow Us',
+    'footer_description' => 'Your trusted partner for home appliances, electronics, and smart solutions in Cambodia.',
 
     // Product detail
     'similar_items'   => 'Similar Items',

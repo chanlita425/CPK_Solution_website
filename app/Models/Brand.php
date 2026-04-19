@@ -24,7 +24,7 @@ class Brand extends Model
     public function getNameAttribute()
     {
         $locale = app()->getLocale();
-        if ($locale === 'kh') {
+        if ($locale === 'km') {
             return $this->name_kh ?: $this->name_en;
         }
         return $this->name_en;

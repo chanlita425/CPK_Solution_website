@@ -31,7 +31,7 @@
 
                 {{-- Description --}}
                 <p class="text-[18px] leading-relaxed text-gray-300">
-                    {{ $settings->about_company ?? 'Your trusted partner for home appliances, electronics, and smart solutions in Cambodia.' }}
+                    {{ $settings->about_company ?? __('messages.footer_description') }}
                 </p>
             </div>
 

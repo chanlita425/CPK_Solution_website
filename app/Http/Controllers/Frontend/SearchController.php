@@ -77,13 +77,13 @@ class SearchController extends Controller
     public function suggestions(Request $request)
     {
         $q    = trim($request->get('q', ''));
-        $lang = $request->get('lang', 'en'); // 'en' or 'kh'
+        $lang = $request->get('lang', 'en'); // 'en' or 'km'
 
         if (strlen($q) < 1) {
             return response()->json(['brands' => [], 'skus' => [], 'products' => []]);
         }
 
-        $isKhmer    = $lang === 'kh';
+        $isKhmer    = $lang === 'km';
         $nameCol    = $isKhmer ? 'name_kh'   : 'name_en';
         $fallback   = $isKhmer ? 'name_en'   : 'name_kh';
 

@@ -40,13 +40,13 @@ $brands = Brand::where('is_active', true)->get();
         </div>
 
         {{-- Nav buttons --}}
-        <button id="brand-prev" class="brand-prev absolute left-6 top-1/2 -translate-y-1/2 -translate-x-3 z-10 w-7 h-7 flex items-center justify-center hover:shadow-lg transition-all">
+        <button id="brand-prev" class="brand-prev absolute left-6 top-1/2 -translate-y-1/2 -translate-x-3 z-10 w-7 h-7 flex items-center justify-center hover:shadow-lg transition-all mt-2">
             <svg width="60" height="60" viewBox="0 0 24 24" fill="#C9A84C" xmlns="http://www.w3.org/2000/svg">
                 <polygon points="5,12 14,5 14,19"/>
                 <rect x="14" y="5" width="3" height="14" rx="1"/>
             </svg>
         </button>
-        <button id="brand-next" class="brand-next absolute right-6 top-1/2 -translate-y-1/2 translate-x-3 z-10 w-7 h-7 flex items-center justify-center hover:shadow-lg transition-all">
+        <button id="brand-next" class="brand-next absolute right-6 top-1/2 -translate-y-1/2 translate-x-3 z-10 w-7 h-7 flex items-center justify-center hover:shadow-lg transition-all mt-2">
             <svg width="60" height="60" viewBox="0 0 24 24" fill="#C9A84C" xmlns="http://www.w3.org/2000/svg">
                 <polygon points="19,12 10,5 10,19"/>
                 <rect x="7" y="5" width="3" height="14" rx="1"/>

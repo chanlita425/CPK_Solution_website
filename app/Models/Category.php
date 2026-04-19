@@ -24,7 +24,7 @@ class Category extends Model
     public function getNameAttribute()
     {
         $locale = app()->getLocale();
-        if ($locale === 'kh') {
+        if ($locale === 'km') {
             return $this->name_kh ?: $this->name_en;
         }
         return $this->name_en;
@@ -33,7 +33,7 @@ class Category extends Model
     public function getLocalizedName($locale = null)
     {
         $locale = $locale ?: app()->getLocale();
-        return $locale === 'kh' ? ($this->name_kh ?: $this->name_en) : $this->name_en;
+        return $locale === 'km' ? ($this->name_kh ?: $this->name_en) : $this->name_en;
     }
 
     public function products()

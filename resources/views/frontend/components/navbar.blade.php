@@ -93,7 +93,7 @@
             {{-- Right Actions --}}
             <div class="flex items-center gap-4">
                {{-- Cart --}}
-                <a href="{{ route('cart.index') }}" class="relative flex items-center gap-1.5 text-gray-600 hover:text-primary-600 transition-colors group">
+                <a href="{{ route('cart.index') }}#order_card" onclick="event.preventDefault(); window.navigateToCart ? window.navigateToCart() : window.location.href=this.href;" class="relative flex items-center gap-1.5 text-gray-600 hover:text-primary-600 transition-colors group">
                     <div class="relative">
                         <i class="fa-solid fa-bag-shopping text-[#28282A] text-xl group-hover:scale-110 transition-transform"></i>
                     </div>
@@ -174,7 +174,7 @@
 
         // --- Products + Brands + SKU (AJAX with debounce) ---
         clearTimeout(_suggestTimer);
-        _suggestTimer = setTimeout(() => fetchSuggestions(raw, khmer ? 'kh' : 'en'), 280);
+        _suggestTimer = setTimeout(() => fetchSuggestions(raw, khmer ? 'km' : 'en'), 280);
     }
 
     function fetchSuggestions(q, lang) {
