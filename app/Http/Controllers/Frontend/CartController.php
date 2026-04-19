@@ -26,26 +26,31 @@ class CartController extends Controller
         $subtotal   = 0;
         $cartItems  = [];
 
-        foreach ($cart as $id => $details) {
-            $product = Product::find($id);
+        foreach ($cart as $cartKey => $details) {
+            $productId = $details['product_id'] ?? (int) $cartKey;
+            $product   = Product::find($productId);
 
             if ($product && $product->is_active) {
                 $itemTotal = $product->price * $details['quantity'];
                 $subtotal += $itemTotal;
 
+                $selectedImagePath = $details['selected_image'] ?? null;
                 $cartItems[] = [
-                    'id' => $product->id,
-                    'name' => $product->name,
-                    'name_en' => $product->name_en,
-                    'name_kh' => $product->name_kh,
-                    'price' => $product->price,
-                    'price_formatted' => number_format($product->price, 2),
-                    'qty' => $details['quantity'],
-                    'line_total' => $itemTotal,
-                    'line_total_formatted' => number_format($itemTotal, 2),
-                    'image' => $product->main_image_url,
+                    'cart_key' => $cartKey,
+                    'id'       => $product->id,
+                    'name'     => $product->name,
+                    'name_en'  => $product->name_en,
+                    'name_kh'  => $product->name_kh,
+                    'price'    => $product->price,
+                    'price_formatted'       => number_format($product->price, 2),
+                    'qty'                   => $details['quantity'],
+                    'line_total'            => $itemTotal,
+                    'line_total_formatted'  => number_format($itemTotal, 2),
+                    'image' => $selectedImagePath
+                        ? \Illuminate\Support\Facades\Storage::url($selectedImagePath)
+                        : $product->main_image_url,
                     'slug' => $product->id,
-                    'sku' => $product->SKU,
+                    'sku'  => $product->SKU,
                 ];
             }
         }
@@ -197,17 +202,20 @@ class CartController extends Controller
      */
     public function add(Request $request, $id)
     {
-        $product = Product::active()->findOrFail($id);
-        $quantity = $request->input('quantity', 1);
+        $product       = Product::active()->findOrFail($id);
+        $quantity      = $request->input('quantity', 1);
+        $selectedImage = $request->input('selected_image'); // raw storage path, e.g. products/img.jpg
 
-        $cart = session()->get('cart', []);
+        $cart    = session()->get('cart', []);
+        $cartKey = $selectedImage ? $id . '_' . md5($selectedImage) : (string) $id;
 
-        if (isset($cart[$id])) {
-            $newQuantity = $cart[$id]['quantity'] + $quantity;
-            $cart[$id]['quantity'] = $newQuantity;
+        if (isset($cart[$cartKey])) {
+            $cart[$cartKey]['quantity'] += $quantity;
         } else {
-            $cart[$id] = [
-                'quantity' => $quantity,
+            $cart[$cartKey] = [
+                'product_id'     => (int) $id,
+                'quantity'       => $quantity,
+                'selected_image' => $selectedImage,
             ];
         }
 
@@ -241,7 +249,6 @@ class CartController extends Controller
     public function update(Request $request, $id)
     {
         $cart = session()->get('cart', []);
-        $product = Product::findOrFail($id);
 
         if (!isset($cart[$id])) {
             return response()->json(['success' => false, 'message' => 'Not found']);
@@ -254,8 +261,9 @@ class CartController extends Controller
         // Recalculate totals
         $settings = Setting::getSettings();
         $subtotal = 0;
-        foreach ($cart as $pid => $details) {
-            $p = Product::find($pid);
+        foreach ($cart as $cartKey => $details) {
+            $productId = $details['product_id'] ?? (int) $cartKey;
+            $p = Product::find($productId);
             if ($p && $p->is_active) {
                 $subtotal += $p->price * $details['quantity'];
             }
@@ -312,8 +320,9 @@ class CartController extends Controller
     private function calculateSubtotal($cart)
     {
         $subtotal = 0;
-        foreach ($cart as $id => $details) {
-            $product = Product::find($id);
+        foreach ($cart as $cartKey => $details) {
+            $productId = $details['product_id'] ?? (int) $cartKey;
+            $product = Product::find($productId);
             if ($product && $product->is_active) {
                 $subtotal += $product->price * $details['quantity'];
             }

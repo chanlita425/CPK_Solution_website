@@ -39,8 +39,9 @@
 @push('scripts')
 <script>
 (function () {
-    window.originalMainSrc  = document.getElementById('mainImage')?.src ?? null;
-    window.activeThumbIndex = null;
+    window.originalMainSrc    = document.getElementById('mainImage')?.src ?? null;
+    window.activeThumbIndex   = null;
+    window.selectedImagePath  = null;
 
     window.selectThumb = function (imageUrl, index) {
         const mainImage = document.getElementById('mainImage');
@@ -56,7 +57,9 @@
             mainImage.style.opacity = 1;
         }, 120);
 
-        window.activeThumbIndex = isReverting ? null : index;
+        window.activeThumbIndex  = isReverting ? null : index;
+        window.selectedImagePath = isReverting ? null : (thumbs[index]?.dataset.image ?? null);
+
         thumbs.forEach((btn, i) => {
             btn.classList.toggle('border-yellow-400', i === window.activeThumbIndex);
             btn.classList.toggle('border-gray-200',   i !== window.activeThumbIndex);

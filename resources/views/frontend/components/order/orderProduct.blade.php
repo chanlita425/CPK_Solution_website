@@ -12,12 +12,8 @@
                         class="flex items-center justify-center shrink-0
                             w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 lg:w-36 lg:h-36">
 
-                        @php
-                            $product = \App\Models\Product::find($item['id']);
-                        @endphp
-
-                        @if($product && $product->main_image_url)
-                            <img src="{{ asset($product->main_image_url) }}"
+                        @if($item['image'])
+                            <img src="{{ asset($item['image']) }}"
                                 alt="{{ $item['name'] }}"
                                 class="w-full h-full object-contain rounded-lg">
                         @else
@@ -44,17 +40,17 @@
 
                         {{-- Qty selector --}}
                         <div class="flex items-center border border-gray-200 rounded-full w-fit overflow-hidden mt-2 sm:mt-1">
-                            <button onclick="changeCartQty({{ $item['id'] }}, -1)"
+                            <button onclick="changeCartQty('{{ $item['cart_key'] }}', -1)"
                                     class="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 flex items-center justify-center text-gray-500 hover:bg-gray-100">
                                 -
                             </button>
 
-                            <span id="qty-{{ $item['id'] }}"
+                            <span id="qty-{{ $item['cart_key'] }}"
                                 class="w-10 sm:w-12 md:w-14 text-center text-sm sm:text-base md:text-lg font-semibold">
                                 {{ $item['qty'] }}
                             </span>
 
-                            <button onclick="changeCartQty({{ $item['id'] }}, 1)"
+                            <button onclick="changeCartQty('{{ $item['cart_key'] }}', 1)"
                                     class="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 flex items-center justify-center text-gray-500 hover:bg-gray-100">
                                 +
                             </button>

@@ -16,8 +16,7 @@
 
         {{-- Product Name & SKU --}}
         <a href="{{ route('pages.viewProduct', $product->id) }}#product-detail" class="text-center text-xs font-bold text-black hover:text-yellow-600 transition leading-snug uppercase">
-            {{ $product->name }} <br>
-            {{-- <span class="normal-case">{{ $product->SKU }}</span> --}}
+            {{ $product->name }} <br> 
         </a>
 
         {{-- Price --}}

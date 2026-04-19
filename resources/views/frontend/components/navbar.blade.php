@@ -28,7 +28,7 @@
                         type="text"
                         id="searchInput"
                         name="search"
-                        value="{{ request('search') }}"
+                        value=""
                         placeholder="Search products ..."
                         class="w-full border border-gray-400 bg-gray-50 rounded-[18px] py-2 pl-4 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent transition"
                         oninput="handleSearchInput(this.value)"

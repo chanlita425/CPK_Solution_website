@@ -84,7 +84,7 @@
             font-family: 'Nunito', 'Kantumruy Pro', sans-serif;
         }
         #product-detail {
-            scroll-margin-top: 250px;
+            scroll-margin-top: 150px;
         }
 
          #order_card {
@@ -218,18 +218,47 @@
             if (!link) return;
 
             const href = link.getAttribute('href');
-            const url  = href.split('#')[0];
-            const hash = href.includes('#') ? '#' + href.split('#')[1] : '';
+            const rawUrl = href.split('#')[0];
 
             // Only intercept when the link targets the current page
             try {
-                const linkPath = new URL(url, window.location.origin).pathname.replace(/\/$/, '') || '/';
+                const linkPath = new URL(rawUrl, window.location.origin).pathname.replace(/\/$/, '') || '/';
                 const curPath  = window.location.pathname.replace(/\/$/, '') || '/';
                 if (linkPath !== curPath) return;
             } catch (_) { return; }
 
-            if (!doFilterAjax(url, hash)) return;
+            // Build toggle URL dynamically from current params
+            const params     = new URLSearchParams(window.location.search);
+            const filterType = link.dataset.filterLink;
+
+            if (filterType === 'brand') {
+                const id = link.dataset.brandId;
+                if (params.get('brand_id') === String(id)) {
+                    params.delete('brand_id');   // second click → remove filter
+                } else {
+                    params.set('brand_id', id);  // first click → apply filter
+                }
+            } else if (filterType === 'category') {
+                const id = link.dataset.catId;
+                if (params.get('category_id') === String(id)) {
+                    params.delete('category_id');
+                } else {
+                    params.set('category_id', id);
+                }
+            }
+
+            params.delete('search');
+            const basePath = window.location.pathname;
+            const qs       = params.toString();
+            const url      = basePath + (qs ? '?' + qs : '');
+
+            if (!doFilterAjax(url, '#product-grid')) return;
             e.preventDefault();
+
+            // Clear search input
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) searchInput.value = '';
+            document.getElementById('searchDropdown')?.classList.add('hidden');
         });
 
         // ── AJAX Search (form submit) ───────────────────────────────────────
@@ -251,6 +280,7 @@
             if (!doFilterAjax(url, '#product-grid')) return;
 
             e.preventDefault();
+            if (input) input.value = '';
             document.getElementById('searchDropdown')?.classList.add('hidden');
         });
 
@@ -289,7 +319,7 @@
                     // Scroll to top or anchor
                     const anchor = hash ? document.getElementById(hash.replace('#', '')) : null;
                     if (anchor) {
-                        setTimeout(() => anchor.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+                        setTimeout(() => anchor.scrollIntoView({ behavior: 'smooth', block: 'start' }), 200);
                     } else {
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                     }
