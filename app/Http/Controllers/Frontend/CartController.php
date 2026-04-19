@@ -204,19 +204,31 @@ class CartController extends Controller
     /**
      * Add item to cart
      */
-    public function add(Request $request, $id)
+  public function add(Request $request, $id)
     {
         $product       = Product::active()->findOrFail($id);
-        $quantity      = $request->input('quantity', 1);
-        $selectedImage = $request->input('selected_image'); // raw storage path, e.g. products/img.jpg
+        $quantity      = (int) $request->input('quantity', 1);
+        $selectedImage = $request->input('selected_image');
 
-        $cart    = session()->get('cart', []);
-        $cartKey = $selectedImage ? $id . '_' . md5($selectedImage) : (string) $id;
+        $cart = session()->get('cart', []);
+
+        // ✅ Use ONLY product ID as key
+        $cartKey = (string) $id;
 
         if (isset($cart[$cartKey])) {
+            // ✅ Just increase quantity
             $cart[$cartKey]['quantity'] += $quantity;
-            // keep original added_at so position stays stable
+
+            // ❗ Optional: keep original image OR update image (choose one)
+
+            // Option A: KEEP first selected image (recommended)
+            // do nothing
+
+            // Option B: UPDATE to latest selected image
+            // $cart[$cartKey]['selected_image'] = $selectedImage;
+
         } else {
+            // ✅ First time adding product
             $cart[$cartKey] = [
                 'product_id'     => (int) $id,
                 'quantity'       => $quantity,
@@ -231,16 +243,17 @@ class CartController extends Controller
 
         if ($request->wantsJson()) {
             return response()->json([
-                'success' => true,
-                'message' => 'Product added to cart!',
+                'success'    => true,
+                'message'    => 'Product added to cart!',
                 'cart_count' => $cartCount,
             ]);
         }
 
-        return redirect()->route('cart.index')->with('success', 'Product added to cart!')
-                        ->withFragment('order_card');;
+        return redirect()
+            ->route('cart.index')
+            ->with('success', 'Product added to cart!')
+            ->withFragment('order_card');
     }
-
     /**
      * Clear entire cart
      */
@@ -334,5 +347,5 @@ class CartController extends Controller
             }
         }
         return $subtotal;
-    }
+        }
 }
