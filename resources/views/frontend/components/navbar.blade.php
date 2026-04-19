@@ -43,6 +43,12 @@
                 <div id="searchDropdown"
                     class="absolute left-0 right-0 top-full mt-1 bg-white rounded-2xl shadow-lg border border-gray-100 z-50 hidden max-h-80 overflow-y-auto">
 
+                    {{-- Product name suggestions (AJAX) --}}
+                    <div id="productSection" class="hidden">
+                        <p class="text-[10px] uppercase tracking-widest text-gray-400 font-semibold px-4 pt-3 pb-1">Products</p>
+                        <ul id="productList"></ul>
+                    </div>
+
                     {{-- Brand suggestions (AJAX) --}}
                     <div id="brandSection" class="hidden">
                         <p class="text-[10px] uppercase tracking-widest text-gray-400 font-semibold px-4 pt-3 pb-1">Brands</p>
@@ -149,6 +155,7 @@
 
         // Hide brand/sku sections while typing
         if (query.length < 1) {
+            document.getElementById('productSection').classList.add('hidden');
             document.getElementById('brandSection').classList.add('hidden');
             document.getElementById('skuSection').classList.add('hidden');
             document.getElementById('noResults').classList.add('hidden');
@@ -164,14 +171,31 @@
         fetch(`/search/suggestions?q=${encodeURIComponent(q)}`)
             .then(r => r.json())
             .then(data => {
+                renderProducts(data.products || []);
                 renderBrands(data.brands || []);
                 renderSkus(data.skus || []);
 
-                const hasAny = (data.brands.length + data.skus.length) > 0 ||
+                const hasAny = (data.products.length + data.brands.length + data.skus.length) > 0 ||
                                document.querySelectorAll('.category-item:not([style*="none"])').length > 0;
                 document.getElementById('noResults').classList.toggle('hidden', hasAny);
             })
             .catch(() => {});
+    }
+
+    function renderProducts(products) {
+        const section = document.getElementById('productSection');
+        const list    = document.getElementById('productList');
+        if (!products.length) { section.classList.add('hidden'); list.innerHTML = ''; return; }
+
+        list.innerHTML = products.map(p => `
+            <li>
+                <a href="{{ route('home') }}?search=${encodeURIComponent(p.name)}#product-grid"
+                   class="flex items-center gap-3 px-4 py-2.5 hover:bg-[#FFF8E7] transition-colors text-sm text-gray-700">
+                    <i class="fa fa-box text-[#C9A84C] text-sm w-5 text-center"></i>
+                    <span>${escHtml(p.name)}</span>
+                </a>
+            </li>`).join('');
+        section.classList.remove('hidden');
     }
 
     function renderBrands(brands) {

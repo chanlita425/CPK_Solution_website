@@ -17,6 +17,8 @@
                                 ? $baseUrl . ($brandId ? '?brand_id=' . $brandId : '') . (request('search') ? ($brandId ? '&' : '?') . 'search=' . request('search') : '') . '#product-grid'
                                 : $baseUrl . '?category_id=' . $cat->id . ($brandId ? '&brand_id=' . $brandId : '') . (request('search') ? '&search=' . request('search') : '') . '#product-grid'
                             }}"
+                            data-filter-link="category"
+                            data-cat-id="{{ $cat->id }}"
                         class="flex flex-col items-center gap-3 px-3 py-3 hover:bg-primary-50 rounded-xl transition-colors group w-30 text-center
                         {{ $categoryId == $cat->id ? 'bg-[#FFE3A1] shadow-sm' : '' }}">
                             

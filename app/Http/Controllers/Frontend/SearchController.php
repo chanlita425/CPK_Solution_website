@@ -99,7 +99,17 @@ class SearchController extends Controller
             ->get()
             ->map(fn($p) => ['id' => $p->id, 'sku' => $p->SKU, 'name' => $p->name_en]);
 
-        return response()->json(['brands' => $brands, 'skus' => $skus]);
+        $products = Product::active()
+            ->where(function ($query) use ($q) {
+                $query->where('name_en', 'like', "%{$q}%")
+                      ->orWhere('name_kh', 'like', "%{$q}%");
+            })
+            ->select('id', 'name_en', 'name_kh')
+            ->limit(6)
+            ->get()
+            ->map(fn($p) => ['id' => $p->id, 'name' => $p->name_en ?? $p->name_kh]);
+
+        return response()->json(['brands' => $brands, 'skus' => $skus, 'products' => $products]);
     }
 
     /**

@@ -217,15 +217,10 @@
             const link = e.target.closest('[data-filter-link]');
             if (!link) return;
 
-            const href = link.getAttribute('href');
-            const rawUrl = href.split('#')[0];
-
-            // Only intercept when the link targets the current page
-            try {
-                const linkPath = new URL(rawUrl, window.location.origin).pathname.replace(/\/$/, '') || '/';
-                const curPath  = window.location.pathname.replace(/\/$/, '') || '/';
-                if (linkPath !== curPath) return;
-            } catch (_) { return; }
+            // Only do AJAX filtering when on the home page
+            const homePath = new URL('{{ route("home") }}', window.location.origin).pathname.replace(/\/$/, '') || '/';
+            const curPath  = window.location.pathname.replace(/\/$/, '') || '/';
+            if (curPath !== homePath) return; // let normal navigation go to home
 
             // Build toggle URL dynamically from current params
             const params     = new URLSearchParams(window.location.search);
@@ -259,6 +254,23 @@
             const searchInput = document.getElementById('searchInput');
             if (searchInput) searchInput.value = '';
             document.getElementById('searchDropdown')?.classList.add('hidden');
+        });
+
+        // ── AJAX Pagination ────────────────────────────────────────────────
+        document.addEventListener('click', function (e) {
+            const link = e.target.closest('[data-pagination-link]');
+            if (!link) return;
+
+            const pageParam = link.dataset.pageParam;
+            const page      = link.dataset.page;
+
+            const params = new URLSearchParams(window.location.search);
+            params.set(pageParam, page);
+
+            const url = window.location.pathname + '?' + params.toString();
+
+            if (!doFilterAjax(url, '#product-grid')) return;
+            e.preventDefault();
         });
 
         // ── AJAX Search (form submit) ───────────────────────────────────────
