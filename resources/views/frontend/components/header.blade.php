@@ -65,15 +65,37 @@
                 {{-- Language Switcher --}}
                 <div class="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm">
                     <a href="{{ route('locale.switch', ['locale' => 'km']) }}"
-                    class="transition-colors {{ app()->getLocale() === 'km' ? 'text-primary-400 font-semibold' : 'text-gray-600 hover:text-primary-400' }}">
+                       data-locale-link="km"
+                       class="locale-btn transition-colors {{ app()->getLocale() === 'km' ? 'text-primary-400 font-semibold' : 'text-gray-600 hover:text-primary-400' }}">
                         {{ __('messages.khmer') }}
                     </a>
                     <span class="text-gray-600">\</span>
                     <a href="{{ route('locale.switch', ['locale' => 'en']) }}"
-                    class="transition-colors {{ app()->getLocale() === 'en' ? 'text-primary-400 font-semibold' : 'text-gray-600 hover:text-primary-400' }}">
+                       data-locale-link="en"
+                       class="locale-btn transition-colors {{ app()->getLocale() === 'en' ? 'text-primary-400 font-semibold' : 'text-gray-600 hover:text-primary-400' }}">
                         {{ __('messages.english') }}
                     </a>
                 </div>
+
+                <script>
+                document.addEventListener('click', function (e) {
+                    var link = e.target.closest('[data-locale-link]');
+                    if (!link) return;
+                    e.preventDefault();
+
+                    fetch(link.href, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                        .then(function (r) { return r.json(); })
+                        .then(function () {
+                            return fetch(window.location.href);
+                        })
+                        .then(function (r) { return r.text(); })
+                        .then(function (html) {
+                            document.open('text/html', 'replace');
+                            document.write(html);
+                            document.close();
+                        });
+                });
+                </script>
 
             </div>
         </div>
