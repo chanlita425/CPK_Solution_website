@@ -63,9 +63,24 @@ class ProductController extends Controller
             $query->where('brand_id', $brandId);
         }
 
-        // No explicit brand filter → same brand first, then others
-        if (!$brandId) {
+        // No explicit filters → same brand & category first (0), then brand or category match (1), then others (2)
+        if (!$brandId && !$categoryId) {
+            $query->orderByRaw('
+                CASE
+                    WHEN brand_id = ? AND category_id = ? THEN 0
+                    WHEN brand_id = ? OR  category_id = ? THEN 1
+                    ELSE 2
+                END
+            ', [
+                $product->brand_id,    $product->category_id,
+                $product->brand_id,    $product->category_id,
+            ]);
+        } elseif (!$brandId) {
+            // Category filter active → same brand first within results
             $query->orderByRaw('CASE WHEN brand_id = ? THEN 0 ELSE 1 END', [$product->brand_id]);
+        } elseif (!$categoryId) {
+            // Brand filter active → same category first within results
+            $query->orderByRaw('CASE WHEN category_id = ? THEN 0 ELSE 1 END', [$product->category_id]);
         }
 
         $allProducts = $query->latest()->get();

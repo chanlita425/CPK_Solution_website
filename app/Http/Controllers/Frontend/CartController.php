@@ -23,10 +23,11 @@ class CartController extends Controller
 
         $categories     = Category::where('is_active', true)->get();
         $brands         = Brand::where('is_active', true)->get();
-        $subtotal       = 0;
-        $cartItems      = [];
-        $cartProductIds = [];
-        $cartBrandIds   = [];
+        $subtotal        = 0;
+        $cartItems       = [];
+        $cartProductIds  = [];
+        $cartBrandIds    = [];
+        $cartCategoryIds = [];
 
         foreach ($cart as $cartKey => $details) {
             $productId = $details['product_id'] ?? (int) $cartKey;
@@ -39,6 +40,9 @@ class CartController extends Controller
                 $cartProductIds[] = $product->id;
                 if ($product->brand_id) {
                     $cartBrandIds[] = $product->brand_id;
+                }
+                if ($product->category_id) {
+                    $cartCategoryIds[] = $product->category_id;
                 }
 
                 $cartItems[] = [
@@ -60,7 +64,8 @@ class CartController extends Controller
             }
         }
 
-        $cartBrandIds = array_unique($cartBrandIds);
+        $cartBrandIds    = array_unique($cartBrandIds);
+        $cartCategoryIds = array_unique($cartCategoryIds);
 
         // Oldest first (top) → newest last (bottom)
         usort($cartItems, fn($a, $b) => ($a['added_at'] ?? 0) <=> ($b['added_at'] ?? 0));
@@ -80,10 +85,33 @@ class CartController extends Controller
             $query->where('brand_id', $brandId);
         }
 
-        // No explicit brand filter → same brands as cart items first, then others
-        if (!$brandId && !empty($cartBrandIds)) {
-            $ph = implode(',', array_fill(0, count($cartBrandIds), '?'));
-            $query->orderByRaw("CASE WHEN brand_id IN ({$ph}) THEN 0 ELSE 1 END", $cartBrandIds);
+        // No explicit filters → brand or category match first (0), then others (1)
+        if (!$brandId && !$categoryId) {
+            $hasBrands      = !empty($cartBrandIds);
+            $hasCategories  = !empty($cartCategoryIds);
+
+            if ($hasBrands && $hasCategories) {
+                $bPh = implode(',', array_fill(0, count($cartBrandIds), '?'));
+                $cPh = implode(',', array_fill(0, count($cartCategoryIds), '?'));
+                $query->orderByRaw(
+                    "CASE WHEN brand_id IN ({$bPh}) OR category_id IN ({$cPh}) THEN 0 ELSE 1 END",
+                    array_merge($cartBrandIds, $cartCategoryIds)
+                );
+            } elseif ($hasBrands) {
+                $bPh = implode(',', array_fill(0, count($cartBrandIds), '?'));
+                $query->orderByRaw("CASE WHEN brand_id IN ({$bPh}) THEN 0 ELSE 1 END", $cartBrandIds);
+            } elseif ($hasCategories) {
+                $cPh = implode(',', array_fill(0, count($cartCategoryIds), '?'));
+                $query->orderByRaw("CASE WHEN category_id IN ({$cPh}) THEN 0 ELSE 1 END", $cartCategoryIds);
+            }
+        } elseif (!$brandId && !empty($cartBrandIds)) {
+            // Category filter active → same brand first within results
+            $bPh = implode(',', array_fill(0, count($cartBrandIds), '?'));
+            $query->orderByRaw("CASE WHEN brand_id IN ({$bPh}) THEN 0 ELSE 1 END", $cartBrandIds);
+        } elseif (!$categoryId && !empty($cartCategoryIds)) {
+            // Brand filter active → same category first within results
+            $cPh = implode(',', array_fill(0, count($cartCategoryIds), '?'));
+            $query->orderByRaw("CASE WHEN category_id IN ({$cPh}) THEN 0 ELSE 1 END", $cartCategoryIds);
         }
 
         $allProducts = $query->latest()->get();

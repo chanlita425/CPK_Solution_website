@@ -23,7 +23,7 @@
 
 
     {{-- CARD PRODUCT --}}
-    <section id="product-grid" class="mt-8 lg:mt-16 sm:px-12 px-8 lg:px-4 ">
+    <section id="product-grid" class="mt-8 lg:mt-16 sm:px-2 px-2 lg:px-2 ">
         <h2 class="text-center text-base sm:text-lg font-semibold mb-6 sm:mb-8" style="color:#C9A84C;">
             {{ __('messages.similar_items') }}
         </h2>
