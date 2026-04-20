@@ -1,4 +1,3 @@
-
 @php
     $settings = \App\Models\Setting::getSettings();
     $logoPath = $settings->company_logo;
@@ -117,32 +116,91 @@
 
         {{-- Mobile Search --}}
         <div class="sm:hidden pb-3 hidden" id="mobileSearch">
-            <form action="{{ route('home') }}" method="GET" class="relative">
-                <input
-                    type="text"
-                    name="search"
-                    placeholder="{{ __('messages.search_placeholder') }}"
-                    class="w-full border border-gray-200 bg-gray-50 rounded-full py-2 pl-4 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
-                >
-                <button type="submit" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
-                    <i class="fa fa-search text-sm"></i>
-                </button>
-            </form>
+            <div class="relative" id="mobileSearchWrapper">
+                <form id="mobileSearchForm" action="{{ route('home') }}" method="GET" class="relative" autocomplete="off">
+                    <input
+                        type="text"
+                        id="mobileSearchInput"
+                        name="search"
+                        value=""
+                        placeholder="{{ __('messages.search_placeholder') }}"
+                        class="w-full border border-gray-200 bg-gray-50 rounded-full py-2 pl-4 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
+                        oninput="handleMobileSearchInput(this.value)"
+                        onfocus="handleMobileSearchInput(this.value)"
+                    >
+                    <button type="submit" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
+                        <i class="fa fa-search text-sm"></i>
+                    </button>
+                </form>
+
+                {{-- Mobile Search Dropdown --}}
+                <div id="mobileSearchDropdown"
+                    class="absolute left-0 right-0 top-full mt-1 bg-white rounded-2xl shadow-lg border border-gray-100 z-50 hidden max-h-96 overflow-y-auto">
+
+                    <div id="mobileProductSection" class="hidden">
+                        <p class="text-[10px] uppercase tracking-widest text-gray-400 font-semibold px-4 pt-3 pb-1">{{ __('messages.products') }}</p>
+                        <ul id="mobileProductList"></ul>
+                    </div>
+
+                    <div id="mobileBrandSection" class="hidden">
+                        <p class="text-[10px] uppercase tracking-widest text-gray-400 font-semibold px-4 pt-3 pb-1">{{ __('messages.brands') }}</p>
+                        <ul id="mobileBrandList"></ul>
+                    </div>
+
+                    <div id="mobileSkuSection" class="hidden">
+                        <p class="text-[10px] uppercase tracking-widest text-gray-400 font-semibold px-4 pt-1 pb-1">{{ __('messages.sku') }}</p>
+                        <ul id="mobileSkuList"></ul>
+                    </div>
+
+                    <div id="mobileCategorySection">
+                        <p class="text-[10px] uppercase tracking-widest text-gray-400 font-semibold px-4 pt-3 pb-1">{{ __('messages.categories') }}</p>
+                        <ul id="mobileCategoryList">
+                            @foreach($navCategories as $cat)
+                            <li class="mobile-category-item"
+                                data-name="{{ strtolower($cat->name_en ?? '') }}"
+                                data-name-kh="{{ $cat->name_kh ?? '' }}">
+                                <a href="{{ route('home') }}?category_id={{ $cat->id }}#product-grid"
+                                    class="flex items-center gap-3 px-4 py-2.5 hover:bg-[#FFF8E7] transition-colors text-sm text-gray-700">
+                                    @if($cat->icon_url)
+                                        <img src="{{ asset($cat->icon_url) }}" class="w-6 h-6 object-contain">
+                                    @else
+                                        <i class="fa fa-folder text-[#C9A84C] text-sm w-6 text-center"></i>
+                                    @endif
+                                    {{ $cat->name_en ?? $cat->name }}
+                                </a>
+                            </li>
+                            @endforeach
+                        </ul>
+                        <div id="mobileNoCategory" class="hidden px-4 py-3 text-sm text-gray-400">{{ __('messages.no_categories_found') }}</div>
+                    </div>
+
+                    <div id="mobileNoResults" class="hidden px-4 py-3 text-sm text-gray-400 text-center">{{ __('messages.no_results_found') }}</div>
+                </div>
+            </div>
         </div>
+
     </div>
 </nav>
 
 <script>
     document.getElementById('mobileSearchBtn')?.addEventListener('click', () => {
-        document.getElementById('mobileSearch').classList.toggle('hidden');
+        const mobileSearch = document.getElementById('mobileSearch');
+        mobileSearch.classList.toggle('hidden');
+        if (!mobileSearch.classList.contains('hidden')) {
+            // Focus the input after showing
+            setTimeout(() => document.getElementById('mobileSearchInput')?.focus(), 50);
+        }
     });
 
     let _suggestTimer = null;
+    let _mobileSuggestTimer = null;
 
     // Detect if text contains Khmer characters (U+1780–U+17FF)
     function isKhmer(text) {
         return /[\u1780-\u17FF]/.test(text);
     }
+
+    // ─── Desktop search ───────────────────────────────────────────────────────
 
     function handleSearchInput(val) {
         const dropdown = document.getElementById('searchDropdown');
@@ -152,18 +210,7 @@
 
         dropdown.classList.remove('hidden');
 
-        // --- Categories (client-side, match both name-en and name-kh) ---
-        const catItems   = document.querySelectorAll('.category-item');
-        const noCategory = document.getElementById('noCategory');
-        let catVisible = 0;
-        catItems.forEach(item => {
-            const nameEn = (item.dataset.name || '').toLowerCase();
-            const nameKh = (item.dataset.nameKh || '').toLowerCase();
-            const match  = query === '' || nameEn.includes(query) || nameKh.includes(query);
-            item.style.display = match ? '' : 'none';
-            if (match) catVisible++;
-        });
-        noCategory.classList.toggle('hidden', catVisible > 0);
+        filterCategories(query, '.category-item', 'noCategory');
 
         if (query.length < 1) {
             document.getElementById('productSection').classList.add('hidden');
@@ -173,39 +220,89 @@
             return;
         }
 
-        // --- Products + Brands + SKU (AJAX with debounce) ---
         clearTimeout(_suggestTimer);
-        _suggestTimer = setTimeout(() => fetchSuggestions(raw, khmer ? 'km' : 'en'), 280);
+        _suggestTimer = setTimeout(() => fetchSuggestions(raw, khmer ? 'km' : 'en', 'desktop'), 280);
     }
 
-    function fetchSuggestions(q, lang) {
+    // ─── Mobile search ────────────────────────────────────────────────────────
+
+    function handleMobileSearchInput(val) {
+        const dropdown = document.getElementById('mobileSearchDropdown');
+        const raw      = val.trim();
+        const query    = raw.toLowerCase();
+        const khmer    = isKhmer(raw);
+
+        dropdown.classList.remove('hidden');
+
+        filterCategories(query, '.mobile-category-item', 'mobileNoCategory');
+
+        if (query.length < 1) {
+            document.getElementById('mobileProductSection').classList.add('hidden');
+            document.getElementById('mobileBrandSection').classList.add('hidden');
+            document.getElementById('mobileSkuSection').classList.add('hidden');
+            document.getElementById('mobileNoResults').classList.add('hidden');
+            return;
+        }
+
+        clearTimeout(_mobileSuggestTimer);
+        _mobileSuggestTimer = setTimeout(() => fetchSuggestions(raw, khmer ? 'km' : 'en', 'mobile'), 280);
+    }
+
+    // ─── Shared helpers ───────────────────────────────────────────────────────
+
+    function filterCategories(query, itemSelector, noCatId) {
+        const catItems   = document.querySelectorAll(itemSelector);
+        const noCategory = document.getElementById(noCatId);
+        let catVisible = 0;
+        catItems.forEach(item => {
+            const nameEn = (item.dataset.name || '').toLowerCase();
+            const nameKh = (item.dataset.nameKh || '').toLowerCase();
+            const match  = query === '' || nameEn.includes(query) || nameKh.includes(query);
+            item.style.display = match ? '' : 'none';
+            if (match) catVisible++;
+        });
+        noCategory.classList.toggle('hidden', catVisible > 0);
+    }
+
+    function fetchSuggestions(q, lang, target) {
         fetch(`/search/suggestions?q=${encodeURIComponent(q)}&lang=${lang}`)
             .then(r => r.json())
             .then(data => {
-                renderProducts(data.products || []);
-                renderBrands(data.brands || []);
-                renderSkus(data.skus || []);
-
-                const hasAny = (data.products.length + data.brands.length + data.skus.length) > 0 ||
-                               document.querySelectorAll('.category-item:not([style*="none"])').length > 0;
-                document.getElementById('noResults').classList.toggle('hidden', hasAny);
+                if (target === 'mobile') {
+                    renderProducts(data.products || [], 'mobile');
+                    renderBrands(data.brands || [], 'mobile');
+                    renderSkus(data.skus || [], 'mobile');
+                    const hasAny = (data.products.length + data.brands.length + data.skus.length) > 0 ||
+                                   document.querySelectorAll('.mobile-category-item:not([style*="none"])').length > 0;
+                    document.getElementById('mobileNoResults').classList.toggle('hidden', hasAny);
+                } else {
+                    renderProducts(data.products || [], 'desktop');
+                    renderBrands(data.brands || [], 'desktop');
+                    renderSkus(data.skus || [], 'desktop');
+                    const hasAny = (data.products.length + data.brands.length + data.skus.length) > 0 ||
+                                   document.querySelectorAll('.category-item:not([style*="none"])').length > 0;
+                    document.getElementById('noResults').classList.toggle('hidden', hasAny);
+                }
             })
             .catch(() => {});
     }
 
-    function renderProducts(products) {
-        const section = document.getElementById('productSection');
-        const list    = document.getElementById('productList');
+    function renderProducts(products, target) {
+        const prefix  = target === 'mobile' ? 'mobile' : '';
+        const section = document.getElementById(prefix ? 'mobileProductSection' : 'productSection');
+        const list    = document.getElementById(prefix ? 'mobileProductList' : 'productList');
+        const storeKey = prefix ? '_mobileSearchProductUrls' : '_searchProductUrls';
+
         if (!products.length) { section.classList.add('hidden'); list.innerHTML = ''; return; }
 
-        // Store URLs in a map so onclick can reference them safely
-        window._searchProductUrls = {};
-        products.forEach(p => { window._searchProductUrls[p.id] = p.url; });
+        window[storeKey] = {};
+        products.forEach(p => { window[storeKey][p.id] = p.url; });
 
+        const fnName = prefix ? 'goToProductMobile' : 'goToProduct';
         list.innerHTML = products.map(p => `
             <li>
                 <button type="button"
-                   onclick="goToProduct(${p.id})"
+                   onclick="${fnName}(${p.id})"
                    class="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-[#FFF8E7] transition-colors text-left cursor-pointer">
                     <div class="w-10 h-10 rounded-lg bg-gray-100 flex-shrink-0 overflow-hidden flex items-center justify-center">
                         ${p.image_url
@@ -229,20 +326,30 @@
         window.location.href = url + '#product-detail';
     }
 
-    function renderBrands(brands) {
-        const section = document.getElementById('brandSection');
-        const list    = document.getElementById('brandList');
+    function goToProductMobile(id) {
+        const url = window._mobileSearchProductUrls && window._mobileSearchProductUrls[id];
+        if (!url) return;
+        document.getElementById('mobileSearchDropdown')?.classList.add('hidden');
+        window.location.href = url + '#product-detail';
+    }
+
+    function renderBrands(brands, target) {
+        const section = document.getElementById(target === 'mobile' ? 'mobileBrandSection' : 'brandSection');
+        const list    = document.getElementById(target === 'mobile' ? 'mobileBrandList' : 'brandList');
+        const storeKey = target === 'mobile' ? '_mobileSearchBrandUrls' : '_searchBrandUrls';
+        const fnName   = target === 'mobile' ? 'goToBrandMobile' : 'goToBrand';
+
         if (!brands.length) { section.classList.add('hidden'); list.innerHTML = ''; return; }
 
-        window._searchBrandUrls = {};
+        window[storeKey] = {};
         brands.forEach(b => {
-            window._searchBrandUrls[b.id] = '{{ route('home') }}?brand_id=' + b.id + '#product-grid';
+            window[storeKey][b.id] = '{{ route('home') }}?brand_id=' + b.id + '#product-grid';
         });
 
         list.innerHTML = brands.map(b => `
             <li>
                 <button type="button"
-                   onclick="goToBrand(${b.id})"
+                   onclick="${fnName}(${b.id})"
                    class="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-[#FFF8E7] transition-colors text-left cursor-pointer">
                     <i class="fa fa-tag text-[#C9A84C] text-sm w-5 text-center"></i>
                     <span class="text-sm text-gray-700">${escHtml(b.name)}</span>
@@ -258,9 +365,17 @@
         window.location.href = url;
     }
 
-    function renderSkus(skus) {
-        const section = document.getElementById('skuSection');
-        const list    = document.getElementById('skuList');
+    function goToBrandMobile(id) {
+        const url = window._mobileSearchBrandUrls && window._mobileSearchBrandUrls[id];
+        if (!url) return;
+        document.getElementById('mobileSearchDropdown')?.classList.add('hidden');
+        window.location.href = url;
+    }
+
+    function renderSkus(skus, target) {
+        const section = document.getElementById(target === 'mobile' ? 'mobileSkuSection' : 'skuSection');
+        const list    = document.getElementById(target === 'mobile' ? 'mobileSkuList' : 'skuList');
+
         if (!skus.length) { section.classList.add('hidden'); list.innerHTML = ''; return; }
 
         list.innerHTML = skus.map(p => `
@@ -279,11 +394,17 @@
         return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
 
-    // Close dropdown when clicking outside
+    // Close dropdowns when clicking outside
     document.addEventListener('click', function (e) {
-        const wrapper = document.getElementById('searchWrapper');
-        if (wrapper && !wrapper.contains(e.target)) {
+        const desktopWrapper = document.getElementById('searchWrapper');
+        if (desktopWrapper && !desktopWrapper.contains(e.target)) {
             document.getElementById('searchDropdown')?.classList.add('hidden');
+        }
+
+        const mobileWrapper = document.getElementById('mobileSearchWrapper');
+        const mobileBtn     = document.getElementById('mobileSearchBtn');
+        if (mobileWrapper && !mobileWrapper.contains(e.target) && !mobileBtn?.contains(e.target)) {
+            document.getElementById('mobileSearchDropdown')?.classList.add('hidden');
         }
     });
 </script>

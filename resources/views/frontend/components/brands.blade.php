@@ -4,7 +4,7 @@ $brands = Brand::where('is_active', true)->get();
 @endphp
 
 <section class="category px-8 mt-2">
-    <div class="relative bg-[#FCF6ED] rounded-[40px] shadow-sm border border-gray-100 p-14 py-6">
+    <div class="relative bg-[#FCF6ED] rounded-[20px] shadow-sm border border-gray-100 p-14 py-6">
         <p class="text-center text-xs font-Inter text-[#000000] uppercase tracking-widest mb-3">{{ __('messages.brands') }}</p>
 
         {{-- Swiper --}}
@@ -21,7 +21,7 @@ $brands = Brand::where('is_active', true)->get();
                             data-filter-link="brand"
                             data-brand-id="{{ $brand->id }}"
                             class="flex items-center justify-center px-4 py-3 rounded-full transition-all duration-200
-                            {{ $brandId == $brand->id ? 'bg-[#FFE3A1]' : 'hover:bg-[#FFE3A1]' }}">
+                            {{ $brandId == $brand->id ? 'bg-[#FFE3A1]' : 'hover:bg-[#fff0d8]' }}">
 
                             @if($brand->logo_image)
                                 <img src="{{ asset('storage/' . $brand->logo_image) }}"
