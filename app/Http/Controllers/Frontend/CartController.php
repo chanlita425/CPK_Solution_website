@@ -85,31 +85,8 @@ class CartController extends Controller
             $query->where('brand_id', $brandId);
         }
 
-        // No explicit filters → brand or category match first (0), then others (1)
-        if (!$brandId && !$categoryId) {
-            $hasBrands      = !empty($cartBrandIds);
-            $hasCategories  = !empty($cartCategoryIds);
-
-            if ($hasBrands && $hasCategories) {
-                $bPh = implode(',', array_fill(0, count($cartBrandIds), '?'));
-                $cPh = implode(',', array_fill(0, count($cartCategoryIds), '?'));
-                $query->orderByRaw(
-                    "CASE WHEN brand_id IN ({$bPh}) OR category_id IN ({$cPh}) THEN 0 ELSE 1 END",
-                    array_merge($cartBrandIds, $cartCategoryIds)
-                );
-            } elseif ($hasBrands) {
-                $bPh = implode(',', array_fill(0, count($cartBrandIds), '?'));
-                $query->orderByRaw("CASE WHEN brand_id IN ({$bPh}) THEN 0 ELSE 1 END", $cartBrandIds);
-            } elseif ($hasCategories) {
-                $cPh = implode(',', array_fill(0, count($cartCategoryIds), '?'));
-                $query->orderByRaw("CASE WHEN category_id IN ({$cPh}) THEN 0 ELSE 1 END", $cartCategoryIds);
-            }
-        } elseif (!$brandId && !empty($cartBrandIds)) {
-            // Category filter active → same brand first within results
-            $bPh = implode(',', array_fill(0, count($cartBrandIds), '?'));
-            $query->orderByRaw("CASE WHEN brand_id IN ({$bPh}) THEN 0 ELSE 1 END", $cartBrandIds);
-        } elseif (!$categoryId && !empty($cartCategoryIds)) {
-            // Brand filter active → same category first within results
+        // No explicit filters → same category as cart items first (0), then others (1)
+        if (!$brandId && !$categoryId && !empty($cartCategoryIds)) {
             $cPh = implode(',', array_fill(0, count($cartCategoryIds), '?'));
             $query->orderByRaw("CASE WHEN category_id IN ({$cPh}) THEN 0 ELSE 1 END", $cartCategoryIds);
         }

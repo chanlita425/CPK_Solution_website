@@ -16,7 +16,7 @@
         <!-- item  -->
         <span id="item-count" class="absolute right-4 sm:right-8 lg:right-14 px-5 py-1.5 rounded-full text-sm font-bold text-white shadow"
             style="background:#D7B259;">
-            {{ number_format($totalItems) }} Items
+            {{ number_format($totalItems) }} {{ __('messages.items') }}
         </span>
 
     </div>
