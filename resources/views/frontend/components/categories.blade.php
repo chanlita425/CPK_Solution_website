@@ -4,7 +4,7 @@
 
 <section class="category px-8">
     <div class="relative bg-[#FFEDD0] rounded-[40px] shadow-sm border border-gray-100 p-14 py-6">
-        <p class="text-center text-xs font-Inter text-[#000000] uppercase tracking-widest mb-3">Categories</p>
+        <p class="text-center text-xs font-Inter text-[#000000] uppercase tracking-widest mb-3">{{ __('messages.categories') }}</p>
 
         {{-- Swiper --}}
         <div class="swiper categories-swiper overflow-hidden">
@@ -12,10 +12,13 @@
 
                  @foreach($categories as $index => $cat)
                     <div class="swiper-slide !w-auto">
+                        @php $baseUrl = $filterBaseUrl ?? url()->current(); @endphp
                         <a href="{{ $categoryId == $cat->id
-                                ? url()->current() . ($brandId ? '?brand_id=' . $brandId : '') . (request('search') ? ($brandId ? '&' : '?') . 'search=' . request('search') : '') . '#product-grid'
-                                : url()->current() . '?category_id=' . $cat->id . ($brandId ? '&brand_id=' . $brandId : '') . (request('search') ? '&search=' . request('search') : '') . '#product-grid'
+                                ? $baseUrl . ($brandId ? '?brand_id=' . $brandId : '') . (request('search') ? ($brandId ? '&' : '?') . 'search=' . request('search') : '') . '#product-grid'
+                                : $baseUrl . '?category_id=' . $cat->id . ($brandId ? '&brand_id=' . $brandId : '') . (request('search') ? '&search=' . request('search') : '') . '#product-grid'
                             }}"
+                            data-filter-link="category"
+                            data-cat-id="{{ $cat->id }}"
                         class="flex flex-col items-center gap-3 px-3 py-3 hover:bg-primary-50 rounded-xl transition-colors group w-30 text-center
                         {{ $categoryId == $cat->id ? 'bg-[#FFE3A1] shadow-sm' : '' }}">
                             
@@ -40,8 +43,8 @@
         {{-- Nav buttons --}}
         <button id="cat-prev" class="cat-prev absolute left-6 top-1/2 -translate-y-1/2 -translate-x-3 z-10 w-7 h-7 flex items-center justify-center hover:shadow-lg transition-all">
             <svg width="60" height="60" viewBox="0 0 24 24" fill="#C9A84C" xmlns="http://www.w3.org/2000/svg">
-                <polygon points="19,12 10,5 10,19"/>
-                <rect x="7" y="5" width="3" height="14" rx="1"/>
+                <polygon points="5,12 14,5 14,19"/>
+                <rect x="14" y="5" width="3" height="14" rx="1"/>
             </svg>        
         </button>
         <button id="cat-next" class="cat-next absolute right-6 top-1/2 -translate-y-1/2 translate-x-3 z-10 w-7 h-7 flex items-center justify-center hover:shadow-lg transition-all">
@@ -71,18 +74,16 @@
             freeMode: true,
             on: {
                 init: function () {
-                    // Show buttons only if swiper overflows
-                    const wrapperWidth  = this.wrapperEl.scrollWidth;
+                    const wrapperWidth   = this.wrapperEl.scrollWidth;
                     const containerWidth = this.el.clientWidth;
-                    const showButtons = wrapperWidth > containerWidth;
+                    const showButtons    = wrapperWidth > containerWidth;
                     prevBtn.style.display = showButtons ? 'flex' : 'none';
                     nextBtn.style.display = showButtons ? 'flex' : 'none';
                 },
                 resize: function () {
-                    // Recheck on window resize
-                    const wrapperWidth  = this.wrapperEl.scrollWidth;
+                    const wrapperWidth   = this.wrapperEl.scrollWidth;
                     const containerWidth = this.el.clientWidth;
-                    const showButtons = wrapperWidth > containerWidth;
+                    const showButtons    = wrapperWidth > containerWidth;
                     prevBtn.style.display = showButtons ? 'flex' : 'none';
                     nextBtn.style.display = showButtons ? 'flex' : 'none';
                 }

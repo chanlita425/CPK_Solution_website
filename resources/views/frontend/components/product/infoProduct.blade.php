@@ -9,14 +9,14 @@
         <div class="flex flex-col gap-1 text-xs sm:text-sm text-gray-500">
 
             <p>
-                Brand:
+                {{ __('messages.brand') }}:
                 <span class="text-gray-700 font-medium">
                     {{ $product->brand->name ?? 'N/A' }}
                 </span>
             </p>
 
             <p>
-                SKU:
+                {{ __('messages.sku') }}:
                 <span class="text-gray-700 font-medium">
                     {{ $product->SKU ?? 'N/A' }}
                 </span>
@@ -32,7 +32,7 @@
         {{-- Specifications --}}
         <div>
             <p class="text-xs sm:text-sm font-bold text-gray-700 mb-1.5">
-                Specification:
+                {{ __('messages.specification') }}:
             </p>
 
             @php
@@ -55,14 +55,14 @@
                     @endforeach
                 </ul>
             @else
-                <p class="text-xs text-gray-400">No specification available</p>
+                <p class="text-xs text-gray-400">{{ __('messages.no_specification') }}</p>
             @endif
         </div>
         
         {{-- Quantity --}}
         <div class="flex flex-col sm:flex-row items-center sm:items-start gap-2 sm:gap-3 text-md sm:text-[20px] text-gray-700">
             <span class="font-medium text-center sm:text-left">
-                Quantity
+                {{ __('messages.quantity') }}
             </span>
 
             <div class="flex items-center gap-1 sm:gap-2">
@@ -89,25 +89,12 @@
             onclick="addToCart({{ $product->id }})"
             class="w-full sm:w-auto px-4 py-2 rounded-full text-sm sm:text-base font-semibold text-black hover:brightness-95 transition-all shadow-md active:scale-95"
             style="background:#C9A84C;">
-            Add to Cart
+            {{ __('messages.add_to_cart') }}
         </button>
-    </div>
-
-    {{-- Toast --}}
-    <div id="cart-toast"
-        class="fixed bottom-6 right-6 z-50 hidden flex items-center gap-3 px-5 py-3 rounded-2xl shadow-lg text-white text-sm font-medium"
-        style="background:#C9A84C;">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-        </svg>
-        <span id="cart-toast-msg">Added to cart!</span>
-        <a href="{{ url('/order') }}" class="ml-2 underline font-bold hover:opacity-80">View Cart</a>
     </div>
 
 {{-- Scripts --}}
 <script>
-
-    
     let qty = 1;
 
     function changeQty(delta) {
@@ -115,51 +102,10 @@
         document.getElementById('qty-display').textContent = qty;
     }
 
-    // function addToCart(productId) {
-    //     const btn = document.getElementById('add-to-cart-btn');
-    //     btn.disabled    = true;
-    //     btn.textContent = 'Adding…';
-
-    //     fetch("{{ url('/cart/add') }}/" + productId, {
-    //         method: 'POST',
-    //         headers: {
-    //             'Content-Type': 'application/json',
-    //             'X-CSRF-TOKEN': '{{ csrf_token() }}',
-    //             'Accept':       'application/json',
-    //         },
-    //         body: JSON.stringify({ quantity: qty })
-    //     })
-    //     .then(r => r.json())
-    //     .then(res => {
-    //         if (res.success) {
-    //             showToast('Added to cart!', true);
-
-    //             // update navbar badge if exists
-    //             const badge = document.getElementById('cart-count');
-    //             if (badge) badge.textContent = res.cart_count;
-    //         } else {
-    //             showToast(res.message || 'Failed to add to cart.', false);
-    //         }
-    //     })
-    //     .catch(() => showToast('Something went wrong.', false))
-    //     .finally(() => {
-    //         btn.disabled    = false;
-    //         btn.textContent = 'Add to Cart';
-    //     });
-    // }
-
-    function showToast(msg, success) {
-        const toast = document.getElementById('cart-toast');
-        document.getElementById('cart-toast-msg').textContent = msg;
-        toast.style.background = success ? '#C9A84C' : '#ef4444';
-        toast.classList.remove('hidden');
-        setTimeout(() => toast.classList.add('hidden'), 3000);
-    }
-
     function addToCart(productId) {
         const btn = document.getElementById('add-to-cart-btn');
         btn.disabled    = true;
-        btn.textContent = 'Adding…';
+        btn.textContent = '{{ __('messages.adding') }}…';
 
         fetch("{{ url('/cart/add') }}/" + productId, {
             method: 'POST',
@@ -168,22 +114,22 @@
                 'X-CSRF-TOKEN': '{{ csrf_token() }}',
                 'Accept':       'application/json',
             },
-            body: JSON.stringify({ quantity: qty })
+            body: JSON.stringify({ quantity: qty, selected_image: window.selectedImagePath || null })
         })
         .then(r => r.json())
         .then(res => {
             if (res.success) {
-                window.location.href = "{{ route('cart.index') }}#product-detail"; // ← redirect to cart page
-            } else {
-                showToast(res.message || 'Failed to add to cart.', false);
-                btn.disabled    = false;
-                btn.textContent = 'Add to Cart';
+                if (window.updateCartBadge) window.updateCartBadge(res.cart_count);
+                if (window.navigateToCart) {
+                    window.navigateToCart();
+                } else {
+                    window.location.href = "{{ route('cart.index') }}#order_card";
+                }
             }
         })
         .catch(() => {
-            showToast('Something went wrong.', false);
             btn.disabled    = false;
-            btn.textContent = 'Add to Cart';
+            btn.textContent = '{{ __('messages.add_to_cart') }}';
         });
     }
 </script>

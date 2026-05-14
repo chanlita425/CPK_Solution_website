@@ -5,7 +5,7 @@
 @section('content') 
 
 {{-- Order card --}}
-<section id="product-detail" class="px-6 sm:px-8 lg:px-12 mt-6 sm:mt-8 py-5">
+<section id="order_card" class="px-6 sm:px-8 lg:px-12 mt-6 sm:mt-8 py-5">
     <div class="flex flex-col md:flex-row gap-10 lg:gap-8 items-start">
         @include('frontend.components.order.orderProduct')
     </div>
@@ -15,10 +15,12 @@
 <section id="product-grid" class="mt-6 lg:mt-16 sm:px-12 px-8 lg:px-4 sm:px-4">
     
     <h2 class="text-center text-base sm:text-lg font-semibold mb-6 sm:mb-8" style="color:#C9A84C;">
-        Similar Items
+        {{ __('messages.similar_items') }}
     </h2>
 
-    @include('frontend.components.cards.cardResponsive')
+    <div id="add-cards-container">
+        @include('frontend.components.cards.cardResponsive')
+    </div>
 
 </section>
 @endsection

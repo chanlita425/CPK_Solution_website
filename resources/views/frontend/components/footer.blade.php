@@ -19,28 +19,26 @@
                 <a href="{{ url('/') }}" class="flex items-center gap-4 mb-4">
                     
                     {{-- Logo --}}
-                    @if(!empty($settings->logo))
-                        <img src="{{ asset('storage/' . $settings->logo) }}" 
-                            alt="Logo"
-                            class="h-12 w-auto object-contain">
+                    @if($settings->company_logo)
+                        <img src="{{ asset('storage/' . $settings->company_logo) }}"
+                            alt="{{ $settings->company_name }}"
+                            class="h-10">
                     @else
-                        <img src="{{ asset('images/logo.png') }}" 
-                            alt="Default Logo"
-                            class="h-12 w-auto object-contain">
+                        <span class="text-lg font-bold">{{ $settings->company_name ?? 'CPK' }}</span>
                     @endif
 
                 </a>
 
                 {{-- Description --}}
                 <p class="text-[18px] leading-relaxed text-gray-300">
-                    {{ $settings->about_company ?? 'Your trusted partner for home appliances, electronics, and smart solutions in Cambodia.' }}
+                    {{ $settings->about_company ?? __('messages.footer_description') }}
                 </p>
             </div>
 
             {{-- ================= CATEGORIES ================= --}}
             <div>
                 <h4 class="text-[#D7B259] font-semibold text-[20px] mb-4 uppercase tracking-wide">
-                    Categories
+                    {{ __('messages.categories') }}
                 </h4>
 
                 <ul class="grid grid-cols-1 gap-2 text-[16px]">
@@ -59,7 +57,7 @@
             {{-- ================= SOCIAL + CONTACT ================= --}}
             <div>
                 <h4 class="text-[#D7B259] font-semibold text-[20px] mb-4 uppercase tracking-wide">
-                    Follow Us
+                    {{ __('messages.follow_us') }}
                 </h4>
 
                 {{-- Social Icons --}}

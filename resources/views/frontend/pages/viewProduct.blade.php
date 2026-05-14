@@ -4,9 +4,6 @@
 @section('title', 'CPK Solution - Home')
 @section('content')
 
-    <!-- Add Alpine.js -->
-    <script src="//unpkg.com/alpinejs" defer></script>
-
     {{--- Link nav bar ---}}
    @include('frontend.components.product.navLink', ['product' => $product])
 
@@ -26,12 +23,14 @@
 
 
     {{-- CARD PRODUCT --}}
-    <section id="product-grid" class="mt-8 lg:mt-16 sm:px-12 px-8 lg:px-4 ">
+    <section id="product-grid" class="mt-8 lg:mt-16 sm:px-2 px-2 lg:px-2 ">
         <h2 class="text-center text-base sm:text-lg font-semibold mb-6 sm:mb-8" style="color:#C9A84C;">
-            Similar Items
-        </h2>   
-        
-        @include('frontend.components.cards.cardResponsive')
+            {{ __('messages.similar_items') }}
+        </h2>
+
+        <div id="view-cards-container">
+            @include('frontend.components.cards.cardResponsive')
+        </div>
 
     </section>
 
@@ -39,31 +38,33 @@
 @endsection
 @push('scripts')
 <script>
-    const originalMainSrc = document.getElementById('mainImage')?.src;
-    let activeThumbIndex = null;
+(function () {
+    window.originalMainSrc    = document.getElementById('mainImage')?.src ?? null;
+    window.activeThumbIndex   = null;
+    window.selectedImagePath  = null;
 
-    function selectThumb(imageUrl, index) {
+    window.selectThumb = function (imageUrl, index) {
         const mainImage = document.getElementById('mainImage');
-        const thumbs = document.querySelectorAll('.thumb-btn');
-
+        const thumbs    = document.querySelectorAll('.thumb-btn');
         if (!mainImage) return;
 
-        // Second click on same thumbnail → revert to original main image
-        const targetSrc = (activeThumbIndex === index) ? originalMainSrc : imageUrl;
-        const isReverting = activeThumbIndex === index;
+        const isReverting = window.activeThumbIndex === index;
+        const targetSrc   = isReverting ? window.originalMainSrc : imageUrl;
 
         mainImage.style.opacity = 0;
         setTimeout(() => {
-            mainImage.src = targetSrc;
+            mainImage.src           = targetSrc;
             mainImage.style.opacity = 1;
         }, 120);
 
-        activeThumbIndex = isReverting ? null : index;
+        window.activeThumbIndex  = isReverting ? null : index;
+        window.selectedImagePath = isReverting ? null : (thumbs[index]?.dataset.image ?? null);
 
         thumbs.forEach((btn, i) => {
-            btn.classList.toggle('border-yellow-400', i === activeThumbIndex);
-            btn.classList.toggle('border-gray-200', i !== activeThumbIndex);
+            btn.classList.toggle('border-yellow-400', i === window.activeThumbIndex);
+            btn.classList.toggle('border-gray-200',   i !== window.activeThumbIndex);
         });
-    }
+    };
+})();
 </script>
 @endpush

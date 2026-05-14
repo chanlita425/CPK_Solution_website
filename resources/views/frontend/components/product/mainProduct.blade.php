@@ -18,23 +18,31 @@
         @else
             <div class="flex flex-col items-center gap-2 text-gray-300">
                 <i class="fas fa-image text-5xl sm:text-6xl"></i>
-                <span class="text-xs">No image</span>
+                <span class="text-xs">{{ __('messages.no_image') }}</span>
             </div>
         @endif
         </div>
 
-        {{---- Thumbnail ----}}
+        {{---- Thumbnail (always 4 slots) ----}}
+        @php $thumbCount = $product->images->count(); @endphp
         <div class="grid grid-cols-4 gap-2 sm:gap-3">
-            @foreach($product->images as $thumb)
-            <button
-                onclick="selectThumb('{{ asset('storage/' . $thumb->image) }}', {{ $loop->index }})"
-                class="thumb-btn aspect-square rounded-xl border-2 overflow-hidden flex items-center justify-center bg-gray-50
-                border-gray-200 hover:border-yellow-300">
-
-                <img src="{{ asset('storage/' . $thumb->image) }}"
-                    class="w-full h-full object-contain">
-            </button>
-            @endforeach
+            @for($i = 0; $i < 4; $i++)
+                @php $thumb = $product->images->get($i); @endphp
+                @if($thumb && $thumb->image)
+                    <button
+                        data-image="{{ $thumb->image }}"
+                        onclick="selectThumb('{{ asset('storage/' . $thumb->image) }}', {{ $i }})"
+                        class="thumb-btn aspect-square rounded-xl border-2 overflow-hidden flex items-center justify-center bg-gray-50
+                        border-gray-200 hover:border-yellow-300">
+                        <img src="{{ asset('storage/' . $thumb->image) }}"
+                            class="w-full h-full object-contain">
+                    </button>
+                @else
+                    <div class="aspect-square rounded-xl border-2 border-dashed border-gray-200 flex items-center justify-center bg-gray-50">
+                        <i class="fas fa-image text-2xl text-gray-300"></i>
+                    </div>
+                @endif
+            @endfor
         </div>
 
     </div>

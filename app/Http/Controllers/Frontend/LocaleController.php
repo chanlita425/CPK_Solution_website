@@ -31,12 +31,16 @@ class LocaleController extends Controller
     {
         $locale = $request->query('locale');
 
-        if (!in_array($locale, ['en', 'kh'])) {
+        if (!in_array($locale, ['en', 'km'])) {
             abort(400, 'Invalid locale');
         }
 
         session()->put('locale', $locale);
         app()->setLocale($locale);
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json(['success' => true, 'locale' => $locale]);
+        }
 
         return redirect()->back();
     }
